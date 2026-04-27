@@ -44,3 +44,10 @@ phpunit.phar
 /backend/web/index.php
 /backend/web/index-test.php
 /backend/web/robots.txt
+
+# environment file
+.env
+
+# Node
+node_modules/
+package-lock.json

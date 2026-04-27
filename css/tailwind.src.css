@@ -1,0 +1,48 @@
+/* ==========================================================================
+   Clinical Curator — Tailwind CSS Source
+   Compile:  npm run dev   (watch)
+             npm run build (minify for prod)
+   ========================================================================== */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --------------------------------------------------------------------------
+   Custom component styles
+   -------------------------------------------------------------------------- */
+@layer components {
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    /* Used on guest CTA buttons (login, register, reset) */
+    .editorial-gradient {
+        background: linear-gradient(135deg, #003b53 0%, #135370 100%);
+    }
+
+    .editorial-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+        .editorial-grid {
+            gap: 1rem;
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Mobile sidebar transition
+   -------------------------------------------------------------------------- */
+@layer utilities {
+    #mobile-menu-overlay {
+        transition: opacity 0.3s ease;
+    }
+
+    #mobile-sidebar {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}

@@ -75,6 +75,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $this->layout = 'dashboard';
         return $this->render('index');
     }
 
@@ -85,6 +86,7 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+        $this->layout = 'guest';
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -171,6 +173,7 @@ class SiteController extends Controller
      */
     public function actionRequestPasswordReset()
     {
+        $this->layout = 'guest';
         $model = new PasswordResetRequestForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
@@ -196,6 +199,7 @@ class SiteController extends Controller
      */
     public function actionResetPassword($token)
     {
+        $this->layout = 'guest';
         try {
             $model = new ResetPasswordForm($token);
         } catch (InvalidArgumentException $e) {
@@ -243,6 +247,7 @@ class SiteController extends Controller
      */
     public function actionResendVerificationEmail()
     {
+        $this->layout = 'guest';
         $model = new ResendVerificationEmailForm();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {

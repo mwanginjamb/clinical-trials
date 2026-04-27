@@ -1,31 +1,96 @@
 <?php
 
-/** @var yii\web\View $this */
-/** @var yii\bootstrap5\ActiveForm $form */
-/** @var \frontend\models\PasswordResetRequestForm $model */
+/**
+ * Clinical Curator — Request Password Reset View
+ *
+ * @var \yii\web\View                      $this
+ * @var app\models\PasswordResetRequestForm $model
+ *
+ * Controller: SiteController::actionRequestPasswordReset()
+ *   $this->layout = 'guest';
+ */
 
-use yii\bootstrap5\Html;
-use yii\bootstrap5\ActiveForm;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
-$this->title = 'Request password reset';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Reset Password | Clinical Curator';
+$this->params['brandSubtitle'] = 'Account Recovery';
 ?>
-<div class="site-request-password-reset">
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out your email. A link to reset password will be sent there.</p>
+<!-- ════════════════════════════════════════════════════════════════════════════
+     Password Reset Card
+     ════════════════════════════════════════════════════════════════════════════ -->
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl rounded-xl p-10
+            shadow-[0_32px_64px_-12px_rgba(0,59,83,0.12)] border border-outline-variant/10">
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'request-password-reset-form']); ?>
+    <div class="mb-8">
+        <h2 class="text-xl font-bold text-on-surface mb-2">Reset Your Password</h2>
+        <p class="text-on-surface-variant text-sm">
+            Enter your institutional email address and we will send a secure reset link.
+        </p>
+    </div>
 
-                <?= $form->field($model, 'email')->textInput(['autofocus' => true]) ?>
+    <?php $form = ActiveForm::begin([
+        'id' => 'password-reset-form',
+        'method' => 'post',
+        'options' => ['class' => 'space-y-6'],
+        'fieldConfig' => [
+            'template' => '{label}{input}{error}',
+            'labelOptions' => [
+                'class' => 'block font-label text-[0.6875rem] font-bold uppercase
+                            tracking-wider text-on-surface-variant ml-1 mb-1',
+            ],
+            'errorOptions' => ['class' => 'text-xs text-error mt-1 ml-1', 'tag' => 'p'],
+            'options' => ['class' => 'space-y-1'],
+        ],
+        'enableClientValidation' => true,
+    ]); ?>
 
-                <div class="form-group">
-                    <?= Html::submitButton('Send', ['class' => 'btn btn-primary']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
+    <!-- ── Email ──────────────────────────────────────────────────────────── -->
+    <div class="space-y-1">
+        <label class="block font-label text-[0.6875rem] font-bold uppercase tracking-wider
+                      text-on-surface-variant ml-1" for="passwordresetrequestform-email">
+            Work Email
+        </label>
+        <div class="group relative">
+            <?= $form->field($model, 'email', ['options' => ['class' => '']])->textInput([
+                'id' => 'passwordresetrequestform-email',
+                'type' => 'email',
+                'placeholder' => 'researcher@institution.edu',
+                'autocomplete' => 'email',
+                'class' => 'w-full h-12 bg-surface-container-low border-b-2
+                                  border-transparent focus:border-primary focus:ring-0
+                                  focus:bg-surface-container-lowest transition-all px-4
+                                  text-on-surface rounded-t-lg',
+            ])->label(false) ?>
+            <div class="absolute right-4 top-3 text-outline opacity-40
+                        group-focus-within:text-primary group-focus-within:opacity-100 transition-all">
+                <span class="material-symbols-outlined text-xl">mail</span>
+            </div>
         </div>
     </div>
+
+    <!-- ── Submit ─────────────────────────────────────────────────────────── -->
+    <?= Html::submitButton(
+        '<span>Send Reset Link</span>
+         <span class="material-symbols-outlined text-xl">send</span>',
+        [
+            'class' => 'editorial-gradient w-full py-4 rounded-xl text-on-primary font-bold
+                        tracking-tight text-lg shadow-[0_8px_20px_-4px_rgba(0,59,83,0.3)]
+                        hover:scale-[1.02] active:scale-[0.98] transition-all duration-200
+                        flex items-center justify-center gap-2',
+        ]
+    ) ?>
+
+    <?php ActiveForm::end(); ?>
+
+    <!-- ── Back to login ───────────────────────────────────────────────────── -->
+    <p class="mt-6 text-center text-xs text-on-surface-variant">
+        <?= Html::a(
+            '← Back to Sign In',
+            ['/site/login'],
+            ['class' => 'font-bold text-primary hover:text-primary-container transition-colors']
+        ) ?>
+    </p>
+
 </div>

@@ -4,9 +4,10 @@ namespace frontend\controllers;
 
 use frontend\models\ClinicalTrial;
 use frontend\models\ClinicalTrialSearch;
+use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * ClinicalTrialController implements the CRUD actions for ClinicalTrial model.
@@ -72,7 +73,7 @@ class ClinicalTrialController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(Url::toRoute(['study-purpose/create', 'id' => $model->id]));
             }
         } else {
             $model->loadDefaultValues();

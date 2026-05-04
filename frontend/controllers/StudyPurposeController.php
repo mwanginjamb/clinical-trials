@@ -4,9 +4,10 @@ namespace frontend\controllers;
 
 use frontend\models\StudyPurpose;
 use frontend\models\StudyPurposeSearch;
+use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * StudyPurposeController implements the CRUD actions for StudyPurpose model.
@@ -71,7 +72,7 @@ class StudyPurposeController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(Url::toRoute(['study-population-eligibility/create', 'id' => $model->trial_id]));
             }
         } else {
             $model->loadDefaultValues();

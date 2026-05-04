@@ -3,6 +3,8 @@
 namespace frontend\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 
 /**
  * This is the model class for table "clinical_trial".
@@ -35,6 +37,14 @@ class ClinicalTrial extends \yii\db\ActiveRecord
         return 'clinical_trial';
     }
 
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
+            BlameableBehavior::class,
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -44,6 +54,7 @@ class ClinicalTrial extends \yii\db\ActiveRecord
             [['scientific_title', 'public_title', 'scientific_acronym', 'protocol_version', 'registration_status', 'protocol_number', 'registration_number', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['registration_status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['scientific_title', 'public_title', 'scientific_acronym', 'protocol_version', 'protocol_number', 'registration_number'], 'string', 'max' => 255],
+            [['scientific_title', 'protocol_number', 'registration_status'], 'required', 'message' => 'This field is required.'],
         ];
     }
 

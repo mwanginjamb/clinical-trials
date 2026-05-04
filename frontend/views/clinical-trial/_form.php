@@ -94,7 +94,45 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
                 ->hint($model->getAttributeHint('registration_status'))
                 ?>
         </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <?= $form->field($model, 'protocol_number', FormUi::fieldConfig()['base'])
+                ->textInput(array_merge(FormUi::inputOptions()['text'], [
+                    'placeholder' => 'Enter the protocol number...',
+                ]))
+                ->hint($model->getAttributeHint('protocol_number'))
+                ?>
+
+            <?= $form->field($model, 'registration_number', FormUi::fieldConfig()['base'])
+                ->textInput(array_merge(FormUi::inputOptions()['text'], [
+                    'placeholder' => 'Enter the registration number...',
+                ]))
+                ->hint($model->getAttributeHint('registration_number'))
+                ?>
+        </div>
+
     </div>
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         Form Actions
+     ═══════════════════════════════════════════════════════ -->
+    <div class="flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
+
+        <?php Html::a(
+            'Cancel',
+            ['attachee/create'],   // adjust route as needed
+            ['class' => 'px-8 py-3 font-semibold text-on-surface-variant hover:text-primary transition-colors']
+        ) ?>
+
+        <?= Html::submitButton(
+            'Save and Continue',
+            [
+                'class' => FormUi::buttonClass(),
+            ]
+        ) ?>
+
+    </div>
+
 
     <?php ActiveForm::end() ?>
 </div>

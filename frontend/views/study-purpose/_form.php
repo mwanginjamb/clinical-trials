@@ -1,51 +1,119 @@
 <?php
 
+use common\library\FormUi;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\StudyPurpose $model */
 /** @var yii\widgets\ActiveForm $form */
+
+$steps = Yii::$app->params['steps'];
+$actionId = Yii::$app->controller->action->id;
+$totalSteps = count($steps);
+
+$activeIndex = 0;
+foreach ($steps as $i => $step) {
+    if ($step['action'] === $actionId) {
+        $activeIndex = $i;
+        break;
+    }
+}
+
+$stepNumber = str_pad($activeIndex + 1, 2, '0', STR_PAD_LEFT);
+$prevStep = $activeIndex > 0 ? $steps[$activeIndex - 1] : null;
+$nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 ?>
 
 <div class="study-purpose-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php /* ── Editorial Header ────────────────────────────────────────────── */ ?>
 
-    <?= $form->field($model, 'study_purpose')->textarea(['rows' => 6]) ?>
+    <header class="mb-12 border-l-4 border-primary pl-8">
+        <span class="text-label-sm font-bold tracking-[0.1em] text-on-surface-variant uppercase">
+            Step
+            <?= $stepNumber ?> /
+            <?= $totalSteps ?>
+        </span>
+        <h1 class="text-4xl font-extrabold tracking-tight text-primary mt-2">
+            Study Purpose and Design
+        </h1>
+        <p class="text-on-surface-variant max-w-2xl mt-3 leading-relaxed">
+            Define the scientific intent and methodological framework for the upcoming
+            clinical investigation. This data ensures protocol compliance and regulatory alignment.
+        </p>
+    </header>
 
-    <?= $form->field($model, 'study_objective')->textarea(['rows' => 6]) ?>
+    <?php /* ── Progress Tracker partial (active state auto-resolved internally) */ ?>
+    <?= $this->render('../clinical-trial/_progress_tracker') ?>
 
-    <?= $form->field($model, 'study_hypothesis')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'type_of_study')->textInput() ?>
+    <?php $form = ActiveForm::begin(FormUi::formConfig('clinical-trial-form')); ?>
 
-    <?= $form->field($model, 'intervention')->textInput(['maxlength' => true]) ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'study_purpose', FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['textarea'], ['rows' => 3])) ?>
 
-    <?= $form->field($model, 'control_group_name')->textInput() ?>
+        <?= $form->field($model, 'study_objective', FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['textarea'], ['rows' => 3])) ?>
+    </div>
 
-    <?= $form->field($model, 'design_control_group_presence')->textInput() ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'study_hypothesis', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter study hypothesis...']))->hint($model->getAttributeHint('study_hypothesis')) ?>
 
-    <?= $form->field($model, 'phase_of_study')->textInput() ?>
+        <?= $form->field($model, 'type_of_study', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter type of study...']))->hint($model->getAttributeHint('type_of_study')) ?>
+    </div>
 
-    <?= $form->field($model, 'randomization_method_name')->textInput(['maxlength' => true]) ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-    <?= $form->field($model, 'masking_description')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'intervention', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter intervention...']))->hint($model->getAttributeHint('intervention')) ?>
 
-    <?= $form->field($model, 'masking_status')->textInput() ?>
+        <?= $form->field($model, 'control_group_name', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter control group name...']))->hint($model->getAttributeHint('control_group_name')) ?>
+    </div>
 
-    <?= $form->field($model, 'trial_id')->textInput() ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-    <?= $form->field($model, 'created_at')->textInput() ?>
+        <?= $form->field($model, 'design_control_group_presence', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter design control group presence...']))->hint($model->getAttributeHint('design_control_group_presence')) ?>
 
-    <?= $form->field($model, 'updated_at')->textInput() ?>
+        <?= $form->field($model, 'phase_of_study', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter phase of study...']))->hint($model->getAttributeHint('phase_of_study')) ?>
 
-    <?= $form->field($model, 'created_by')->textInput() ?>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-    <?= $form->field($model, 'updated_by')->textInput() ?>
+        <?= $form->field($model, 'randomization_method_name', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter randomization method name...']))->hint($model->getAttributeHint('randomization_method_name')) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= $form->field($model, 'masking_description', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter masking description...']))->hint($model->getAttributeHint('masking_description')) ?>
+
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+        <?= $form->field($model, 'masking_status', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter masking status...']))->hint($model->getAttributeHint('masking_status')) ?>
+
+        <?= $form->field($model, 'trial_id', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter trial ID...']))->hint($model->getAttributeHint('trial_id')) ?>
+
+    </div>
+
+
+
+
+
+
+    <!-- ═══════════════════════════════════════════════════════
+         Form Actions
+     ═══════════════════════════════════════════════════════ -->
+    <div class="flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
+
+        <?php Html::a(
+            'Cancel',
+            ['attachee/create'],   // adjust route as needed
+            ['class' => 'px-8 py-3 font-semibold text-on-surface-variant hover:text-primary transition-colors']
+        ) ?>
+
+        <?= Html::submitButton(
+            'Save and Continue',
+            [
+                'class' => FormUi::buttonClass(),
+            ]
+        ) ?>
+
     </div>
 
     <?php ActiveForm::end(); ?>

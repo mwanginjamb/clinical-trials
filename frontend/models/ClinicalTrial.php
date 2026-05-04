@@ -68,6 +68,21 @@ class ClinicalTrial extends \yii\db\ActiveRecord
         ];
     }
 
+    public function attributeHints(): array
+    {
+        return [
+            'scientific_title' => 'Describe the therapeutic or scientific problem this study intends to solve.',
+            'public_title' => 'Provide a layperson-friendly title that accurately reflects the study’s purpose and design.',
+            'objective' => 'Primary endpoint and specific research aim.',
+            'intervention' => 'e.g. Compound X, 50mg',
+            'has_control_group' => 'Is there a comparator group in this study?',
+            'masking_enabled' => 'Are participants or investigators blinded?',
+            'control_group_name' => 'e.g. Placebo Arm A',
+            'randomization_method' => 'e.g. Permuted Block Randomization',
+            'masking_description' => 'Detail who is blinded (e.g., Participant, Care Provider, Outcomes Assessor) and how it is maintained.',
+        ];
+    }
+
     /**
      * Gets query for [[StudyPopulationEligibilities]].
      *
@@ -86,6 +101,16 @@ class ClinicalTrial extends \yii\db\ActiveRecord
     public function getStudyPurposes()
     {
         return $this->hasMany(StudyPurpose::class, ['trial_id' => 'id']);
+    }
+
+    public static function getRegistrationStatusOptions(): array
+    {
+        return [
+            0 => 'Not Registered',
+            1 => 'Registered',
+            2 => 'Pending',
+            3 => 'Rejected',
+        ];
     }
 
 }

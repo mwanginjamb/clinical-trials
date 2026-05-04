@@ -1,0 +1,100 @@
+<?php
+
+use common\library\FormUi;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+
+
+/** @var yii\web\View $this */
+/** @var frontend\models\ClinicalTrial $model */
+/** @var yii\widgets\ActiveForm $form */
+$steps = Yii::$app->params['steps'];
+$actionId = Yii::$app->controller->action->id;
+$totalSteps = count($steps);
+
+$activeIndex = 0;
+foreach ($steps as $i => $step) {
+    if ($step['action'] === $actionId) {
+        $activeIndex = $i;
+        break;
+    }
+}
+
+$stepNumber = str_pad($activeIndex + 1, 2, '0', STR_PAD_LEFT);
+$prevStep = $activeIndex > 0 ? $steps[$activeIndex - 1] : null;
+$nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
+
+
+?>
+
+<div class="trials-form">
+    <?php /* ── Editorial Header ────────────────────────────────────────────── */ ?>
+    <header class="mb-12 border-l-4 border-primary pl-8">
+        <span class="text-label-sm font-bold tracking-[0.1em] text-on-surface-variant uppercase">
+            Step
+            <?= $stepNumber ?> /
+            <?= $totalSteps ?>
+        </span>
+        <h1 class="text-4xl font-extrabold tracking-tight text-primary mt-2">
+            Study Purpose and Design
+        </h1>
+        <p class="text-on-surface-variant max-w-2xl mt-3 leading-relaxed">
+            Define the scientific intent and methodological framework for the upcoming
+            clinical investigation. This data ensures protocol compliance and regulatory alignment.
+        </p>
+    </header>
+
+    <?php /* ── Progress Tracker partial (active state auto-resolved internally) */ ?>
+    <?= $this->render('_progress_tracker') ?>
+
+
+    <?php $form = ActiveForm::begin(FormUi::formConfig('clinical-trial-form')); ?>
+
+    <?php
+    /* -------------------------------------------------------------------
+       SECTION 1 – Scientific Rationale
+       ------------------------------------------------------------------- */
+    ?>
+
+    <div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm space-y-8">
+        <h2 class="text-xl font-bold text-primary border-b border-surface-container pb-4">
+            Scientific Rationale
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <?= $form->field($model, 'scientific_title', FormUi::fieldConfig()['base'])
+                ->textarea(array_merge(FormUi::inputOptions()['textarea'], [
+                    'rows' => 3,
+                    'placeholder' => 'Describe the therapeutic or scientific problem this study intends to solve...',
+                ]))
+                ->hint($model->getAttributeHint('scientific_title'))
+                ?>
+
+            <?= $form->field($model, 'public_title', FormUi::fieldConfig()['base'])
+                ->textarea(array_merge(FormUi::inputOptions()['textarea'], [
+                    'rows' => 3,
+                    'placeholder' => 'Provide a layperson-friendly summary of the study’s purpose and significance...',
+                ]))
+                ->hint($model->getAttributeHint('public_title'))
+                ?>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <?= $form->field($model, 'protocol_version', FormUi::fieldConfig()['base'])
+                ->textInput(array_merge(FormUi::inputOptions()['text'], [
+                    'placeholder' => 'Enter the protocol version...',
+                ]))
+                ->hint($model->getAttributeHint('protocol_version'))
+                ?>
+
+            <?= $form->field($model, 'registration_status', FormUi::fieldConfig()['base'])
+                ->dropDownList($model->registrationStatusOptions, array_merge(FormUi::inputOptions()['select'], [
+                    'prompt' => 'Select registration status...',
+                ]))
+                ->hint($model->getAttributeHint('registration_status'))
+                ?>
+        </div>
+    </div>
+
+    <?php ActiveForm::end() ?>
+</div>

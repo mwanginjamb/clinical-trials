@@ -9,53 +9,116 @@ namespace common\library;
 
 class FormUi
 {
-    public static function formConfig($id = 'auth-form'): array
+    public static function formConfig($id, $method = 'post'): array
     {
         return [
             'id' => $id,
-
+            'method' => $method,
             'options' => [
                 'class' => 'space-y-5 md:space-y-6',
             ],
-
-            'fieldConfig' => [
-                'template' => "{label}\n{input}\n{error}",
-
-                'labelOptions' => [
-                    'class' => '
-                        block
-                        font-label
-                        text-sm
-                        font-semibold
-                        text-on-surface-variant
-                        mb-2
-                    ',
-                ],
-
-                'errorOptions' => [
-                    'class' => 'text-sm text-red-600 mt-1',
-                ],
-            ],
+            'fieldConfig' => self::fieldConfig()['base'],
+            'enableClientValidation' => true,
+            'validateOnSubmit' => true,
+            'validateOnChange' => false,
+            'validateOnBlur' => true,
         ];
     }
 
-    public static function inputClass(): string
+    public static function inputOptions(): array
     {
-        return '
-            w-full
-            px-4
-            py-3
-            bg-surface-container
-            border-none
-            rounded-lg
-            focus:ring-2
-            focus:ring-primary-container
-            transition-all
-            text-on-surface
-            placeholder:text-outline-variant
-            font-medium
-        ';
+        // Shared Tailwind classes for every text-like control
+        $baseControl = 'w-full bg-surface-container-low border-none border-b-2 border-transparent '
+            . 'focus:border-primary focus:bg-surface-container-lowest focus:ring-0 '
+            . 'transition-all text-sm py-3 px-4';
+
+        // -----------------------------------------------------------------------
+        // Single-line text input
+        // -----------------------------------------------------------------------
+        $text = [
+            'class' => $baseControl,
+        ];
+
+        // -----------------------------------------------------------------------
+        // Multi-line textarea  (set 'rows' per call to override)
+        // -----------------------------------------------------------------------
+        $textarea = [
+            'class' => $baseControl . ' resize-none',
+            'rows' => 3,
+        ];
+
+        // -----------------------------------------------------------------------
+        // <select> / dropDownList
+        // -----------------------------------------------------------------------
+        $select = [
+            'class' => $baseControl,
+        ];
+
+        // -----------------------------------------------------------------------
+        // Toggle switch (checkbox rendered as an iOS-style pill)
+        // Uses a custom template — see usage note below.
+        //
+        // In the view, wrap the field output in the toggle-row <div>
+        // and suppress the auto-generated label (use 'label' => false).
+        // -----------------------------------------------------------------------
+        $toggle = [
+            // The checkbox input itself is visually hidden; the pill is CSS-only.
+            'class' => 'sr-only peer',
+            'uncheck' => '0',
+            // Yii2 wraps checkboxes in <label>; we handle layout externally.
+            'labelOptions' => ['style' => 'display:none'],
+        ];
+
+        return [
+            'text' => $text,
+            'textarea' => $textarea,
+            'select' => $select,
+            'toggle' => $toggle,
+        ];
     }
+
+    /**
+     * Field template Config
+     * Usage: Shared field config — preserves the "bottom-border only" input aesthetic
+     * Example: <?= $form->field($model, 'username', FormUi::fieldTemplateConfig("{label}\n{input}\n{error}"))->textInput(['class' => FormUi::inputClass()]) ?>
+     */
+
+    public static function fieldConfig(): array
+    {
+
+        // ---------------------------------------------------------------------------
+        // BASE field template (wraps label + input + hint + error)
+        // ---------------------------------------------------------------------------
+        $baseField = [
+            'template' => "{label}\n{input}\n{hint}\n{error}",
+            'options' => ['class' => 'space-y-2'],          // <div> wrapper
+            'labelOptions' => [
+                'class' => 'block text-xs font-bold uppercase tracking-wider text-on-surface-variant',
+            ],
+            'errorOptions' => [
+                'tag' => 'p',
+                'class' => 'text-xs text-error mt-1',
+            ],
+            'hintOptions' => [
+                'tag' => 'p',
+                'class' => 'text-xs text-on-surface-variant mt-1',
+            ],
+        ];
+        // ---------------------------------------------------------------------------
+        // VARIANT: no label (for toggle rows that have their own inline label)
+        // ---------------------------------------------------------------------------
+        $noLabelField = array_merge($baseField, [
+            'template' => "{input}\n{error}",
+            'options' => ['class' => ''],
+        ]);
+
+
+        return [
+            'base' => $baseField,
+            'noLabel' => $noLabelField,
+        ];
+    }
+
 
     public static function buttonClass(): string
     {
@@ -156,6 +219,7 @@ class FormUi
             ],
         ];
     }
+
 
 
     /**

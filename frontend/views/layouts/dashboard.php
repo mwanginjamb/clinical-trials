@@ -136,7 +136,7 @@ $this->registerCssFile(
         <div class="mt-auto px-4 space-y-1">
             <?= Html::a(
                 '<span class="material-symbols-outlined">add</span><span>New Trial</span>',
-                ['/trials/create'],
+                ['/clinical-trial/create'],
                 [
                     'class' => 'w-full bg-gradient-to-r from-primary to-primary-container text-white
                             rounded-xl py-3 px-4 font-bold flex items-center justify-center
@@ -223,8 +223,10 @@ $this->registerCssFile(
             </div>
         </header>
 
+
         <!-- ── Page view content injected here ──────────────────────────────── -->
         <div class="p-6 md:p-12 max-w-7xl mx-auto space-y-8 md:space-y-12">
+            <?= $this->render('_bread_crumbs') ?>
             <?= $content ?>
         </div>
 
@@ -233,11 +235,16 @@ $this->registerCssFile(
     <!-- ════════════════════════════════════════════════════════════════════════════
      Contextual FAB
      ════════════════════════════════════════════════════════════════════════════ -->
-    <button class="fixed bottom-6 right-6 md:bottom-10 md:right-10 w-14 h-14 md:w-16 md:h-16
-               bg-primary text-white rounded-2xl shadow-2xl flex items-center justify-center
-               hover:scale-110 active:scale-95 transition-all z-50">
-        <span class="material-symbols-outlined text-2xl md:text-3xl">add_chart</span>
-    </button>
+    <?= Html::a(
+        '<span class="material-symbols-outlined text-2xl md:text-3xl">add_chart</span>',
+        ['/clinical-trial/create'],
+        [
+            'class' => 'fixed bottom-6 right-6 md:bottom-10 md:right-10 w-14 h-14 md:w-16 md:h-16
+                    bg-primary text-white rounded-2xl shadow-2xl flex items-center justify-center
+                    hover:scale-110 active:scale-95 transition-all z-50',
+            'encode' => false,
+        ]
+    ) ?>
 
     <?php $this->endBody() ?>
 </body>

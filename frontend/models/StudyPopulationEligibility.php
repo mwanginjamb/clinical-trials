@@ -33,6 +33,15 @@ class StudyPopulationEligibility extends \yii\db\ActiveRecord
         return 'study_population_eligibility';
     }
 
+
+    public function behaviors()
+    {
+        return [
+            \yii\behaviors\TimestampBehavior::class,
+            \yii\behaviors\BlameableBehavior::class,
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -44,6 +53,8 @@ class StudyPopulationEligibility extends \yii\db\ActiveRecord
             [['participant_target_number', 'sample_size', 'final_number_of_participants', 'trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['health_condition_studied'], 'string', 'max' => 255],
             [['trial_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClinicalTrial::class, 'targetAttribute' => ['trial_id' => 'id']],
+            ['type_of_eligibility', 'in', 'range' => array_keys($this->typeOfEligibilityOptions)],
+            [['health_condition_studied', 'type_of_eligibility', 'participant_target_number', 'sample_size', 'final_number_of_participants'], 'required', 'message' => 'This field cannot be blank.'],
         ];
     }
 
@@ -67,6 +78,18 @@ class StudyPopulationEligibility extends \yii\db\ActiveRecord
         ];
     }
 
+    // Attribute hints for form field tooltips
+    public function attributeHints()
+    {
+        return [
+            'health_condition_studied' => 'Describe the health condition or disease being studied in this clinical trial.',
+            'type_of_eligibility' => 'Select the type of eligibility criteria (e.g., inclusion, exclusion).',
+            'participant_target_number' => 'Enter the target number of participants to be enrolled in the study.',
+            'sample_size' => 'Enter the sample size calculated for the study based on statistical considerations.',
+            'final_number_of_participants' => 'Enter the final number of participants enrolled after recruitment is complete.',
+        ];
+    }
+
     /**
      * Gets query for [[Trial]].
      *
@@ -75,6 +98,16 @@ class StudyPopulationEligibility extends \yii\db\ActiveRecord
     public function getTrial()
     {
         return $this->hasOne(ClinicalTrial::class, ['id' => 'trial_id']);
+    }
+
+    /// Custom getter for type of eligibility options
+    public function getTypeOfEligibilityOptions()
+    {
+        return [
+            1 => 'Inclusion Criteria',
+            2 => 'Exclusion Criteria',
+            3 => 'Other',
+        ];
     }
 
 }

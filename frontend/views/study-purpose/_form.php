@@ -89,7 +89,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
         <?= $form->field($model, 'masking_status', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter masking status...']))->hint($model->getAttributeHint('masking_status')) ?>
 
-        <?= $form->field($model, 'trial_id', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter trial ID...']))->hint($model->getAttributeHint('trial_id')) ?>
+        <?= $form->field($model, 'trial_id', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['readonly' => true]))->hint($model->getAttributeHint('trial_id')) ?>
 
     </div>
 
@@ -102,12 +102,6 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
          Form Actions
      ═══════════════════════════════════════════════════════ -->
     <div class="flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
-
-        <?php Html::a(
-            'Cancel',
-            ['attachee/create'],   // adjust route as needed
-            ['class' => 'px-8 py-3 font-semibold text-on-surface-variant hover:text-primary transition-colors']
-        ) ?>
 
         <?= Html::submitButton(
             'Save and Continue',

@@ -8,6 +8,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use Yii;
 
 /**
  * ClinicalTrialController implements the CRUD actions for ClinicalTrial model.
@@ -73,6 +74,10 @@ class ClinicalTrialController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                // save model ID for wizard step
+                Yii::$app->wizard->registerModel('clinical-trial', $model->id);
+                // save trial ID session for utilization by rest of dependant models
+                Yii::$app->session->set('clinical_trial_id', $model->id);
                 return $this->redirect(Url::toRoute(['study-purpose/create', 'id' => $model->id]));
             }
         } else {

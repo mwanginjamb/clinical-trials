@@ -32,6 +32,8 @@ class DashAsset extends AssetBundle
      */
     public $css = [
         'css/tailwind.css',
+        'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap',
+        'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap'
     ];
 
     /**

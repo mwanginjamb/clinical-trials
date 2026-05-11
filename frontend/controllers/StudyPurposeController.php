@@ -8,6 +8,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use Yii;
 
 /**
  * StudyPurposeController implements the CRUD actions for StudyPurpose model.
@@ -69,10 +70,13 @@ class StudyPurposeController extends Controller
     public function actionCreate()
     {
         $model = new StudyPurpose();
+        $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(Url::toRoute(['study-population-eligibility/create', 'id' => $model->trial_id]));
+                // save model ID for wizard step
+                Yii::$app->wizard->registerModel('study-purpose', $model->id);
+                return $this->redirect(Url::toRoute(['study-population-eligibility/create']));
             }
         } else {
             $model->loadDefaultValues();

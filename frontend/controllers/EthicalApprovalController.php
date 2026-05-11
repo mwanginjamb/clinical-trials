@@ -7,6 +7,7 @@ use frontend\models\EthicalApprovalSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * EthicalApprovalController implements the CRUD actions for EthicalApproval model.
@@ -68,10 +69,13 @@ class EthicalApprovalController extends Controller
     public function actionCreate()
     {
         $model = new EthicalApproval();
+        $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                // save model ID for wizard step
+                Yii::$app->wizard->registerModel('ethical-approval', $model->id);
+                return $this->redirect(Yii::$app->urlManager->createUrl(['funding/create']));
             }
         } else {
             $model->loadDefaultValues();

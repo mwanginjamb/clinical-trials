@@ -66,9 +66,9 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                 ) ?>
 
                 <nav class="hidden md:flex gap-6 items-center">
-                    <?= Html::a('Dashboard', Url::to(['/dashboard/index']), ['class' => $topNavClass('dashboard')]) ?>
-                    <?= Html::a('Clinical Trials', Url::to(['/trials/index']), ['class' => $topNavClass('trials')]) ?>
-                    <?= Html::a('Investigator Registry', Url::to(['/investigators/index']), ['class' => $topNavClass('investigators')]) ?>
+                    <?= Html::a('Dashboard', Url::to(['/site/index']), ['class' => $topNavClass('dashboard')]) ?>
+                    <?= Html::a('Clinical Trials', Url::to(['/clinical-trial/index']), ['class' => $topNavClass('clinical-trial')]) ?>
+                   
                 </nav>
             </div>
 
@@ -124,36 +124,24 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                 <nav class="flex-1 px-4 space-y-1">
                     <?= Html::a(
                         '<span class="material-symbols-outlined">dashboard</span> Dashboard',
-                        Url::to(['/dashboard/index']),
-                        ['class' => $navClass('dashboard')]
+                        Url::to(['/site/index']),
+                        ['class' => $navClass('site','index')]
                     ) ?>
                     <?= Html::a(
                         '<span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;">clinical_notes</span> Clinical Trials',
-                        Url::to(['/trials/index']),
-                        ['class' => $navClass('trials')]
+                        Url::to(['/clinical-trial/index']),
+                        ['class' => $navClass('clinical-trial','index')]
                     ) ?>
-                    <?= Html::a(
-                        '<span class="material-symbols-outlined">group</span> Investigator Registry',
-                        Url::to(['/investigators/index']),
-                        ['class' => $navClass('investigators')]
-                    ) ?>
-                    <?= Html::a(
-                        '<span class="material-symbols-outlined">query_stats</span> Analytics',
-                        Url::to(['/analytics/index']),
-                        ['class' => $navClass('analytics')]
-                    ) ?>
-                    <?= Html::a(
-                        '<span class="material-symbols-outlined">description</span> Protocols',
-                        Url::to(['/protocols/index']),
-                        ['class' => $navClass('protocols')]
-                    ) ?>
+                    
+                    
+                   
                 </nav>
 
                 <!-- CTA Button -->
                 <div class="px-6 pt-4 border-t border-slate-200/50">
                     <?= Html::a(
                         'New Trial',
-                        Url::to(['/trials/create']),
+                        Url::to(['/clinical-trial/create']),
                         ['class' => 'block w-full py-3 bg-primary text-white rounded-xl font-headline text-sm font-bold shadow-md hover:opacity-90 transition-opacity text-center']
                     ) ?>
                 </div>

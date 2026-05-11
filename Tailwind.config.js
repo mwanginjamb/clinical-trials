@@ -8,7 +8,7 @@ module.exports = {
     ],
     theme: {
         extend: {
-            colors: {
+            "colors": {
                 "on-tertiary-fixed-variant": "#004f4f",
                 "surface-tint": "#2a6481",
                 "surface-container": "#edeeef",
@@ -55,19 +55,19 @@ module.exports = {
                 "error": "#ba1a1a",
                 "on-primary-container": "#90c6e7",
                 "primary-fixed": "#c4e7ff",
-                "surface-container-high": "#e7e8e9",
+                "surface-container-high": "#e7e8e9"
             },
-            borderRadius: {
-                DEFAULT: "0.125rem",
-                lg: "0.25rem",
-                xl: "0.5rem",
-                full: "0.75rem",
+            "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
             },
-            fontFamily: {
-                headline: ["Manrope", "sans-serif"],
-                body: ["Inter", "sans-serif"],
-                label: ["Inter", "sans-serif"],
-            },
+            "fontFamily": {
+                "headline": ["Manrope"],
+                "body": ["Inter"],
+                "label": ["Inter"]
+            }
         },
     },
     plugins: [

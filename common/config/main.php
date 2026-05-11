@@ -17,5 +17,8 @@ return [
             'password' => env('DB_PASSWORD'),
             'charset' => 'utf8',
         ],
+        'wizard' => [
+            'class' => \common\library\WizardComponent::class,
+        ],
     ],
 ];

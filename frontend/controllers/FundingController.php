@@ -7,6 +7,7 @@ use frontend\models\FundingSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * FundingController implements the CRUD actions for Funding model.
@@ -68,10 +69,13 @@ class FundingController extends Controller
     public function actionCreate()
     {
         $model = new Funding();
+        $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                // save model ID for wizard step
+                Yii::$app->wizard->registerModel('funding', $model->id);
+                return $this->redirect(Yii::$app->urlManager->createUrl(['study-description/create']));
             }
         } else {
             $model->loadDefaultValues();
@@ -94,7 +98,9 @@ class FundingController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            // save model ID for wizard step
+            Yii::$app->wizard->registerModel('funding', $model->id);
+            return $this->redirect(Yii::$app->urlManager->createUrl(['study-description/create']));
         }
 
         return $this->render('update', [

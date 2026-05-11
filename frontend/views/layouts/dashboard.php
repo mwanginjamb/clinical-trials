@@ -79,37 +79,17 @@ DashAsset::register($this);
                     'label' => 'Dashboard',
                     'icon' => 'dashboard',
                     'filled' => true,
-                    'url' => ['/dashboard/index'],
+                    'url' => ['/site/index'],
                     'active' => true,
                 ],
                 [
                     'label' => 'Clinical Trials',
                     'icon' => 'clinical_notes',
                     'filled' => false,
-                    'url' => ['/trials/index'],
+                    'url' => ['/clinical-trial/index'],
                     'active' => false,
                 ],
-                [
-                    'label' => 'Investigator Registry',
-                    'icon' => 'group',
-                    'filled' => false,
-                    'url' => ['/investigators/index'],
-                    'active' => false,
-                ],
-                [
-                    'label' => 'Analytics',
-                    'icon' => 'query_stats',
-                    'filled' => false,
-                    'url' => ['/analytics/index'],
-                    'active' => false,
-                ],
-                [
-                    'label' => 'Protocols',
-                    'icon' => 'description',
-                    'filled' => false,
-                    'url' => ['/protocols/index'],
-                    'active' => false,
-                ],
+               
             ];
 
             foreach ($navItems as $item):

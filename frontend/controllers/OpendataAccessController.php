@@ -8,6 +8,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
+use Yii;
+
 /**
  * OpendataAccessController implements the CRUD actions for OpendataAccess model.
  */
@@ -68,10 +70,16 @@ class OpendataAccessController extends Controller
     public function actionCreate()
     {
         $model = new OpendataAccess();
+        $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                // save model ID for wizard step
+                Yii::$app->wizard->registerModel('open-data-access', $model->id);
+                // Add a success flash message
+                Yii::$app->session->addFlash('success', 'Trial Information saved successfully!');
+                // final step - redirect to clinical-trial view
+                return $this->redirect(['clinical-trial/view', 'id' => $model->trial_id]);
             }
         } else {
             $model->loadDefaultValues();
@@ -94,7 +102,8 @@ class OpendataAccessController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            // final step - redirect to clinical-trial view
+            return $this->redirect(['clinical-trial/view', 'id' => $model->trial_id]);
         }
 
         return $this->render('update', [

@@ -7,6 +7,7 @@ use frontend\models\StudyDescriptionSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * StudyDescriptionController implements the CRUD actions for StudyDescription model.
@@ -68,10 +69,13 @@ class StudyDescriptionController extends Controller
     public function actionCreate()
     {
         $model = new StudyDescription();
+        $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                // save model ID for wizard step
+                Yii::$app->wizard->registerModel('study-description', $model->id);
+                return $this->redirect(Yii::$app->urlManager->createUrl(['study-intervention/create']));
             }
         } else {
             $model->loadDefaultValues();
@@ -94,7 +98,9 @@ class StudyDescriptionController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            // save model ID for wizard step
+            Yii::$app->wizard->registerModel('study-description', $model->id);
+            return $this->redirect(Yii::$app->urlManager->createUrl(['study-intervention/create']));
         }
 
         return $this->render('update', [

@@ -2,46 +2,83 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\library\FormUi;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\StudyTimeline $model */
 /** @var yii\widgets\ActiveForm $form */
+
+$steps = Yii::$app->params['steps'];
+$actionId = Yii::$app->controller->action->id;
+$totalSteps = count($steps);
+
+$activeIndex = 0;
+
+// show next/prev buttons based on current step index not more than 3 steps away from current step to prevent navigation to non-sequential steps
+foreach ($steps as $i => $step) {
+    if ($step['controller'] === Yii::$app->controller->id && $step['action'] === Yii::$app->controller->action->id) {
+        $activeIndex = $i;
+        break;
+    }
+}
+
+$stepNumber = str_pad($activeIndex + 1, 2, '0', STR_PAD_LEFT);
+$prevStep = $activeIndex > 0 ? $steps[$activeIndex - 1] : null;
+$nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 ?>
 
 <div class="study-timeline-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+<header class="mb-12 border-l-4 border-primary pl-8">
+        <span class="text-label-sm font-bold tracking-[0.1em] text-on-surface-variant uppercase">
+            Step
+            <?= $stepNumber ?> /
+            <?= $totalSteps ?>
+        </span>
+        <h1 class="text-4xl font-extrabold tracking-tight text-primary mt-2">
+            Study Timeline
+        </h1>
+        <p class="text-on-surface-variant max-w-2xl mt-3 leading-relaxed">
+            Define the timeline for the study including start and end dates, recruitment status, and country information.
+        </p>
+    </header>
 
-    <?= $form->field($model, 'study_duration')->textInput() ?>
+    <?php /* ── Progress Tracker partial (active state auto-resolved internally) */ ?>
+    <?= $this->render('../clinical-trial/_progress_tracker') ?>
 
-    <?= $form->field($model, 'study_site_location')->textInput(['maxlength' => true]) ?>
+    <?php $form = ActiveForm::begin(FormUi::formConfig($model->formName())); ?>
 
-    <?= $form->field($model, 'centre_postal_address')->textInput(['maxlength' => true]) ?>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+         <?= $form->field($model, 'study_duration',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter study duration...'])) ?>
 
-    <?= $form->field($model, 'anticipated_start_date')->textInput() ?>
+         <?= $form->field($model, 'study_site_location',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true])) ?>
+     </div>
 
-    <?= $form->field($model, 'anticipated_end_date')->textInput() ?>
 
-    <?= $form->field($model, 'recruitment_status')->textInput() ?>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'centre_postal_address',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true])) ?>
+        <?= $form->field($model, 'anticipated_start_date',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['type' => 'date'])) ?>
+      </div>
 
-    <?= $form->field($model, 'recruiting_country')->textInput() ?>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'anticipated_end_date',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['type' => 'date'])) ?>
+        <?= $form->field($model, 'recruitment_status',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter recruitment status...'])) ?>
+      </div>
 
-    <?= $form->field($model, 'centre_pysical_address')->textInput(['maxlength' => true]) ?>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'recruiting_country',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter recruiting country...'])) ?>
+        <?= $form->field($model, 'centre_pysical_address',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true, 'placeholder' => 'Enter centre physical address...'])) ?>
+      </div>
 
-    <?= $form->field($model, 'centre_region')->textInput() ?>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'centre_region',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter centre region...'])) ?>
+      </div>
 
-    <?= $form->field($model, 'trial_id')->textInput() ?>
+    <?= $form->field($model, 'trial_id')->hiddenInput(['readonly' => true])->label(false) ?>
 
-    <?= $form->field($model, 'created_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'updated_by')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput() ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Yii::t('app', 'Save and Continue'), ['class' => FormUi::buttonClass()]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

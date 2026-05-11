@@ -1,101 +1,157 @@
 <?php
-/**
- * views/trials/_progress_tracker.php
- *
- * Reusable multi-step progress tracker partial.
- * Resolves active/completed/upcoming state automatically from the current
- * Yii2 controller/action context — no variables need to be passed in.
- *
- * Usage (in any wizard step view):
- *   <?= $this->render('_progress_tracker') ?>
- *
- * The partial reads _steps_config.php from the same directory to stay
- * decoupled from individual step views.
- */
 
 use yii\helpers\Html;
-use yii\helpers\Url;
 
-// ── Load step definitions ────────────────────────────────────────────────────
-$steps = Yii::$app->params['steps'];
+$wizard = Yii::$app->wizard;
 
-// ── Resolve active step from current controller/action context ───────────────
-$currentController = Yii::$app->controller->id;
-$currentAction = Yii::$app->controller->action->id;
+$steps = $wizard->getSteps();
 
-$activeIndex = 0; // fallback to first step if no match found
+$visibleSteps = $wizard->getVisibleSteps(4);
 
-foreach ($steps as $i => $step) {
-    if ($step['controller'] === $currentController && $step['action'] === $currentAction) {
-        $activeIndex = $i;
-        break;
-    }
-}
+$activeIndex = $wizard->getActiveIndex();
 
 $totalSteps = count($steps);
+
 ?>
 
-<div class="mb-12 flex items-center justify-between max-w-4xl px-4" role="navigation" aria-label="Form progress">
+<div class="mb-10">
 
-    <?php foreach ($steps as $i => $step):
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
 
-        $isCompleted = $i < $activeIndex;
-        $isActive = $i === $activeIndex;
-        $isUpcoming = $i > $activeIndex;
-        $isLast = $i === $totalSteps - 1;
-        $stepNumber = $i + 1;
+        <div class="text-sm font-semibold text-primary">
+            Step <?= $activeIndex + 1 ?>
+            of
+            <?= $totalSteps ?>
+        </div>
 
-        // Completed steps are clickable; upcoming steps are not
-        $stepUrl = $isCompleted ? Url::to($step['url']) : null;
+        <div class="text-xs text-on-surface-variant">
+            <?= $wizard->getProgressPercentage() ?>%
+            Complete
+        </div>
+
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="w-full h-2 bg-outline-variant rounded-full overflow-hidden mb-8">
+
+        <div
+            class="h-full bg-primary transition-all duration-500"
+            style="width: <?= $wizard->getProgressPercentage() ?>%">
+        </div>
+
+    </div>
+
+    <!-- Stepper -->
+    <div
+        class="flex items-center justify-between gap-3"
+        role="navigation"
+        aria-label="Form progress"
+    >
+
+        <?php foreach ($visibleSteps as $i => $step):
+
+            $isCompleted = $wizard->isCompleted($i);
+
+            $isActive = $wizard->isActive($i);
+
+            $isUpcoming = $wizard->isUpcoming($i);
+
+            $stepUrl = $wizard->getStepUrl($step, $i);
+
+            $stepNumber = $i + 1;
+
+            $isLastVisible = $i === array_key_last($visibleSteps);
 
         ?>
 
-        <?php /* ── Step pill ───────────────────────────────────────────── */ ?>
-        <div class="flex items-center gap-3 <?= $isUpcoming ? 'opacity-40' : '' ?>">
+            <div class="flex items-center flex-1">
 
-            <?php if ($isCompleted): ?>
+                <div class="flex flex-col items-center text-center min-w-[100px]">
 
-                <?= Html::a(
-                    '<span class="material-symbols-outlined text-sm" style="font-variation-settings: \'FILL\' 1">check</span>',
-                    $stepUrl,
-                    [
-                        'class' => 'w-7 h-7 rounded bg-primary text-white flex items-center
-                                         justify-center text-xs font-bold
-                                         hover:opacity-80 transition-opacity',
-                        'title' => $step['label'],
-                        'aria-label' => "Go back to step {$stepNumber}: {$step['label']}",
-                    ]
-                ) ?>
+                    <?php if ($isCompleted && $stepUrl): ?>
 
-            <?php elseif ($isActive): ?>
+                        <?= Html::a(
+                            '<span class="material-symbols-outlined text-sm"
+                                style="font-variation-settings: \'FILL\' 1">
+                                check
+                            </span>',
+                            $stepUrl,
+                            [
+                                'class' => '
+                                    w-10 h-10 rounded-full
+                                    bg-primary text-white
+                                    flex items-center justify-center
+                                    shadow-sm hover:scale-105
+                                    transition-transform
+                                ',
+                            ]
+                        ) ?>
 
-                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary-container
-                             text-white flex items-center justify-center text-sm font-bold shadow-lg"
-                    aria-current="step" title="Current step: <?= Html::encode($step['label']) ?>">
-                    <?= $stepNumber ?>
+                    <?php elseif ($isActive): ?>
+
+                        <div
+                            class="
+                                w-12 h-12 rounded-2xl
+                                bg-gradient-to-br
+                                from-primary to-primary-container
+                                text-white font-bold
+                                flex items-center justify-center
+                                shadow-lg
+                            "
+                            aria-current="step"
+                        >
+                            <?= $stepNumber ?>
+                        </div>
+
+                    <?php else: ?>
+
+                        <div
+                            class="
+                                w-10 h-10 rounded-full
+                                bg-outline-variant
+                                text-on-surface
+                                flex items-center justify-center
+                                opacity-40
+                            "
+                        >
+                            <?= $stepNumber ?>
+                        </div>
+
+                    <?php endif; ?>
+
+                    <div
+                        class="
+                            mt-2 text-xs font-medium leading-tight
+                            <?= $isActive
+                                ? 'text-primary'
+                                : 'text-on-surface-variant'
+                            ?>
+                        "
+                    >
+                        <?= Html::encode($step['label']) ?>
+                    </div>
+
                 </div>
 
-            <?php else: ?>
+                <?php if (!$isLastVisible): ?>
 
-                <div class="w-7 h-7 rounded bg-outline-variant text-on-surface flex items-center
-                             justify-center text-xs font-bold" title="<?= Html::encode($step['label']) ?>">
-                    <?= $stepNumber ?>
-                </div>
+                    <div
+                        class="
+                            flex-1 h-[2px] mx-3 rounded-full
+                            <?= $isCompleted
+                                ? 'bg-primary'
+                                : 'bg-outline-variant'
+                            ?>
+                        ">
+                    </div>
 
-            <?php endif; ?>
+                <?php endif; ?>
 
-            <span
-                class="text-xs font-bold tracking-wide <?= $isActive ? 'text-primary' : 'text-on-surface' ?> hidden sm:block">
-                <?= Html::encode($step['label']) ?>
-            </span>
+            </div>
 
-        </div>
+        <?php endforeach; ?>
 
-        <?php /* ── Connector line (skipped after last step) ─────────────── */ ?>
-        <?php if (!$isLast): ?>
-            <div class="flex-1 h-[2px] mx-3 <?= $isCompleted ? 'bg-primary opacity-30' : 'bg-outline-variant' ?>"></div>
-        <?php endif; ?>
-
-    <?php endforeach; ?>
+    </div>
 
 </div>

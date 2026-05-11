@@ -7,6 +7,7 @@ use frontend\models\StudyPopulationEligibilitySearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use Yii;
 
 /**
  * StudyPopulationEligibilityController implements the CRUD actions for StudyPopulationEligibility model.
@@ -68,10 +69,13 @@ class StudyPopulationEligibilityController extends Controller
     public function actionCreate()
     {
         $model = new StudyPopulationEligibility();
+        $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+                // save model ID for wizard step
+                Yii::$app->wizard->registerModel('study-population-eligibility', $model->id);
+                return $this->redirect(Yii::$app->urlManager->createUrl(['study-timeline/create']));
             }
         } else {
             $model->loadDefaultValues();

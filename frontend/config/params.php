@@ -35,6 +35,62 @@ return [
             'url' => ['/study-population-eligibility/create'],
             'icon' => 'checklist',
         ],
+        [
+            'label' => '4 . Study Timeline and Location',
+            'controller' => 'study-timeline',
+            'action' => 'create',
+            'url' => ['/study-timeline/create'],
+            'icon' => 'map-pin',
+        ],
+        [
+            'label' => '5. Investigator Team',
+            'controller' => 'investigator-team',
+            'action' => 'create',
+            'url' => ['/investigator-team/create'],
+            'icon' => 'users',
+        ],
+        [
+            'label' => '6. Ethics and Regulatory Approvals',
+            'controller' => 'ethics-approval',
+            'action' => 'create',
+            'url' => ['/ethics-regulatory/create'],
+            'icon' => 'shield-check',
+        ],
+        [
+            'label' => '7. Funding and Sponsorship',
+            'controller' => 'funding',
+            'action' => 'create',
+            'url' => ['/funding/create'],
+            'icon' => 'share-nodes',
+        ],
+        [
+            'label' => '8. Study Description (Lay and Scientific)',
+            'controller' => 'study-description',
+            'action' => 'create',
+            'url' => ['/study-description/create'],
+            'icon' => 'document-text',
+        ],
+        [
+            'label' => '9. Study Interventions and Outcomes',
+            'controller' => 'study-intervention',
+            'action' => 'create',
+            'url' => ['/study-intervention/create'],
+            'icon' => 'pills',
+        ],
+        [
+            'label' => '10. Study Result Pulication',
+            'controller' => 'study-results',
+            'action' => 'create',
+            'url' => ['/study-results/create'],
+            'icon' => 'file-text',
+        ],
+        [
+            'label' => '11. Open Data Access and Sharing',
+            'controller' => 'open-data',
+            'action' => 'create',
+            'url' => ['/open-data/create'],
+            'icon' => 'database',
+        ]
 
     ]
 ];

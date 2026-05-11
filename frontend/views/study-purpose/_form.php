@@ -13,6 +13,8 @@ $actionId = Yii::$app->controller->action->id;
 $totalSteps = count($steps);
 
 $activeIndex = 0;
+
+// show next/prev buttons based on current step index not more than 3 steps away from current step to prevent navigation to non-sequential steps
 foreach ($steps as $i => $step) {
     if ($step['action'] === $actionId) {
         $activeIndex = $i;

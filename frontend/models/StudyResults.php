@@ -76,11 +76,20 @@ class StudyResults extends \yii\db\ActiveRecord
     /**
      * Gets query for [[Trial]].
      *
-     * @return \yii\db\ActiveQuery
+     * @return \yii\db\ActiveQuery|\frontend\models\query\ClinicalTrialQuery
      */
     public function getTrial()
     {
         return $this->hasOne(ClinicalTrial::class, ['id' => 'trial_id']);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return \frontend\models\query\StudyResultsQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return new \frontend\models\query\StudyResultsQuery(get_called_class());
     }
 
 }

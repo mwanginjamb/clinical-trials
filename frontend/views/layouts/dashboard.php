@@ -10,21 +10,19 @@
 use frontend\assets\DashAsset;
 use yii\helpers\Html;
 
-DashAsset::register($this);
+
 
 // ── External fonts & icon font ────────────────────────────────────────────────
 // Registered here (not in AppAsset) so they resolve to CDN URLs and arrive in
 // <head> via $this->head() before any local CSS — avoids FOUT.
-$this->registerCssFile(
-    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700'
-    . '&family=Manrope:wght@400;500;600;700;800&display=swap',
-    ['rel' => 'stylesheet']
-);
-$this->registerCssFile(
-    'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined'
-    . ':wght,FILL@100..700,0..1&display=swap',
-    ['rel' => 'stylesheet']
-);
+
+
+$this->registerLinkTag(['rel' => 'preconnect', 'href' => 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap']);
+$this->registerLinkTag(['rel' => 'preconnect', 'href' => 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap']);
+
+DashAsset::register($this);
+
+
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>

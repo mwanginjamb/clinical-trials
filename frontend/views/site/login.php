@@ -66,7 +66,7 @@ $this->params['brandSubtitle'] = 'Institutional Research Portal';
             Work Email
         </label>
         <div class="group relative">
-            <?= $form->field($model, 'username', ['options' => ['class' => '']])->textInput([
+            <?= $form->field($model, 'username')->textInput([
                 'id' => 'loginform-username',
                 'type' => 'email',
                 'placeholder' => 'e.g. researcher@institution.edu',

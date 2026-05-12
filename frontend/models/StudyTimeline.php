@@ -59,7 +59,7 @@ class StudyTimeline extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'study_duration' => Yii::t('app', 'Study Duration'),
+            'study_duration' => Yii::t('app', 'Study Duration (Years)'),
             'study_site_location' => Yii::t('app', 'Study Site Location'),
             'centre_postal_address' => Yii::t('app', 'Centre Postal Address'),
             'anticipated_start_date' => Yii::t('app', 'Anticipated Start Date'),
@@ -93,6 +93,48 @@ class StudyTimeline extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \frontend\models\query\StudyTimelineQuery(get_called_class());
+    }
+
+    // recruitment status options for dropdown
+    public function getRecruitmentStatus()
+    {
+        return [
+            0 => 'Not yet recruiting',
+            1 => 'Recruiting',
+            2 => 'Enrolling by invitation',
+            3 => 'Active, not recruiting',
+            4 => 'Completed',
+            5 => 'Suspended',
+            6 => 'Terminated',
+            7 => 'Withdrawn',
+            8 => 'Unknown status',
+        ];
+    }
+
+    // Centres / Regions Options
+    public function getCentreRegion()
+    {
+        return [
+            1 => 'Nairobi (HQ)',
+            2 => 'Busia',
+            3 => 'Kwale',
+            4 => 'Mombasa',
+            5 => 'Kilifi Region',
+            6 => 'Kisumu',
+            7 => 'Siaya',
+            8 => 'Kirinyaga',
+        ];
+    }
+
+    // Recruiting Country Options
+    public function getRecruitingCountry()
+    {
+        return [
+            1 => 'Kenya',
+            2 => 'Uganda',
+            3 => 'Tanzania',
+            4 => 'Rwanda',
+        ];
     }
 
 }

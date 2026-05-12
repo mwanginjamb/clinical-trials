@@ -61,7 +61,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <?= $form->field($model, 'study_hypothesis', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter study hypothesis...']))->hint($model->getAttributeHint('study_hypothesis')) ?>
 
-        <?= $form->field($model, 'type_of_study', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter type of study...']))->hint($model->getAttributeHint('type_of_study')) ?>
+        <?= $form->field($model, 'type_of_study', FormUi::fieldConfig()['base'])->dropDownList($model->typeOfStudy, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select type of study...'])) ?>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -73,9 +73,9 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-        <?= $form->field($model, 'design_control_group_presence', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter design control group presence...']))->hint($model->getAttributeHint('design_control_group_presence')) ?>
+        <?= $form->field($model, 'design_control_group_presence', FormUi::fieldConfig()['base'])->checkbox(array_merge(FormUi::inputOptions())) ?>
 
-        <?= $form->field($model, 'phase_of_study', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter phase of study...']))->hint($model->getAttributeHint('phase_of_study')) ?>
+        <?= $form->field($model, 'phase_of_study', FormUi::fieldConfig()['base'])->dropDownList($model->phaseOfStudy, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select phase of study...'])) ?>
 
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -87,7 +87,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-        <?= $form->field($model, 'masking_status', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter masking status...']))->hint($model->getAttributeHint('masking_status')) ?>
+        <?= $form->field($model, 'masking_status', FormUi::fieldConfig()['base'])->checkbox(array_merge(FormUi::inputOptions())) ?>
 
         <?= $form->field($model, 'trial_id', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['readonly' => true]))->hint($model->getAttributeHint('trial_id')) ?>
 
@@ -100,9 +100,8 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <!-- ═══════════════════════════════════════════════════════
          Form Actions
-     ═══════════════════════════════════════════════════════ -->
+     ══════════════════════════════════════════════════════ -->
     <div class="flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
-
         <?= Html::submitButton(
             'Save and Continue',
             [

@@ -93,4 +93,44 @@ class InvestigatorTeam extends \yii\db\ActiveRecord
         return new \frontend\models\query\InvestigatorTeamQuery(get_called_class());
     }
 
+    // Get PI role options for dropdown
+    public function getRoleOptions()
+    {
+        return [
+            1 => 'Principal Investigator',
+            2 => 'Co-Principal Investigator',
+            3 => 'Collaborator',
+        ];
+    }
+
+    // get Country Options
+    public function getCountryOptions()
+    {
+        return [
+            1 => 'Kenya',
+            2 => 'Uganda',
+            3 => 'United Kingdom',
+            4 => 'Canada',
+            5 => 'Australia',
+            6 => 'Germany',
+            // Add more countries as needed
+        ];
+    }
+
+    // Get City Options
+
+    public function getCityOptions()
+    {
+        return [
+            1 => 'Nairobi',
+            2 => 'Kampala',
+            3 => 'London',
+            4 => 'Toronto',
+            5 => 'Sydney',
+            6 => 'Berlin',
+            // Add more cities as needed
+        ];
+    }
+
+
 }

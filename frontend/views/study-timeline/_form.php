@@ -29,7 +29,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
 <div class="study-timeline-form">
 
-<header class="mb-12 border-l-4 border-primary pl-8">
+    <header class="mb-12 border-l-4 border-primary pl-8">
         <span class="text-label-sm font-bold tracking-[0.1em] text-on-surface-variant uppercase">
             Step
             <?= $stepNumber ?> /
@@ -39,7 +39,8 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
             Study Timeline
         </h1>
         <p class="text-on-surface-variant max-w-2xl mt-3 leading-relaxed">
-            Define the timeline for the study including start and end dates, recruitment status, and country information.
+            Define the timeline for the study including start and end dates, recruitment status, and country
+            information.
         </p>
     </header>
 
@@ -48,31 +49,31 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <?php $form = ActiveForm::begin(FormUi::formConfig($model->formName())); ?>
 
-     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-         <?= $form->field($model, 'study_duration',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter study duration...'])) ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'study_duration', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter study duration...', 'type' => 'number'])) ?>
 
-         <?= $form->field($model, 'study_site_location',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true])) ?>
-     </div>
+        <?= $form->field($model, 'study_site_location', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true])) ?>
+    </div>
 
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <?= $form->field($model, 'centre_postal_address',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true])) ?>
-        <?= $form->field($model, 'anticipated_start_date',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['type' => 'date'])) ?>
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'centre_postal_address', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true])) ?>
+        <?= $form->field($model, 'anticipated_start_date', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['type' => 'date'])) ?>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <?= $form->field($model, 'anticipated_end_date',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['type' => 'date'])) ?>
-        <?= $form->field($model, 'recruitment_status',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter recruitment status...'])) ?>
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'anticipated_end_date', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['type' => 'date'])) ?>
+        <?= $form->field($model, 'recruitment_status', FormUi::fieldConfig()['base'])->dropDownList($model->recruitmentStatus, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select recruitment status...'])) ?>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <?= $form->field($model, 'recruiting_country',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter recruiting country...'])) ?>
-        <?= $form->field($model, 'centre_pysical_address',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true, 'placeholder' => 'Enter centre physical address...'])) ?>
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'recruiting_country', FormUi::fieldConfig()['base'])->dropDownList($model->recruitingCountry, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select recruiting country...'])) ?>
+        <?= $form->field($model, 'centre_pysical_address', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true, 'placeholder' => 'Enter centre physical address...'])) ?>
+    </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <?= $form->field($model, 'centre_region',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter centre region...'])) ?>
-      </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'centre_region', FormUi::fieldConfig()['base'])->dropDownList($model->centreRegion, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select centre region...'])) ?>
+    </div>
 
     <?= $form->field($model, 'trial_id')->hiddenInput(['readonly' => true])->label(false) ?>
 

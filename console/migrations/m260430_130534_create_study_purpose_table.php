@@ -22,7 +22,7 @@ class m260430_130534_create_study_purpose_table extends Migration
             'study_hypothesis' => $this->string(),
             'type_of_study' => $this->integer(),
             'intervention' => $this->string(),
-            'control_group_name' => $this->boolean(),
+            'control_group_name' => $this->string(),
             'design_control_group_presence' => $this->boolean(),
             'phase_of_study' => $this->integer(),
             'randomization_method_name' => $this->string(),

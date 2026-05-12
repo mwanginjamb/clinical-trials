@@ -98,7 +98,8 @@ class StudyPopulationEligibilityController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            Yii::$app->wizard->registerModel('study-population-eligibility', $model->id);
+            return $this->redirect(Yii::$app->urlManager->createUrl(['study-timeline/create']));
         }
 
         return $this->render('update', [

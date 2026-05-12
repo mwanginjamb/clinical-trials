@@ -56,10 +56,10 @@ return [
         ],
         [
             'label' => '6. Ethics and Regulatory Approvals',
-            'controller' => 'ethics-approval',
+            'controller' => 'ethical-approval',
             'action' => 'create',
-            'createUrl' => ['/ethics-approval/create'],
-            'updateUrl' => ['/ethics-approval/update'],
+            'createUrl' => ['/ethical-approval/create'],
+            'updateUrl' => ['/ethical-approval/update'],
             'icon' => 'shield-check',
         ],
         [

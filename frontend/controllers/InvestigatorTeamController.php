@@ -4,9 +4,13 @@ namespace frontend\controllers;
 
 use frontend\models\InvestigatorTeam;
 use frontend\models\InvestigatorTeamSearch;
+use Yii;
+use yii\base\Response;
+use yii\filters\VerbFilter;
+use yii\helpers\Json;
+use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
 
 /**
  * InvestigatorTeamController implements the CRUD actions for InvestigatorTeam model.
@@ -25,10 +29,21 @@ class InvestigatorTeamController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'save-member' => ['POST', 'PUT'], // Only allow POST and PUT for the saveMember action
                     ],
                 ],
             ]
         );
+    }
+
+    // Exclude 'save-member' from CSRF validation since it's an AJAX endpoint that may be called from JS without a CSRF token
+    public function beforeAction($action)
+    {
+        if ($action->id === 'save-member') {
+            $this->enableCsrfValidation = false;
+        }
+
+        return parent::beforeAction($action);
     }
 
     /**
@@ -69,6 +84,12 @@ class InvestigatorTeamController extends Controller
     {
         $model = new InvestigatorTeam();
 
+        $searchModel = new InvestigatorTeamSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        // Load all records for pre-rendering into the table
+        $members = $dataProvider->getModels();
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
@@ -79,6 +100,7 @@ class InvestigatorTeamController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'members' => $members,
         ]);
     }
 
@@ -130,5 +152,69 @@ class InvestigatorTeamController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+    }
+
+    // save member data via AJAX for dynamic form
+    public function actionSaveMember()
+    {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        // Only accept POST/PUT + XMLHttpRequest
+        if (!Yii::$app->request->isPost && !Yii::$app->request->isPut || !Yii::$app->request->isAjax) {
+            throw new BadRequestHttpException('Invalid request.');
+        }
+
+        // Parse JSON body sent by fetch()
+        $body = Json::decode(Yii::$app->request->rawBody, true);
+
+        if (empty($body)) {
+            return ['success' => false, 'message' => 'Empty request body.'];
+        }
+
+        $id = $body['id'] ?? null;
+
+        // Load existing record (update) or create a new one (insert)
+        if ($id) {
+            $model = InvestigatorTeam::findOne($id);
+            if (!$model) {
+                return ['success' => false, 'message' => 'Record not found.'];
+            }
+        } else {
+            $model = new InvestigatorTeam();
+        }
+
+        // Map payload fields onto the model — only assign safe/expected attributes
+        $model->setAttributes([
+            'role' => $body['role'] ?? null,
+            'name' => $body['name'] ?? null,
+            'institution' => $body['institution'] ?? null,
+            'country' => $body['country'] ?? null,
+            'city' => $body['city'] ?? null,
+            'postal_address' => $body['postal_address'] ?? null,
+            'email_address' => $body['email_address'] ?? null,
+            'mobile_number' => $body['mobile_number'] ?? null,
+            'trial_id' => Yii::$app->session->get('trial_id') ?? 1, // Fallback to session if not provided in payload
+        ]);
+
+
+
+
+        if ($model->save()) {
+            return [
+                'success' => true,
+                'id' => $model->id,           // JS writes this back to data-member-id
+                'message' => $id ? 'Member updated.' : 'Member saved.',
+            ];
+        }
+
+
+        // Return validation errors so the front end can display them if needed
+        return [
+            'success' => false,
+            'message' => 'Validation failed.',
+            'errors' => $model->getFirstErrors(),
+        ];
+
+
     }
 }

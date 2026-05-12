@@ -46,8 +46,8 @@ class StudyPurpose extends \yii\db\ActiveRecord
     {
         return [
             [['study_purpose', 'study_objective', 'study_hypothesis', 'type_of_study', 'intervention', 'control_group_name', 'design_control_group_presence', 'phase_of_study', 'randomization_method_name', 'masking_description', 'masking_status', 'trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
-            [['study_purpose', 'study_objective'], 'string'],
-            [['type_of_study', 'control_group_name', 'design_control_group_presence', 'phase_of_study', 'masking_status', 'trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['study_purpose', 'study_objective', 'control_group_name'], 'string'],
+            [['type_of_study', 'design_control_group_presence', 'phase_of_study', 'masking_status', 'trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['study_hypothesis', 'intervention', 'randomization_method_name', 'masking_description'], 'string', 'max' => 255],
             [['trial_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClinicalTrial::class, 'targetAttribute' => ['trial_id' => 'id']],
         ];
@@ -87,6 +87,32 @@ class StudyPurpose extends \yii\db\ActiveRecord
     public function getTrial()
     {
         return $this->hasOne(ClinicalTrial::class, ['id' => 'trial_id']);
+    }
+
+    // Type of Study
+
+    public function getTypeOfStudy()
+    {
+        return [
+            1 => 'Clinical Trial',
+            2 => 'Non-clinical Trial',
+            3 => 'Observational Study',
+            4 => 'Other',
+        ];
+    }
+
+    // Phase of Study
+
+    public function getPhaseOfStudy()
+    {
+        return [
+            1 => 'Phase 1',
+            2 => 'Phase 2',
+            3 => 'Phase 3',
+            4 => 'Phase 4',
+            5 => 'Phase 5',
+            6 => 'Other',
+        ];
     }
 
 }

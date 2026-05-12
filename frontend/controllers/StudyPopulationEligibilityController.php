@@ -93,13 +93,17 @@ class StudyPopulationEligibilityController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id = null,$trial_id = null)
     {
-        $model = $this->findModel($id);
+        if($id){
+            $model = $this->findModel($id);
+        }elseif($trial_id) { // Find model by trial_id
+            $model = $this->findModelByTrialId($trial_id);
+        }
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             Yii::$app->wizard->registerModel('study-population-eligibility', $model->id);
-            return $this->redirect(Yii::$app->urlManager->createUrl(['study-timeline/create']));
+            return $this->redirect(Yii::$app->urlManager->createUrl(['study-timeline/update','trial_id' => $model->trial_id]));
         }
 
         return $this->render('update', [
@@ -135,5 +139,21 @@ class StudyPopulationEligibilityController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+    
+    /**
+     * Finds the StudyPopulationEligibility model based on trial_id.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param int $trial_id ID
+     * @return StudyPopulationEligibility the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModelByTrialId($trial_id)
+    {
+        if (($model = StudyPopulationEligibility::findOne(['trial_id' => $trial_id])) !== null) {
+            return $model;
+        }
+
+        return new StudyPopulationEligibility();
     }
 }

@@ -96,12 +96,13 @@ class ClinicalTrialController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id = null, $trial_id = null)
     {
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+           Yii::$app->session->set('clinical_trial_id', $model->id);
+           return $this->redirect(Url::toRoute(['study-purpose/update', 'trial_id' => $model->id]));
         }
 
         return $this->render('update', [

@@ -93,12 +93,22 @@ class StudyTimelineController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id = null, $trial_id = null)
     {
-        $model = $this->findModel($id);
+        if($id){
+            $model = $this->findModel($id);
+        }elseif($trial_id){ // Find model by trial_id
+            $model = StudyTimeline::findOne(['trial_id' => $trial_id]);
+            if(!$model){
+                $model = new StudyTimeline();
+                $model->trial_id = $trial_id;
+            }
+        }
+
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+             Yii::$app->wizard->registerModel('study-timeline', $model->id);
+             return $this->redirect(Yii::$app->urlManager->createUrl(['investigator-team/create','trial_id' => $model->trial_id]));
         }
 
         return $this->render('update', [

@@ -17,7 +17,7 @@ class m260511_111834_create_funding_table extends Migration
     {
         $this->createTable('{{%funding}}', [
             'id' => $this->primaryKey(),
-            'sponsor_name' => $this->integer(),
+            'sponsor_name' => $this->string(250),
             'Amount' => $this->float(),
             'country' => $this->integer(),
             'funding_Sector' => $this->integer(),

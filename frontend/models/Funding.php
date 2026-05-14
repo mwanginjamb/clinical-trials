@@ -8,7 +8,7 @@ use Yii;
  * This is the model class for table "funding".
  *
  * @property int $id
- * @property int|null $sponsor_name
+ * @property string|null $sponsor_name
  * @property float|null $Amount
  * @property int|null $country
  * @property int|null $funding_Sector
@@ -32,6 +32,14 @@ class Funding extends \yii\db\ActiveRecord
         return 'funding';
     }
 
+    public function behaviour()
+    {
+        return [
+             \yii\behaviors\TimestampBehavior::class,
+            \yii\behaviors\BlameableBehavior::class,
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -39,8 +47,9 @@ class Funding extends \yii\db\ActiveRecord
     {
         return [
             [['sponsor_name', 'Amount', 'country', 'funding_Sector', 'trial_id', 'created_at', 'updated_at', 'created_by', 'update_by'], 'default', 'value' => null],
-            [['sponsor_name', 'country', 'funding_Sector', 'trial_id', 'created_at', 'updated_at', 'created_by', 'update_by'], 'integer'],
+            [['country', 'funding_Sector', 'trial_id', 'created_at', 'updated_at', 'created_by', 'update_by'], 'integer'],
             [['Amount'], 'number'],
+            ['sponsor_name', 'string', 'max' => 250],
             [['trial_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClinicalTrial::class, 'targetAttribute' => ['trial_id' => 'id']],
         ];
     }
@@ -64,6 +73,7 @@ class Funding extends \yii\db\ActiveRecord
         ];
     }
 
+
     /**
      * Gets query for [[Trial]].
      *
@@ -81,6 +91,45 @@ class Funding extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \frontend\models\query\FundingQuery(get_called_class());
+    }
+
+    // Getter for countries
+    public function getCountries()
+    {
+        return [
+            1 => 'USA',
+            2 => 'Canada',
+            3 => 'UK',
+            4 => 'Germany',
+            5 => 'France',
+            6 => 'Italy',
+            7 => 'Spain',
+            8 => 'Portugal',
+            9 => 'Brazil',
+            10 => 'Argentina',
+            11 => 'Chile',
+            12 => 'Colombia',
+            13 => 'Mexico',
+            14 => 'Peru',
+            15 => 'Venezuela',
+            16 => 'Other',
+        ];
+    }
+
+    // Getter for funding sectors
+    public function getFundingSectors()
+    {
+        return [
+            1 => 'Government',
+            2 => 'Private',
+            3 => 'Non-Profit',
+            4 => 'Academic',
+            5 => 'Industry',
+            6 => 'Charity',
+            7 => 'Philanthropy',
+            8 => 'International',
+            9 => 'Other',
+        ];
     }
 
 }

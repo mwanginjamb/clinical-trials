@@ -98,7 +98,8 @@ class EthicalApprovalController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+             Yii::$app->wizard->registerModel('ethical-approval', $model->id);
+            return $this->redirect(Yii::$app->urlManager->createUrl(['funding/create','trial_id' => $model->trial_id]));
         }
 
         return $this->render('update', [

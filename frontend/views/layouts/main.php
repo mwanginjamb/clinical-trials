@@ -68,7 +68,7 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                 <nav class="hidden md:flex gap-6 items-center">
                     <?= Html::a('Dashboard', Url::to(['/site/index']), ['class' => $topNavClass('dashboard')]) ?>
                     <?= Html::a('Clinical Trials', Url::to(['/clinical-trial/index']), ['class' => $topNavClass('clinical-trial')]) ?>
-                   
+
                 </nav>
             </div>
 
@@ -125,24 +125,34 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                     <?= Html::a(
                         '<span class="material-symbols-outlined">dashboard</span> Dashboard',
                         Url::to(['/site/index']),
-                        ['class' => $navClass('site','index')]
+                        ['class' => $navClass('site', 'index')]
                     ) ?>
                     <?= Html::a(
                         '<span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;">clinical_notes</span> Clinical Trials',
                         Url::to(['/clinical-trial/index']),
-                        ['class' => $navClass('clinical-trial','index')]
+                        ['class' => $navClass('clinical-trial', 'index')]
                     ) ?>
-                    
-                    
-                   
+
+
+
                 </nav>
 
                 <!-- CTA Button -->
                 <div class="px-6 pt-4 border-t border-slate-200/50">
-                    <?= Html::a(
+                    <?php Html::a(
                         'New Trial',
                         Url::to(['/clinical-trial/create']),
                         ['class' => 'block w-full py-3 bg-primary text-white rounded-xl font-headline text-sm font-bold shadow-md hover:opacity-90 transition-opacity text-center']
+                    ) ?>
+
+
+                    <?= Html::a(
+                        '<span class="material-symbols-outlined block lg:hidden" data-icon="add">add</span>' .
+                        '<span class="hidden lg:block">New Trial</span>',
+                        ['clinical-trial/create'], // Replace with your actual route
+                        [
+                            'class' => 'w-full mt-4 bg-primary text-white p-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center'
+                        ]
                     ) ?>
                 </div>
 

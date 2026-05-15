@@ -7,6 +7,7 @@
  * @var string        $content Rendered view output injected by Yii.
  */
 
+use common\library\FormUi;
 use frontend\assets\DashAsset;
 use yii\helpers\Html;
 
@@ -89,7 +90,7 @@ DashAsset::register($this);
                     'url' => ['/clinical-trial/index'],
                     'active' => false,
                 ],
-               
+
             ];
 
             foreach ($navItems as $item):
@@ -112,13 +113,14 @@ DashAsset::register($this);
 
         <!-- Bottom utility area -->
         <div class="mt-auto px-4 space-y-1">
+
             <?= Html::a(
-                '<span class="material-symbols-outlined">add</span><span>New Trial</span>',
-                ['/clinical-trial/create'],
+                '<span class="material-symbols-outlined block lg:hidden" data-icon="add">add</span>' .
+                '<span class="hidden lg:block">New Trial</span>',
+                ['clinical-trial/create'], // Replace with your actual route
                 [
-                    'class' => 'w-full bg-gradient-to-r from-primary to-primary-container text-white
-                            rounded-xl py-3 px-4 font-bold flex items-center justify-center
-                            gap-2 shadow-lg mb-6 active:scale-95 duration-200',
+                    'class' => FormUi::buttonClass(),
+                    'title' => 'Create New Trial',
                 ]
             ) ?>
             <?= Html::a(

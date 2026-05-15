@@ -123,24 +123,9 @@ class FormUi
     public static function buttonClass(): string
     {
         return '
-            w-full
-            py-4
-            bg-gradient-to-r
-            from-primary
-            to-primary-container
-            text-on-primary
-            font-headline
-            font-bold
-            text-lg
-            rounded-lg
-            shadow-lg
-            hover:shadow-xl
-            transition-all
-            active:scale-[0.98]
-            flex
-            items-center
-            justify-center
-            gap-3
+           w-full bg-gradient-to-r from-primary to-primary-container text-white
+                            rounded-xl py-3 px-4 font-bold flex items-center justify-center
+                            gap-2 shadow-lg mb-6 active:scale-95 duration-200
         ';
     }
 

@@ -59,7 +59,7 @@ class EthicalApprovalController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
-    }
+    }                                                                                           
 
     /**
      * Creates a new EthicalApproval model.
@@ -70,6 +70,12 @@ class EthicalApprovalController extends Controller
     {
         $model = new EthicalApproval();
         $model->trial_id = Yii::$app->session->get('clinical_trial_id');
+        // fetch model by trial_id - check if already exists
+        $existingModel = EthicalApproval::find()->where(['trial_id' => $model->trial_id])->one();
+        if ($existingModel) {
+            // redirect to update action
+            return $this->redirect(['update', 'id' => $existingModel->id]);
+        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -93,12 +99,17 @@ class EthicalApprovalController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $trial_id = null)
     {
         $model = $this->findModel($id);
 
+        // if model is null , find it by trial_id
+        if (!$model && $trial_id) {
+            $model = EthicalApproval::find()->where(['trial_id' => $trial_id])->one();
+        }
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-             Yii::$app->wizard->registerModel('ethical-approval', $model->id);
+            Yii::$app->wizard->registerModel('ethical-approval', $model->id);
             return $this->redirect(Yii::$app->urlManager->createUrl(['funding/create','trial_id' => $model->trial_id]));
         }
 

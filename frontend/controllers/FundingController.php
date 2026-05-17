@@ -71,6 +71,13 @@ class FundingController extends Controller
         $model = new Funding();
         $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
+        // find model by trial_id - if it exists redirect to update action
+        $funding = Funding::find()->where(['trial_id' => $model->trial_id])->one();
+        if ($funding) {
+            $model->id = $funding->id;
+            return $this->redirect(['update', 'id' => $funding->id]);
+        }
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 // save model ID for wizard step
@@ -93,9 +100,12 @@ class FundingController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id = null, $trial_id = null)
     {
         $model = $this->findModel($id);
+        if (!$model && $trial_id) {
+            $model = Funding::find()->where(['trial_id' => $trial_id])->one();
+        }
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             // save model ID for wizard step

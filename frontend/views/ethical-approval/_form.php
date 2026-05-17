@@ -47,16 +47,28 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <?php $form = ActiveForm::begin(FormUi::formConfig($model->formName())); ?>
 
+
+
+     <div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm space-y-8">
+        <h2 class="text-xl font-bold text-primary border-b border-surface-container pb-4">
+            Ethical Approval Information
+        </h2>
+
+
      <div class="grid grid-cols-1 md:grid-cols-2 gap-10">   
         <?= $form->field($model, 'ethical_regulatory_body', FormUi::fieldConfig()['base'])->dropDownList($model->ethicalRegulatoryBodyOptions,array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select ethical regulatory body'])) ?>
-        <?= $form->field($model, 'approved_by_ethical_committee', FormUi::checkboxFieldConfig())->checkbox(FormUi::checkboxConfig('Approved by ethical committee ?')) ?>
+        <?= $form->field($model, 'approved_by_ethical_committee', FormUi::checkboxFieldConfig())->checkbox(array_merge(FormUi::checkboxConfig('Approved by ethical committee ?'), ['label' => 'Approved by ethical committee ?'])) ?>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <?= $form->field($model, 'document_number', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true, 'placeholder' => 'Enter the document number'])) ?>
         <?= $form->field($model, 'document_path', FormUi::fieldConfig()['base'])->fileInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true, 'placeholder' => 'Enter the document path'])) ?>
 
-    <?= $form->field($model, 'trial_id')->hiddenInput()->label(false) ?>
+        
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <?= $form->field($model, 'trial_id')->textInput(array_merge(FormUi::inputOptions()['text'], ['readonly' => true])) ?>
+    </div>
 
     </div>
 

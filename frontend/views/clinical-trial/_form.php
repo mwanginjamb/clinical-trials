@@ -4,17 +4,19 @@ use common\library\FormUi;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-
 /** @var yii\web\View $this */
-/** @var frontend\models\ClinicalTrial $model */
+/** @var frontend\models\InvestigatorTeam $model */
 /** @var yii\widgets\ActiveForm $form */
+
 $steps = Yii::$app->params['steps'];
 $actionId = Yii::$app->controller->action->id;
 $totalSteps = count($steps);
 
 $activeIndex = 0;
+
+// show next/prev buttons based on current step index not more than 3 steps away from current step to prevent navigation to non-sequential steps
 foreach ($steps as $i => $step) {
-    if ($step['action'] === $actionId) {
+    if ($step['controller'] === Yii::$app->controller->id && $step['action'] === Yii::$app->controller->action->id) {
         $activeIndex = $i;
         break;
     }
@@ -60,6 +62,19 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
         <h2 class="text-xl font-bold text-primary border-b border-surface-container pb-4">
             Scientific Rationale
         </h2>
+
+        <!-- area of specialization field spanning 2 columns -->
+        <div class="grid grid-cols-1 gap-10">
+            <?= $form->field($model, 'area_of_specialization', FormUi::fieldConfig()['base'])
+                ->dropDownList(
+                    $model::getAreaOfSpecializationOptions(),
+                    array_merge(FormUi::inputOptions()['select'], [
+                        'prompt' => 'Select an area of specialization...',
+                    ])
+                )
+                ->hint($model->getAttributeHint('area_of_specialization'))
+                ?>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
             <?= $form->field($model, 'scientific_title', FormUi::fieldConfig()['base'])

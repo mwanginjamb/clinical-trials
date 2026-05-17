@@ -96,10 +96,10 @@ return [
         ],
         [
             'label' => '11. Open Data Access and Sharing',
-            'controller' => 'open-data-access',
+            'controller' => 'opendata-access',
             'action' => 'create',
-            'createUrl' => ['/open-data-access/create'],
-            'updateUrl' => ['/open-data-access/update'],
+            'createUrl' => ['/opendata-access/create'],
+            'updateUrl' => ['/opendata-access/update'],
             'icon' => 'database',
         ]
 

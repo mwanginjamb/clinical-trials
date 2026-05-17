@@ -14,7 +14,7 @@ $totalSteps = count($steps);
 
 $activeIndex = 0;
 foreach ($steps as $i => $step) {
-    if ($step['action'] === $actionId) {
+     if ($step['controller'] === Yii::$app->controller->id && $step['action'] === Yii::$app->controller->action->id) {
         $activeIndex = $i;
         break;
     }
@@ -67,9 +67,9 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
             <?= $form->field($model, 'lay_summary',FormUi::fieldConfig()['base'])->textarea(array_merge(['rows' => 6], FormUi::inputOptions()['textarea']))->hint('A simplified explanation of the study for the general public') ?>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <?= $form->field($model, 'scientific_summary',FormUi::fieldConfig()['base'])->textarea(array_merge(['rows' => 6], FormUi::inputOptions()['textarea'])) ?>
+            <?= $form->field($model, 'scientific_summary',FormUi::fieldConfig()['base'])->textarea(array_merge(['rows' => 6], FormUi::inputOptions()['textarea']))->hint('A detailed explanation of the study for researchers and clinicians') ?>
 
-            <?= $form->field($model, 'trial_id')->hiddenInput()->label(false) ?>
+            <?= $form->field($model, 'trial_id')->textInput(array_merge(['readonly' => true], FormUi::inputOptions()['text'])) ?>
         </div>
     
 

@@ -2,60 +2,120 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\library\FormUi;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\OpendataAccess $model */
 /** @var yii\widgets\ActiveForm $form */
+
+$steps = Yii::$app->params['steps'];
+$actionId = Yii::$app->controller->action->id;
+$totalSteps = count($steps);
+$activeIndex = 0;
+
+// show next/prev buttons based on current step index not more than 3 steps away from current step to prevent navigation to non-sequential steps
+foreach ($steps as $i => $step) {
+    if ($step['controller'] === Yii::$app->controller->id && $step['action'] === Yii::$app->controller->action->id) {
+        $activeIndex = $i;
+        break;
+    }
+}
+
+$stepNumber = str_pad($activeIndex + 1, 2, '0', STR_PAD_LEFT);
+$prevStep = $activeIndex > 0 ? $steps[$activeIndex - 1] : null;
+$nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 ?>
 
 <div class="opendata-access-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+<header class="mb-12 border-l-4 border-primary pl-8">
+        <span class="text-label-sm font-bold tracking-[0.1em] text-on-surface-variant uppercase">
+            Step
+            <?= $stepNumber ?> /
+            <?= $totalSteps ?>
+        </span>
+        <h1 class="text-4xl font-extrabold tracking-tight text-primary mt-2">
+            Open Data Access
+        </h1>
+        <p class="text-on-surface-variant max-w-2xl mt-3 leading-relaxed">
+            Define the open data access information for the study.
+        </p>
+    </header>
 
-    <?= $form->field($model, 'allow_publishing')->textInput() ?>
+     <?php /* ── Progress Tracker partial (active state auto-resolved internally) */ ?>
+    <?= $this->render('../clinical-trial/_progress_tracker') ?>
 
-    <?= $form->field($model, 'repository_name')->textInput(['maxlength' => true]) ?>
+    <?php $form = ActiveForm::begin(FormUi::formConfig('opendata-access-form')); ?>
 
-    <?= $form->field($model, 'study_identification_variable')->textInput(['maxlength' => true]) ?>
+   <div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm space-y-8">
+        <h2 class="text-xl font-bold text-primary border-b border-surface-container pb-4">
+            Open Data Access
+        </h2>
+        
+        
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <?= $form->field($model, 'allow_publishing',FormUi::fieldConfig()['base'])->dropDownList([1 => 'Yes', 0 => 'No'],array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select'])) ?>
+            <?= $form->field($model, 'sensitivity_analysis_result',FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['textarea'], ['rows' => 6])) ?>
+    </div>
+    
 
-    <?= $form->field($model, 'sensitivity_analysis_result')->textarea(['rows' => 6]) ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <?= $form->field($model, 'study_identification_variable',FormUi::fieldConfig()['base'])->dropDownList(\frontend\models\OpendataAccess::getStudyIdentificationVariableOptions(),array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select ...'])) ?>
+        
+        <?= $form->field($model, 'significant_p_value',FormUi::fieldConfig()['base'])->dropDownList(\frontend\models\OpendataAccess::getSignificantPValueOptions(),array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select ...'])) ?>
+    </div>
 
-    <?= $form->field($model, 'effective_size_value')->textInput() ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <?= $form->field($model, 'effective_size_value',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter effective size value','type' => 'number'])) ?>
 
-    <?= $form->field($model, 'adjustable_miltiple_comparison')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'adjustable_miltiple_comparison',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter adjustable multiple comparison'])) ?>
+    </div>
 
-    <?= $form->field($model, 'handling_missing_data')->textInput(['maxlength' => true]) ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <?= $form->field($model, 'handling_missing_data',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter handling missing data'])) ?>
 
-    <?= $form->field($model, 'document_path')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'document_path',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter document path'])) ?>
+    </div>
 
-    <?= $form->field($model, 'quality_assessment_variable')->textInput(['maxlength' => true]) ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <?= $form->field($model, 'quality_assessment_variable',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter quality assessment variable'])) ?>
 
-    <?= $form->field($model, 'risk_of_bias_assessment')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'risk_of_bias_assessment',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter risk of bias assessment'])) ?>
+    </div>
 
-    <?= $form->field($model, 'study_limitation')->textarea(['rows' => 6]) ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <?= $form->field($model, 'study_limitation',FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['textarea'], ['rows' => 6])) ?>
 
-    <?= $form->field($model, 'funding_source')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'funding_source',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter funding source'])) ?>
+    </div>
 
-    <?= $form->field($model, 'potential_conflict_of_interest')->textInput(['maxlength' => true]) ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <?= $form->field($model, 'potential_conflict_of_interest',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter potential conflict of interest'])) ?>
 
-    <?= $form->field($model, 'publication_bias_indicator')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'publication_bias_indicator',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter publication bias indicator'])) ?>
+    </div>
 
-    <?= $form->field($model, 'heterogenity_measure')->textInput(['maxlength' => true]) ?>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <?= $form->field($model, 'heterogenity_measure',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter heterogenity measure'])) ?>
 
-    <?= $form->field($model, 'confidential_interval')->textInput() ?>
+    <?= $form->field($model, 'confidential_interval',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => '0.05', 'type' => 'number'])) ?>
 
-    <?= $form->field($model, 'trial_id')->textInput() ?>
+</div>
+    <?= $form->field($model, 'trial_id',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['readonly' => true])) ?>
 
-    <?= $form->field($model, 'created_at')->textInput() ?>
 
-    <?= $form->field($model, 'updated_at')->textInput() ?>
+    </div>
 
-    <?= $form->field($model, 'created_by')->textInput() ?>
+   <div class="flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
 
-    <?= $form->field($model, 'updated_by')->textInput() ?>
+        <?= Html::submitButton(
+            'Complete Adding Trial Data',
+            [
+                'class' => FormUi::buttonClass(),
+            ]
+        ) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

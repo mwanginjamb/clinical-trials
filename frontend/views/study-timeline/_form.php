@@ -49,6 +49,13 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <?php $form = ActiveForm::begin(FormUi::formConfig($model->formName())); ?>
 
+
+    <div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm space-y-8">
+        <h2 class="text-xl font-bold text-primary border-b border-surface-container pb-4">
+            Study Timeline
+        </h2>
+
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <?= $form->field($model, 'study_duration', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter study duration...', 'type' => 'number'])) ?>
 
@@ -77,9 +84,25 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <?= $form->field($model, 'trial_id')->hiddenInput(['readonly' => true])->label(false) ?>
 
+    </div>
 
-    <div class="form-group">
+    <!-- <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save and Continue'), ['class' => FormUi::buttonClass()]) ?>
+    </div> -->
+
+    <!-- ═══════════════════════════════════════════════════════
+         Form Actions
+     ═══════════════════════════════════════════════════════ -->
+    <div class="flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
+
+
+        <?= Html::submitButton(
+            'Save and Continue',
+            [
+                'class' => FormUi::buttonClass(),
+            ]
+        ) ?>
+
     </div>
 
     <?php ActiveForm::end(); ?>

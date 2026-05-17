@@ -100,7 +100,7 @@ class StudyPopulationEligibilityController extends Controller
         }elseif($trial_id) { // Find model by trial_id
             $model = $this->findModelByTrialId($trial_id);
         }
-
+$model->trial_id = Yii::$app->session->get('clinical_trial_id');
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             Yii::$app->wizard->registerModel('study-population-eligibility', $model->id);
             return $this->redirect(Yii::$app->urlManager->createUrl(['study-timeline/update','trial_id' => $model->trial_id]));

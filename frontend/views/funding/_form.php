@@ -59,15 +59,15 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
             <?= $form->field($model, 'sponsor_name',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'],['placeholder' => 'Enter sponsor name'])) ?>
 
             <?= $form->field($model, 'Amount',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'],['placeholder' => 'Enter amount','type' => 'number'])) ?>
-            </div>
+        </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
             <?= $form->field($model, 'country',FormUi::fieldConfig()['base'])->dropDownList($model->countries,array_merge(FormUi::inputOptions()['select'],['prompt' => 'Select country ...'])) ?>
 
             <?= $form->field($model, 'funding_Sector',FormUi::fieldConfig()['base'])->dropDownList($model->fundingSectors,array_merge(FormUi::inputOptions()['select'],['prompt' => 'Select funding sector ...'])) ?>
-            </div>
+        </div>
 
-            <?= $form->field($model, 'trial_id')->hiddenInput()->label(false) ?>
+        <?= $form->field($model, 'trial_id')->hiddenInput()->label(false) ?>
 
     
 

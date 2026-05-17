@@ -102,7 +102,7 @@ class StudyPurposeController extends Controller
         elseif($trial_id) {
             $model = $this->findModelByTrialId($trial_id);
         }
-
+        $model->trial_id = Yii::$app->session->get('clinical_trial_id');
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             Yii::$app->wizard->registerModel('study-purpose', $model->id);
             return $this->redirect(Url::toRoute(['study-population-eligibility/update', 'trial_id' => $model->trial_id]));

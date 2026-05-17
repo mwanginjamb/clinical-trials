@@ -71,6 +71,13 @@ class StudyDescriptionController extends Controller
         $model = new StudyDescription();
         $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
+       // search model by trial_id, if it exists redirect to update action
+        $studyDescription = StudyDescription::find()->where(['trial_id' => $model->trial_id])->one();
+        if ($studyDescription) {
+            $model->id = $studyDescription->id;
+            return $this->redirect(['update', 'id' => $studyDescription->id]);
+        }
+
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 // save model ID for wizard step
@@ -93,9 +100,13 @@ class StudyDescriptionController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $trial_id = null)
     {
         $model = $this->findModel($id);
+        // if $model is null and trial_id isset find model by  trial_id
+        if(!$model && $trial_id) {
+            $model = StudyDescription::find()->where(['trial_id' => $trial_id])->one();
+        }
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             // save model ID for wizard step

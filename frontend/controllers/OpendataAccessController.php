@@ -97,9 +97,12 @@ class OpendataAccessController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id, $trial_id = null)
     {
         $model = $this->findModel($id);
+        if ($model === null && $trial_id !== null) {
+            $model = OpendataAccess::find()->where(['trial_id' => $trial_id])->one();
+        }
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             // final step - redirect to clinical-trial view

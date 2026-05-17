@@ -80,7 +80,7 @@ class ClinicalTrial extends \yii\db\ActiveRecord
             'updated_at' => Yii::t('app', 'Updated At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'area_of_specialization' => Yii::t('app', 'Area of Specialization'),
+            'area_of_specialization' => Yii::t('app', 'Broad Study Area of Specialization'),
             'specialization_sub_section' => Yii::t('app', 'Specialization Sub Section'),
         ];
     }
@@ -129,6 +129,32 @@ class ClinicalTrial extends \yii\db\ActiveRecord
             1 => 'Registered',
             2 => 'Pending',
             3 => 'Rejected',
+        ];
+    }
+
+    // options for clinical trial area of specialization
+    public static function getAreaOfSpecializationOptions(): array
+    {
+        return [
+            1 => 'Internal Medicine',
+            2 => 'Surgery',
+            3 => 'Pediatrics',
+            4 => 'Obstetrics and Gynecology',
+            5 => 'Psychiatry',
+            6 => 'Dermatology',
+            7 => 'Ophthalmology',
+            8 => 'Otolaryngology',
+            9 => 'Orthopedics',
+            10 => 'Urology',
+            11 => 'Cardiology',
+            12 => 'Neurology',
+            13 => 'Radiology',
+            14 => 'Pathology',
+            15 => 'Anesthesiology',
+            16 => 'Emergency Medicine',
+            17 => 'Family Medicine',
+            18 => 'Public Health',
+            19 => 'Other',
         ];
     }
 

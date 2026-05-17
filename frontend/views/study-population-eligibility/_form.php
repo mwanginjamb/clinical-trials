@@ -50,6 +50,11 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <?php $form = ActiveForm::begin(FormUi::formConfig($model->formName())); ?>
 
+     <div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm space-y-8">
+        <h2 class="text-xl font-bold text-primary border-b border-surface-container pb-4">
+            Study Population and Eligibility Criteria
+        </h2>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <?= $form->field($model, 'health_condition_studied', FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter health condition studied...']))->hint($model->getAttributeHint('health_condition_studied')) ?>
 
@@ -65,14 +70,25 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <?= $form->field($model, 'final_number_of_participants')->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter final number of participants...', 'type' => 'number'])) ?>
 
+        <?= $form->field($model, 'trial_id',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['readonly' => true])) ?>
     </div>
 
-    <?= $form->field($model, 'trial_id')->hiddenInput()->label(false) ?>
+</div>
 
 
+   <!-- ═══════════════════════════════════════════════════════
+         Form Actions
+     ═══════════════════════════════════════════════════════ -->
+    <div class="flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
 
-    <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => FormUi::buttonClass()]) ?>
+
+        <?= Html::submitButton(
+            'Save and Continue',
+            [
+                'class' => FormUi::buttonClass(),
+            ]
+        ) ?>
+
     </div>
 
     <?php ActiveForm::end(); ?>

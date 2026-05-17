@@ -69,13 +69,19 @@ class StudyInterventionController extends Controller
     public function actionCreate()
     {
         $model = new StudyIntervention();
-        $model->trial_id = Yii::$app->session->get('clinical_trial_id');
+        $model->trial_id = Yii::$app->request->get('trial_id') ?? Yii::$app->session->get('clinical_trial_id');
+
+        //find model by trial_id, it it exists, redirect to update
+        $existingModel = StudyIntervention::find()->where(['trial_id' => $model->trial_id])->one();
+        if ($existingModel) {
+            return $this->redirect(['update', 'id' => $existingModel->id]);
+        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
                 // save model ID for wizard step
                 Yii::$app->wizard->registerModel('study-intervention', $model->id);
-                return $this->redirect(Yii::$app->urlManager->createUrl(['study-results/create']));
+                return $this->redirect(Yii::$app->urlManager->createUrl(['study-results/create', 'trial_id' => $model->trial_id]));
             }
         } else {
             $model->loadDefaultValues();
@@ -93,14 +99,17 @@ class StudyInterventionController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id)
+    public function actionUpdate($id = null, $trial_id = null)
     {
         $model = $this->findModel($id);
+        if ($model === null && $trial_id !== null) {
+            $model = StudyIntervention::find()->where(['trial_id' => $trial_id])->one();
+        }
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             // save model ID for wizard step
             Yii::$app->wizard->registerModel('study-intervention', $model->id);
-            return $this->redirect(Yii::$app->urlManager->createUrl(['study-results/create']));
+            return $this->redirect(Yii::$app->urlManager->createUrl(['study-results/create', 'trial_id' => $model->trial_id]));
         }
 
         return $this->render('update', [

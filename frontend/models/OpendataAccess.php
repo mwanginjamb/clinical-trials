@@ -24,6 +24,8 @@ use Yii;
  * @property string|null $publication_bias_indicator
  * @property string|null $heterogenity_measure
  * @property float|null $confidential_interval
+ * @property string|null $significant_p_value
+ * @property string|null $statistical_method_used
  * @property int $trial_id
  * @property int|null $created_at
  * @property int|null $updated_at
@@ -44,19 +46,39 @@ class OpendataAccess extends \yii\db\ActiveRecord
         return 'opendata_access';
     }
 
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => \yii\behaviors\TimestampBehavior::class,
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+            ],
+            'blameable' => [
+                'class' => \yii\behaviors\BlameableBehavior::class,
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_by', 'updated_by'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_by'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['allow_publishing', 'repository_name', 'study_identification_variable', 'sensitivity_analysis_result', 'effective_size_value', 'adjustable_miltiple_comparison', 'handling_missing_data', 'document_path', 'quality_assessment_variable', 'risk_of_bias_assessment', 'study_limitation', 'funding_source', 'potential_conflict_of_interest', 'publication_bias_indicator', 'heterogenity_measure', 'confidential_interval', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
+            [['allow_publishing', 'repository_name', 'study_identification_variable', 'sensitivity_analysis_result', 'effective_size_value', 'adjustable_miltiple_comparison', 'handling_missing_data', 'document_path', 'quality_assessment_variable', 'risk_of_bias_assessment', 'study_limitation', 'funding_source', 'potential_conflict_of_interest', 'publication_bias_indicator', 'heterogenity_measure', 'confidential_interval', 'created_at', 'updated_at', 'created_by', 'updated_by', 'statistical_method_used'], 'default', 'value' => null],
             [['allow_publishing', 'effective_size_value', 'trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['sensitivity_analysis_result', 'study_limitation'], 'string'],
             [['confidential_interval'], 'number'],
             [['trial_id'], 'required'],
             [['repository_name', 'risk_of_bias_assessment'], 'string', 'max' => 150],
-            [['study_identification_variable', 'handling_missing_data', 'quality_assessment_variable', 'funding_source'], 'string', 'max' => 255],
+            [['study_identification_variable', 'handling_missing_data', 'quality_assessment_variable', 'funding_source', 'statistical_method_used'  ], 'string', 'max' => 255],
             [['adjustable_miltiple_comparison', 'document_path', 'potential_conflict_of_interest', 'publication_bias_indicator', 'heterogenity_measure'], 'string', 'max' => 250],
             [['trial_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClinicalTrial::class, 'targetAttribute' => ['trial_id' => 'id']],
         ];
@@ -85,6 +107,8 @@ class OpendataAccess extends \yii\db\ActiveRecord
             'publication_bias_indicator' => Yii::t('app', 'Publication Bias Indicator'),
             'heterogenity_measure' => Yii::t('app', 'Heterogenity Measure'),
             'confidential_interval' => Yii::t('app', 'Confidential Interval'),
+            'significant_p_value' => Yii::t('app', 'Significant P Value'),
+            'statistical_method_used' => Yii::t('app', 'Statistical Method Used'),
             'trial_id' => Yii::t('app', 'Trial ID'),
             'created_at' => Yii::t('app', 'Created At'),
             'updated_at' => Yii::t('app', 'Updated At'),
@@ -101,6 +125,34 @@ class OpendataAccess extends \yii\db\ActiveRecord
     public function getTrial()
     {
         return $this->hasOne(ClinicalTrial::class, ['id' => 'trial_id']);
+    }
+
+    // options for study identification variable: Authors, publication title, publication date, journal name, journal volume, journal issue, journal page range, DOI, PMID
+    public static function getStudyIdentificationVariableOptions()
+    {
+        return [
+            'Authors' => 'Authors',
+            'Publication title' => 'Publication title',
+            'Publication date' => 'Publication date',
+            'Journal name' => 'Journal name',
+            'Journal volume' => 'Journal volume',
+            'Journal issue' => 'Journal issue',
+            'Journal page range' => 'Journal page range',
+            'DOI' => 'DOI',
+            'PMID' => 'PMID',
+        ];
+    }
+
+    // options for significant p-value: statistically-significant, not statistically-significant, highly statistically-significant, marginal statistically-significant, moderate statistically-significant
+    public static function getSignificantPValueOptions()
+    {
+        return [
+            0 => 'Not statistically significant',
+            1 => 'Statistically significant',
+            2 => 'Highly statistically significant',
+            3 => 'Moderate statistically significant',
+            4 => 'Marginal statistically significant',
+        ];
     }
 
 }

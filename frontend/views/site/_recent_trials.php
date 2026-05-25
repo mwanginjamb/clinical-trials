@@ -32,16 +32,20 @@
                 ?>
                 <tr class="hover:bg-slate-50/80 transition-colors group">
                     <!-- Protocol Title & ID -->
+
                     <td class="px-6 md:px-8 py-5 md:py-6">
-                        <div class="flex flex-col">
-                            <span
-                                class="font-headline font-bold text-sm md:text-base text-on-surface group-hover:text-primary transition-colors">
-                                <?= htmlspecialchars($trial->getDisplayTitle()) ?>
-                            </span>
-                            <span class="text-[10px] md:text-xs text-on-surface-variant/70 font-mono">
-                                ID: <?= htmlspecialchars($trial->getProtocolIdentifier()) ?>
-                            </span>
-                        </div>
+                        <a href="<?= Yii::$app->urlManager->createUrl(['clinical-trial/view', 'id' => $trial->id]) ?>"
+                            class="block group/link">
+                            <div class="flex flex-col">
+                                <span
+                                    class="font-headline font-bold text-sm md:text-base text-on-surface group-hover:text-primary transition-colors">
+                                        <?= htmlspecialchars($trial->getDisplayTitle()) ?>
+                                </span>
+                                <span class="text-[10px] md:text-xs text-on-surface-variant/70 font-mono">
+                                    ID: <?= htmlspecialchars($trial->getProtocolIdentifier()) ?>
+                                </span>
+                            </div>
+                        </a>
                     </td>
 
                     <!-- Status -->

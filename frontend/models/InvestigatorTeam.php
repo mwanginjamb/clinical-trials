@@ -94,7 +94,7 @@ class InvestigatorTeam extends \yii\db\ActiveRecord
     }
 
     // Get PI role options for dropdown
-    public function getRoleOptions()
+    public static function getRoleOptions()
     {
         return [
             1 => 'Principal Investigator',

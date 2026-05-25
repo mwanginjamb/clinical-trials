@@ -57,8 +57,28 @@ class ClinicalTrialController extends Controller
      */
     public function actionView($id)
     {
+         $model = ClinicalTrial::find()
+            ->joinWith([
+                'purpose',
+                'studyPopulationEligibility',
+                'timeline',
+                'investigators',
+                'ethicalApproval',
+                'funding',
+                'studyDescription',
+                'studyIntervention',
+                'studyResults',
+                'openDataAccess'
+            ])
+            ->where(['clinical_trial.id' => $id])
+            ->distinct()  // avoids duplication from hasMany relations
+            ->one();
+
+        if (!$model) {
+            throw new NotFoundHttpException('The requested trial does not exist.');
+        }
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
         ]);
     }
 

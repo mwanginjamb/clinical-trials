@@ -21,7 +21,6 @@ use yii\behaviors\TimestampBehavior;
  * @property int|null $updated_at
  * @property int|null $created_by
  * @property int|null $updated_by
- * 
  * @property int|null $area_of_specialization
  * @property int|null $specialization_sub_section
  *
@@ -176,8 +175,54 @@ class ClinicalTrial extends \yii\db\ActiveRecord
         return $this->hasOne(StudyPurpose::class, ['trial_id' => 'id']);
     }
 
+    // get population Eligibility
+    public function getStudyPopulationEligibility()
+    {
+        return $this->hasOne(StudyPopulationEligibility::class, ['trial_id' => 'id']);
+    }
 
-    // Markup helper functions for grid
+    // Get Ethical Approval
+    public function getEthicalApproval()
+    {
+        return $this->hasOne(EthicalApproval::class, ['trial_id' => 'id']);
+    }
+
+    // Get Funding
+    public function getFunding()
+    {
+        return $this->hasOne(Funding::class, ['trial_id' => 'id']);
+    }
+
+    // get study description
+    public function getStudyDescription()
+    {
+        return $this->hasOne(StudyDescription::class, ['trial_id' => 'id']);
+    }
+
+    // Get Study Intervention
+    public function getStudyIntervention()
+    {
+        return $this->hasOne(StudyIntervention::class, ['trial_id' => 'id']);
+    }
+
+    // Get Study Results
+    public function getStudyResults()
+    {
+        return $this->hasOne(StudyResults::class, ['trial_id' => 'id']);
+    }
+
+    // Get Open Data Access
+    public function getOpenDataAccess()
+    {
+        return $this->hasOne(OpenDataAccess::class, ['trial_id' => 'id']);
+    }
+
+
+
+
+    /*
+    * Markup helper functions for grid
+    */
 
     // Add status badge helper
     public function getStatusBadge()

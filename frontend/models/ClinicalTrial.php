@@ -158,4 +158,91 @@ class ClinicalTrial extends \yii\db\ActiveRecord
         ];
     }
 
+    // Get Timelines
+    public function getTimeline()
+    {
+        return $this->hasOne(StudyTimeline::class, ['trial_id' => 'id']);
+    }
+
+    // Get Investigators
+    public function getInvestigators()
+    {
+        return $this->hasMany(InvestigatorTeam::class, ['trial_id' => 'id']);
+    }
+
+    //get Study Purpose
+    public function getPurpose()
+    {
+        return $this->hasOne(StudyPurpose::class, ['trial_id' => 'id']);
+    }
+
+
+    // Markup helper functions for grid
+
+    // Add status badge helper
+    public function getStatusBadge()
+    {
+        $map = [
+            1 => ['label' => 'Draft', 'class' => 'bg-slate-200 text-slate-600'],
+            2 => ['label' => 'Approved', 'class' => 'bg-tertiary-container text-white'],
+            3 => ['label' => 'In Progress', 'class' => 'bg-secondary-container text-on-secondary-container'],
+            4 => ['label' => 'Completed', 'class' => 'bg-primary-container text-white'],
+        ];
+
+        $status = $map[$this->registration_status] ?? ['label' => 'Unknown', 'class' => 'bg-slate-200 text-slate-600'];
+
+        return '<span class="px-2 md:px-3 py-1 ' . $status['class'] . ' text-[9px] md:text-[10px] font-bold rounded-full uppercase tracking-tighter">' . $status['label'] . '</span>';
+    }
+
+    // Get display title (prioritize scientific, then public, then acronym)
+    public function getDisplayTitle()
+    {
+        if (!empty($this->scientific_title) && $this->scientific_title !== 'N/A') {
+            return $this->scientific_title;
+        }
+        if (!empty($this->public_title) && $this->public_title !== 'N/A') {
+            return $this->public_title;
+        }
+        if (!empty($this->scientific_acronym)) {
+            return $this->scientific_acronym;
+        }
+        return 'Untitled Trial';
+    }
+
+    // Get protocol identifier
+    public function getProtocolIdentifier()
+    {
+        return !empty($this->protocol_number)
+            ? $this->protocol_number
+            : ($this->registration_number ?? 'N/A');
+    }
+
+    // Get phase display
+    public function getPhaseDisplay()
+    {
+        $map = [1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV'];
+        $phase = $this->purpose->phase_of_study ?? null;
+        return $map[$phase] ?? 'N/A';
+    }
+
+    // Get primary investigator
+    public function getPrimaryInvestigator()
+    {
+        foreach ($this->investigators as $investigator) {
+            if ($investigator->role == 1) {
+                return $investigator;
+            }
+        }
+        return null;
+    }
+
+    // Get formatted start date
+    public function getFormattedStartDate()
+    {
+        if ($this->timeline && $this->timeline->anticipated_start_date) {
+            return Yii::$app->formatter->asDate($this->timeline->anticipated_start_date, 'php:M d, Y');
+        }
+        return 'TBD';
+    }
+
 }

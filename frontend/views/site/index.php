@@ -133,7 +133,7 @@ $this->title = 'SERCEA Research Repository — Clinical Curator';
             </button>
             <?= Html::a(
                 'View All',
-                ['/trials/index'],
+                ['clinical-trial/index'],
                 [
                     'class' => 'flex-1 sm:flex-none px-4 py-2 bg-primary text-white text-xs md:text-sm
                              font-semibold rounded-lg hover:opacity-90 transition-opacity'
@@ -142,116 +142,10 @@ $this->title = 'SERCEA Research Repository — Clinical Curator';
         </div>
     </div>
 
-    <!-- Scrollable table wrapper -->
-    <div class="bg-surface-container-lowest rounded-2xl overflow-hidden
-                shadow-[0_24px_48px_-12px_rgba(0,59,83,0.06)]
-                border border-outline-variant/10 overflow-x-auto">
-        <table class="w-full text-left border-collapse min-w-[800px] lg:min-w-full">
-            <thead class="bg-surface-container-low/50">
-                <tr>
-                    <th class="px-6 md:px-8 py-4 md:py-5 text-[9px] md:text-[10px] font-bold
-                               uppercase tracking-widest text-on-surface-variant">
-                        Protocol Title &amp; ID
-                    </th>
-                    <th class="px-4 py-4 md:py-5 text-[9px] md:text-[10px] font-bold uppercase
-                               tracking-widest text-on-surface-variant text-center">
-                        Status
-                    </th>
-                    <th class="px-4 py-4 md:py-5 text-[9px] md:text-[10px] font-bold uppercase
-                               tracking-widest text-on-surface-variant text-center">
-                        Phase
-                    </th>
-                    <th class="px-4 py-4 md:py-5 text-[9px] md:text-[10px] font-bold uppercase
-                               tracking-widest text-on-surface-variant">
-                        Primary Investigator
-                    </th>
-                    <th class="px-6 md:px-8 py-4 md:py-5 text-[9px] md:text-[10px] font-bold
-                               uppercase tracking-widest text-on-surface-variant text-right">
-                        Start Date
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-outline-variant/5">
+    <!-- Scrollable table wrapper : render the table here -->
 
-                <?php
-                /**
-                 * In production, $trials would be passed from the controller:
-                 *   return $this->render('index', ['trials' => $trials]);
-                 *
-                 * The static rows below represent the design-time placeholder data.
-                 */
-                $trials = [
-                    [
-                        'title' => 'AstraZeneca AZD1222 Clinical Efficacy',
-                        'id' => 'NCT04516746',
-                        'status' => 'Approved',
-                        'statusClass' => 'bg-tertiary-container text-white',
-                        'phase' => 'III',
-                        'investigator' => 'Dr. Sarah Chen',
-                        'avatarUrl' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuCG4uoy9xTC0VHDY5FIDJqGU_ufe3JSId2mOm0g5H3Sy3aCgrbGpHTYQt8Pfbyfxp9gcAK9nAxqlkrtkT61HOetIOVtzo8XfOwDxtURoc4Zy3sGokt3J9CBjhnap58ak6-dZ5Z0r_NHig9jwkHlkaHfHAt7fb0Eza2K5IbDQsZYwAY8nscwgKJHSRO1E1HyT6u_eyJeRh4vajFgfo0w7NDe496VRsTSnc7egFYssrLLZ0wYn5rZPKZurmvIBUexFVTG2q-sALYMx6A',
-                        'startDate' => 'Oct 12, 2023',
-                    ],
-                    [
-                        'title' => 'Hyper-Targeted CAR-T Cell Therapy',
-                        'id' => 'NCT05921832',
-                        'status' => 'In Progress',
-                        'statusClass' => 'bg-secondary-container text-on-secondary-container',
-                        'phase' => 'II',
-                        'investigator' => 'Dr. Marcus Thorne',
-                        'avatarUrl' => 'https://lh3.googleusercontent.com/aida-public/AB6AXuDyglRLrHs9u_6LTauA3rLEJospzogzo-igDOBmwUAm9pTu5Ai8rlCVioeZyusgJeU7ay7b7wSNnGSfe-j7uYFS8H4KEQabkkn91MmixhrcZpfyj1p4ORprpt_KZYPGHr076fb4iPpm7ocA5vfbtKv_9vHd1Eb3Nx8o7skHz108xnrUXUwzhvtgRoUggNv6k_z1nhwGkRws2mZ5mLfdBcMtDwHKu17a4Y7jWSyu9bldfs7sglnI5Kzu2TdYNUfgEohNA__LUZmmRUU',
-                        'startDate' => 'Jan 05, 2024',
-                    ],
-                ];
-                ?>
+    <?= $this->render('_recent_trials', ['recentTrials' => $recentTrials]) ?>
 
-                <?php foreach ($trials as $trial): ?>
-                    <tr class="hover:bg-slate-50/80 transition-colors group">
-                        <td class="px-6 md:px-8 py-5 md:py-6">
-                            <div class="flex flex-col">
-                                <span class="font-headline font-bold text-sm md:text-base text-on-surface
-                                         group-hover:text-primary transition-colors">
-                                    <?= Html::encode($trial['title']) ?>
-                                </span>
-                                <span class="text-[10px] md:text-xs text-on-surface-variant/70 font-mono">
-                                    ID: <?= Html::encode($trial['id']) ?>
-                                </span>
-                            </div>
-                        </td>
-                        <td class="px-4 py-5 md:py-6 text-center">
-                            <span class="px-2 md:px-3 py-1 <?= $trial['statusClass'] ?>
-                                     text-[9px] md:text-[10px] font-bold rounded-full uppercase tracking-tighter">
-                                <?= Html::encode($trial['status']) ?>
-                            </span>
-                        </td>
-                        <td class="px-4 py-5 md:py-6 text-center">
-                            <span class="font-headline font-extrabold text-primary/40 text-sm md:text-base">
-                                <?= Html::encode($trial['phase']) ?>
-                            </span>
-                        </td>
-                        <td class="px-4 py-5 md:py-6">
-                            <div class="flex items-center gap-2 md:gap-3">
-                                <div class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-slate-200 overflow-hidden">
-                                    <?= Html::img(
-                                        $trial['avatarUrl'],
-                                        ['alt' => 'Investigator', 'class' => 'w-full h-full object-cover']
-                                    ) ?>
-                                </div>
-                                <span class="text-xs md:text-sm font-medium text-on-surface">
-                                    <?= Html::encode($trial['investigator']) ?>
-                                </span>
-                            </div>
-                        </td>
-                        <td class="px-6 md:px-8 py-5 md:py-6 text-right">
-                            <span class="text-xs md:text-sm font-medium text-on-surface-variant">
-                                <?= Html::encode($trial['startDate']) ?>
-                            </span>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-
-            </tbody>
-        </table>
-    </div>
 </section>
 
 <!-- ════════════════════════════════════════════════════════════════════════════

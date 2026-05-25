@@ -2,19 +2,20 @@
 
 namespace frontend\controllers;
 
+use common\models\LoginForm;
+use frontend\models\ClinicalTrial;
+use frontend\models\ContactForm;
+use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResendVerificationEmailForm;
+use frontend\models\ResetPasswordForm;
+use frontend\models\SignupForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
-use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
-use common\models\LoginForm;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResetPasswordForm;
-use frontend\models\SignupForm;
-use frontend\models\ContactForm;
 
 /**
  * Site controller
@@ -76,7 +77,33 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $this->layout = 'dashboard';
-        return $this->render('index');
+        // Recent trials
+        $recentTrials = ClinicalTrial::find()
+            ->joinWith([
+                'timeline',
+                'investigators' => function ($query) {
+                    $query->where(['role' => 1])->limit(1); // Get only the PI
+                },
+                'purpose'
+            ])
+            // ->where(['not', ['registration_status' => 3]]) // Exclude rejected trials
+            ->orderBy([
+                'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
+            ])
+            ->limit(5)
+            //->asArray()
+            ->all();
+
+        /*print '<pre>';
+        print_r($recentTrials);
+        print '</pre>';
+        exit;*/
+
+
+
+        return $this->render('index', [
+            'recentTrials' => $recentTrials,
+        ]);
     }
 
     /**

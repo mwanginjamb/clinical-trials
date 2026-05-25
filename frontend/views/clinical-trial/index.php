@@ -325,7 +325,7 @@ $this->title = 'Trials Library';
             },
             ],
 
-            // ② Registration Status
+            // Registration Status
             [
                 'attribute' => 'registration_status',
                 'label' => 'Status',

@@ -79,16 +79,17 @@ class SiteController extends Controller
         $this->layout = 'dashboard';
         // Recent trials
         $recentTrials = ClinicalTrial::find()
-            ->joinWith([
-                'timeline',
+            ->alias('trial')
+            ->with([
                 'investigators' => function ($query) {
-                    $query->andWhere(['investigator_team.role' => 1]); // Get only the PI
+                    $query->where(['role' => 1]); // Get only PIs
                 },
+                'timeline',
                 'purpose'
             ])
-            // ->where(['not', ['registration_status' => 3]]) // Exclude rejected trials
+            ->joinWith(['timeline', 'purpose']) // For sorting
             ->orderBy([
-                'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
+                'IFNULL(study_timeline.anticipated_start_date, trial.created_at)' => SORT_DESC
             ])
             ->limit(5)
             ->asArray()

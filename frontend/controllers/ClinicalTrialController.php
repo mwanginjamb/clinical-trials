@@ -76,7 +76,7 @@ class ClinicalTrialController extends Controller
 
         // Debug to verify
         if ($model && $model->studyResults) {
-            Yii::info('First result class: ' . get_class($model->studyResults[0]), 'debug');
+            Yii::info('First result class: ' . get_class($model->studyResults), 'debug');
         } else {
             Yii::info('No study results found for trial ID: ' . $id, 'debug');
         }

@@ -79,12 +79,14 @@ class SiteController extends Controller
         $this->layout = 'dashboard';
         // Recent trials
         $recentTrials = ClinicalTrial::find()
-            ->joinWith([
+            ->with([ // Use 'with' for eager loading
                 'timeline',
-                'investigators',
-                'purpose'
+                'purpose',
+                'investigators' => function ($query) {
+                    $query->where(['role' => 1])->limit(1); // This works with 'with'
+                }
             ])
-            ->where(['investigator_team.role' => 1])
+            ->joinWith(['timeline', 'purpose']) // Only join what you need for sorting/filtering
             ->orderBy([
                 'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
             ])

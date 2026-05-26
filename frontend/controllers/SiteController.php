@@ -80,14 +80,18 @@ class SiteController extends Controller
         // Recent trials
         $recentTrials = ClinicalTrial::find()
             ->alias('trial')
+            ->select(['trial.*', 'timeline.*', 'purpose.*'])
             ->joinWith(['timeline', 'purpose'])
-            ->joinWith('investigators')
-            ->where(['investigator_team.role' => 1])
-            ->groupBy(['trial.id']) // Prevent duplicates if multiple PIs
+            ->joinWith([
+                'investigators' => function ($query) {
+                    $query->andWhere(['investigator_team.role' => 1]);
+                }
+            ])
             ->orderBy([
-                'IFNULL(study_timeline.anticipated_start_date, trial.created_at)' => SORT_DESC
+                'IFNULL(timeline.anticipated_start_date, trial.created_at)' => SORT_DESC
             ])
             ->limit(5)
+            ->groupBy(['trial.id']) // Add this to prevent duplicates
             ->asArray()
             ->all();
 

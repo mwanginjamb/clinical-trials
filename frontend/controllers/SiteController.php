@@ -91,13 +91,13 @@ class SiteController extends Controller
                 'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
             ])
             ->limit(5)
-            //->asArray()
+            ->asArray()
             ->all();
 
-        /*print '<pre>';
+        print '<pre>';
         print_r($recentTrials);
         print '</pre>';
-        exit;*/
+        exit;
 
 
 

@@ -84,7 +84,7 @@ class SiteController extends Controller
                 'investigators',
                 'purpose'
             ])
-            ->where(['investigators.role' => 1])
+            ->where(['investigator_team.role' => 1])
             ->orderBy([
                 'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
             ])

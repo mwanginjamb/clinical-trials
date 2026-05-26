@@ -84,8 +84,15 @@ class SiteController extends Controller
             ->groupBy(['trial_id']); // Gets one investigator per trial
 
         $recentTrials = ClinicalTrial::find()
+            ->alias('trial')
+            ->select([
+                'trial.*',
+                'timeline.*',
+                'purpose.*',
+                'pi.*',
+            ])
             ->joinWith(['timeline', 'purpose'])
-            ->leftJoin(['pi' => $subQuery], 'pi.trial_id = clinical_trial.id')
+            ->leftJoin(['pi' => $subQuery], 'pi.trial_id = trial.id')
             ->orderBy([
                 'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
             ])

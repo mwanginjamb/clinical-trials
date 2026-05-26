@@ -39,7 +39,7 @@
                             <div class="flex flex-col">
                                 <span
                                     class="font-headline font-bold text-sm md:text-base text-on-surface group-hover:text-primary transition-colors">
-                                        <?= htmlspecialchars($trial->getDisplayTitle()) ?>
+                                    <?= htmlspecialchars($trial->getDisplayTitle()) ?>
                                 </span>
                                 <span class="text-[10px] md:text-xs text-on-surface-variant/70 font-mono">
                                     ID: <?= htmlspecialchars($trial->getProtocolIdentifier()) ?>

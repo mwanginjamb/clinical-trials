@@ -82,7 +82,7 @@ class SiteController extends Controller
             ->joinWith([
                 'timeline',
                 'investigators' => function ($query) {
-                    $query->where(['role' => 1]); // Get only the PI
+                    $query->andWhere(['investigator_team.role' => 1]); // Primary Investigator
                 },
                 'purpose'
             ])

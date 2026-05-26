@@ -81,9 +81,7 @@ class SiteController extends Controller
         $recentTrials = ClinicalTrial::find()
             ->joinWith([
                 'timeline',
-                'investigators' => function ($query) {
-                    $query->andWhere(['investigator_team.role' => 1]); // Primary Investigator
-                },
+                'investigators',
                 'purpose'
             ])
             // ->where(['not', ['registration_status' => 3]]) // Exclude rejected trials
@@ -91,7 +89,7 @@ class SiteController extends Controller
                 'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
             ])
             ->limit(5)
-            //->asArray()
+            ->asArray()
             ->all();
 
         print '<pre>';

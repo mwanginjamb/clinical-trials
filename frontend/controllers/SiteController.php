@@ -82,7 +82,7 @@ class SiteController extends Controller
             ->joinWith([
                 'timeline',
                 'investigators' => function ($query) {
-                    $query->andWhere(['investigator_team.role' => 1]); // Primary Investigator
+                    $query->where(['role' => 1]); // Get only the PI
                 },
                 'purpose'
             ])
@@ -91,7 +91,7 @@ class SiteController extends Controller
                 'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
             ])
             ->limit(5)
-            ->asArray()
+            //->asArray()
             ->all();
 
         print '<pre>';

@@ -95,10 +95,10 @@ class SiteController extends Controller
             ->asArray()
             ->all();
 
-        print '<pre>';
-        print_r($recentTrials);
-        print '</pre>';
-        exit;
+        /* print '<pre>';
+         print_r($recentTrials);
+         print '</pre>';
+         exit;*/
 
 
 

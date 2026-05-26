@@ -74,12 +74,7 @@ class ClinicalTrialController extends Controller
             ->distinct()  // avoids duplication from hasMany relations
             ->one();
 
-        // Debug to verify
-        if ($model && $model->studyResults) {
-            Yii::info('First result class: ' . (!is_null($model->studyResults) ? json_encode($model->studyResults) : 'No results'), 'debug');
-        } else {
-            Yii::info('No study results found for trial ID: ' . $id, 'debug');
-        }
+
 
         if (!$model) {
             throw new NotFoundHttpException('The requested trial does not exist.');

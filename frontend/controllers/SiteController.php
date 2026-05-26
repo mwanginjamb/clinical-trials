@@ -78,20 +78,18 @@ class SiteController extends Controller
     {
         $this->layout = 'dashboard';
         // Recent trials
+        $subQuery = \frontend\models\InvestigatorTeam::find()
+            ->select(['*'])
+            ->where(['role' => 1])
+            ->groupBy(['trial_id']); // Gets one investigator per trial
+
         $recentTrials = ClinicalTrial::find()
-            ->alias('trial')
-            ->select(['trial.*', 'timeline.*', 'purpose.*'])
             ->joinWith(['timeline', 'purpose'])
-            ->joinWith([
-                'investigators' => function ($query) {
-                    $query->andWhere(['investigator_team.role' => 1]);
-                }
-            ])
+            ->leftJoin(['pi' => $subQuery], 'pi.trial_id = clinical_trial.id')
             ->orderBy([
-                'IFNULL(timeline.anticipated_start_date, trial.created_at)' => SORT_DESC
+                'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
             ])
             ->limit(5)
-            ->groupBy(['trial.id']) // Add this to prevent duplicates
             ->asArray()
             ->all();
 

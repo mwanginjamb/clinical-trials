@@ -57,7 +57,7 @@ class ClinicalTrialController extends Controller
      */
     public function actionView($id)
     {
-         $model = ClinicalTrial::find()
+        $model = ClinicalTrial::find()
             ->joinWith([
                 'purpose',
                 'studyPopulationEligibility',
@@ -73,6 +73,13 @@ class ClinicalTrialController extends Controller
             ->where(['clinical_trial.id' => $id])
             ->distinct()  // avoids duplication from hasMany relations
             ->one();
+
+        // Debug to verify
+        if ($model && $model->studyResults) {
+            Yii::info('First result class: ' . get_class($model->studyResults[0]), 'debug');
+        } else {
+            Yii::info('No study results found for trial ID: ' . $id, 'debug');
+        }
 
         if (!$model) {
             throw new NotFoundHttpException('The requested trial does not exist.');
@@ -119,14 +126,14 @@ class ClinicalTrialController extends Controller
     public function actionUpdate($id = null, $trial_id = null)
     {
         $model = $this->findModel($id);
-        
+
         // if model is null , find it by trial_id
         if (!$model && $trial_id) {
             $model = ClinicalTrial::find()->where(['id' => $trial_id])->one();
         }
-        
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            
+
             // save model ID for wizard step
             Yii::$app->wizard->registerModel('clinical-trial', $model->id);
             Yii::$app->session->set('clinical_trial_id', $model->id);

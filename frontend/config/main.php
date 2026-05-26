@@ -32,6 +32,13 @@ return [
                     'class' => \yii\log\FileTarget::class,
                     'levels' => ['error', 'warning'],
                 ],
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['info'],
+                    'categories' => ['debug'],
+                    'logVars' => [],
+                    'logFile' => '@runtime/logs/debug.log',
+                ]
             ],
         ],
         'errorHandler' => [

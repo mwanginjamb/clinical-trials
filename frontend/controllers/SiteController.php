@@ -81,7 +81,9 @@ class SiteController extends Controller
         $recentTrials = ClinicalTrial::find()
             ->joinWith([
                 'timeline',
-                'investigators',
+                'investigators' => function ($query) {
+                    $query->andWhere(['investigator_team.role' => 1]); // Primary Investigator
+                },
                 'purpose'
             ])
             // ->where(['not', ['registration_status' => 3]]) // Exclude rejected trials

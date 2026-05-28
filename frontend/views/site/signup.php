@@ -6,30 +6,37 @@
 
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
+use common\library\FormUi;
 
 $this->title = 'Signup';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-signup">
-    <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>Please fill out the following fields to signup:</p>
 
-    <div class="row">
-        <div class="col-lg-5">
-            <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
+    <div class="bg-surface-container-lowest/80 backdrop-blur-xl rounded-xl p-10
+            shadow-[0_32px_64px_-12px_rgba(0,59,83,0.12)] border border-outline-variant/10">
 
-                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
-                <?= $form->field($model, 'email') ?>
-
-                <?= $form->field($model, 'password')->passwordInput() ?>
-
-                <div class="form-group">
-                    <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
-                </div>
-
-            <?php ActiveForm::end(); ?>
+        <div class="mb-8">
+            <h2 class="text-xl font-bold text-on-surface mb-2">Create Access Credentials</h2>
+            <p class="text-on-surface-variant text-sm">
+                An Institutional username is preferred. Password must be at least 8 characters.
+            </p>
         </div>
+
+        <?php $form = ActiveForm::begin(FormUi::formConfig('form-signup')); ?>
+
+        <?= $form->field($model, 'username', FormUi::fieldConfig('account_circle')['base'])->textInput(array_merge(FormUi::inputOptions()['text'])) ?>
+
+        <?= $form->field($model, 'email', FormUi::fieldConfig('mail')['base'])->textInput(array_merge(FormUi::inputOptions()['text'])) ?>
+
+        <?= $form->field($model, 'password', FormUi::fieldConfig('lock')['base'])->passwordInput(array_merge(FormUi::inputOptions()['text'])) ?>
+
+        <?= $form->field($model, 'confirmPassword', FormUi::fieldConfig('lock')['base'])->passwordInput(array_merge(FormUi::inputOptions()['text']))->label('Confirm Password') ?>
+
+        <?= FormUi::submitButton('Signup', 'arrow_forward') ?>
+
+        <?php ActiveForm::end(); ?>
+
     </div>
-</div>

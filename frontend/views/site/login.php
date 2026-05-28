@@ -151,6 +151,12 @@ $this->params['brandSubtitle'] = 'Institutional Research Portal';
         ) ?>
     </p>
 
+    <!-- Registration Link -->
+    <p class="mt-4 text-center text-xs text-on-surface-variant">
+        Don't have an account?
+        <?= FormUi::link('Register', ['/site/signup'], FormUi::linkClass()) ?>
+    </p>
+
     <!-- ── Divider ─────────────────────────────────────────────────────────── -->
     <div class="mt-10 flex items-center gap-4">
         <div class="h-[1px] flex-1 bg-outline-variant/30"></div>

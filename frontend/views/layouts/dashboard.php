@@ -63,7 +63,9 @@ DashAsset::register($this);
                     </span>
                 </div>
                 <div>
-                    <h1 class="text-lg font-black text-[#005470]">The Curator</h1>
+                    <h1 class="text-lg font-black text-[#005470]">
+                        <?= Yii::$app->name ?>
+                    </h1>
                     <p class="text-[10px] uppercase tracking-widest text-slate-500">Enterprise Research</p>
                 </div>
             </div>
@@ -162,7 +164,7 @@ DashAsset::register($this);
 
                 <span class="font-manrope antialiased text-lg md:text-xl font-bold tracking-tight
                          text-[#005470] dark:text-cyan-500 truncate">
-                    Clinical Curator
+                    <?= Yii::$app->name ?>
                 </span>
 
                 <!-- Search (desktop only) -->

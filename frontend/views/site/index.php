@@ -116,7 +116,7 @@ $this->title = 'SERCEA Research Repository — Clinical Curator';
 </section>
 
 <!-- ════════════════════════════════════════════════════════════════════════════
-     Recent Trials Ledger
+     Recent Trial Entries (5)
      ════════════════════════════════════════════════════════════════════════════ -->
 <section class="space-y-4 md:space-y-6">
 

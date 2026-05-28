@@ -42,7 +42,7 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
 <head>
     <meta charset="<?= Yii::$app->charset ?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?= Html::encode($this->title ?? 'Clinical Curator') ?></title>
+    <title><?= Html::encode($this->title ?? Yii::$app->name) ?></title>
     <?= Html::csrfMetaTags() ?>
     <?php $this->head() ?>
 </head>
@@ -60,7 +60,7 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
             <!-- Brand + Top Nav Links -->
             <div class="flex items-center gap-8">
                 <?= Html::a(
-                    '<span class="text-xl font-bold tracking-tight text-[#005470] dark:text-cyan-500 font-headline">Clinical Curator</span>',
+                    '<span class="text-xl font-bold tracking-tight text-[#005470] dark:text-cyan-500 font-headline">' . Yii::$app->name . '</span>',
                     Url::to(['/site/index']),
                     ['class' => 'no-underline']
                 ) ?>
@@ -113,7 +113,10 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                                 style="font-variation-settings: 'FILL' 1;">science</span>
                         </div>
                         <div>
-                            <h2 class="text-lg font-black text-[#005470] font-headline leading-tight">The Curator</h2>
+                            <h2 class="text-lg font-black text-[#005470] font-headline leading-tight">
+                                
+                                <?= Yii::$app->name ?>
+                            </h2>
                             <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Enterprise
                                 Research</p>
                         </div>

@@ -69,7 +69,7 @@ $this->registerCssFile(
                 <span class="material-symbols-outlined text-primary text-4xl">clinical_notes</span>
             </div>
             <h1 class="text-3xl font-extrabold tracking-tight text-primary leading-tight">
-                Clinical Curator
+                <?= Yii::$app->params['appTitle'] ?>
             </h1>
             <p class="text-on-surface-variant font-label text-sm uppercase tracking-widest mt-2">
                 <?= Html::encode($this->params['brandSubtitle'] ?? 'Institutional Research Portal') ?>

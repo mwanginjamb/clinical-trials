@@ -7,4 +7,6 @@ return [
     'senderName' => 'Example.com mailer',
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
+    'appName' => env('APP_NAME', 'KEMRI Clinical Trials Management Portal'),
+    'appTitle' => env('APP_TITLE', 'Clinical Trials Management System'),
 ];

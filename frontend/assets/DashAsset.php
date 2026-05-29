@@ -48,6 +48,6 @@ class DashAsset extends AssetBundle
     /** @var array Yii asset dependencies (none required at this time). */
     public $depends = [
         'yii\web\YiiAsset',
-        //'yii\bootstrap5\BootstrapAsset',
+        'yii\bootstrap5\BootstrapAsset',
     ];
 }

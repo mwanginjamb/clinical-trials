@@ -27,6 +27,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?php $form = ActiveForm::begin(FormUi::formConfig('form-signup')); ?>
 
+    <?= $form->errorSummary($model); ?>
+
     <?= $form->field($model, 'username', FormUi::fieldConfig('account_circle')['base'])->textInput(array_merge(FormUi::inputOptions()['text'])) ?>
 
     <?= $form->field($model, 'email', FormUi::fieldConfig('mail')['base'])->textInput(array_merge(FormUi::inputOptions()['text'])) ?>

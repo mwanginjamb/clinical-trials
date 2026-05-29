@@ -209,6 +209,7 @@ DashAsset::register($this);
         <!-- ── Page view content injected here ──────────────────────────────── -->
         <div class="p-6 md:p-12 max-w-7xl mx-auto space-y-8 md:space-y-12">
             <?= $this->render('_bread_crumbs') ?>
+            <?= $this->render('_flash_alerts') ?>
             <?= $content ?>
         </div>
 

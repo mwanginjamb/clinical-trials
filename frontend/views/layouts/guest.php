@@ -76,6 +76,7 @@ $this->registerCssFile(
             </p>
         </div>
 
+        <?= $this->render('_flash_alerts') ?>
         <?= $content ?>
 
         <!-- Shared footer -->

@@ -39,38 +39,38 @@ $this->params['brandSubtitle'] = 'Institutional Research Portal';
             </p>
         </div>
 
-            <?php $form = ActiveForm::begin([
-                'id' => 'login-form',
-                'method' => 'post',
-                'options' => ['class' => 'space-y-6'],
-                // Suppress ActiveForm's default Bootstrap field layout
-                'fieldConfig' => [
-                    'template' => '{label}{input}{error}',
-                    'labelOptions' => [
-                        'class' => 'block font-label text-[0.6875rem] font-bold uppercase
+        <?php $form = ActiveForm::begin([
+            'id' => 'login-form',
+            'method' => 'post',
+            'options' => ['class' => 'space-y-6'],
+            // Suppress ActiveForm's default Bootstrap field layout
+            'fieldConfig' => [
+                'template' => '{label}{input}{error}',
+                'labelOptions' => [
+                    'class' => 'block font-label text-[0.6875rem] font-bold uppercase
                             tracking-wider text-on-surface-variant ml-1',
-                    ],
-                    'errorOptions' => [
-                        'class' => 'text-xs text-error mt-1 ml-1',
-                        'tag' => 'p',
-                    ],
-                    'options' => ['class' => 'space-y-1'],
                 ],
-                'enableClientValidation' => true,
-                'validateOnBlur' => true,
-            ]); ?>
+                'errorOptions' => [
+                    'class' => 'text-xs text-error mt-1 ml-1',
+                    'tag' => 'p',
+                ],
+                'options' => ['class' => 'space-y-1'],
+            ],
+            'enableClientValidation' => true,
+            'validateOnBlur' => true,
+        ]); ?>
 
         <!-- ── Work Email ──────────────────────────────────────────────────────── -->
         <div class="space-y-1">
             <label class="block font-label text-[0.6875rem] font-bold uppercase tracking-wider
                       text-on-surface-variant ml-1" for="loginform-username">
-                Work Email
+                Scientist Username
             </label>
             <div class="group relative">
                 <?= $form->field($model, 'username')->textInput([
                     'id' => 'loginform-username',
-                    'type' => 'email',
-                    'placeholder' => 'e.g. researcher@institution.edu',
+                    'type' => 'text',
+                    'placeholder' => 'e.g. fnoburga',
                     'autocomplete' => 'username',
                     'class' => 'w-full h-12 bg-surface-container-low border-b-2
                                   border-transparent focus:border-primary focus:ring-0

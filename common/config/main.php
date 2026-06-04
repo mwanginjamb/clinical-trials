@@ -37,7 +37,7 @@ return [
                 'host' => env('SMTP_HOST'),
                 'username' => env('SMTP_USERNAME'),
                 'password' => env('SMTP_PASSWORD'),
-                'port' => 465,
+                'port' => env('SMTP_PORT', 587),
                 // 'dsn' => 'native://default',
             ],
             //

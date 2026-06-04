@@ -4,11 +4,12 @@ namespace frontend\controllers;
 
 use frontend\models\StudyPurpose;
 use frontend\models\StudyPurposeSearch;
+use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use Yii;
 
 /**
  * StudyPurposeController implements the CRUD actions for StudyPurpose model.
@@ -24,9 +25,25 @@ class StudyPurposeController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -96,10 +113,9 @@ class StudyPurposeController extends Controller
      */
     public function actionUpdate($id = null, $trial_id = null)
     {
-        if($id){
+        if ($id) {
             $model = $this->findModel($id);
-        }
-        elseif($trial_id) {
+        } elseif ($trial_id) {
             $model = $this->findModelByTrialId($trial_id);
         }
         $model->trial_id = Yii::$app->session->get('clinical_trial_id');
@@ -142,7 +158,7 @@ class StudyPurposeController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    
+
     /**
      * Finds the StudyPurpose model based on trial_id.
      * If the model is not found, a 404 HTTP exception will be thrown.

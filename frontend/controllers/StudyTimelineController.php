@@ -4,10 +4,11 @@ namespace frontend\controllers;
 
 use frontend\models\StudyTimeline;
 use frontend\models\StudyTimelineSearch;
+use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use Yii;
 
 /**
  * StudyTimelineController implements the CRUD actions for StudyTimeline model.
@@ -23,9 +24,25 @@ class StudyTimelineController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -95,11 +112,11 @@ class StudyTimelineController extends Controller
      */
     public function actionUpdate($id = null, $trial_id = null)
     {
-        if($id){
+        if ($id) {
             $model = $this->findModel($id);
-        }elseif($trial_id){ // Find model by trial_id
+        } elseif ($trial_id) { // Find model by trial_id
             $model = StudyTimeline::findOne(['trial_id' => $trial_id]);
-            if(!$model){
+            if (!$model) {
                 $model = new StudyTimeline();
                 $model->trial_id = $trial_id;
             }
@@ -107,8 +124,8 @@ class StudyTimelineController extends Controller
 
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-             Yii::$app->wizard->registerModel('study-timeline', $model->id);
-             return $this->redirect(Yii::$app->urlManager->createUrl(['investigator-team/create','trial_id' => $model->trial_id]));
+            Yii::$app->wizard->registerModel('study-timeline', $model->id);
+            return $this->redirect(Yii::$app->urlManager->createUrl(['investigator-team/create', 'trial_id' => $model->trial_id]));
         }
 
         return $this->render('update', [

@@ -4,10 +4,11 @@ namespace frontend\controllers;
 
 use frontend\models\StudyDescription;
 use frontend\models\StudyDescriptionSearch;
+use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use Yii;
 
 /**
  * StudyDescriptionController implements the CRUD actions for StudyDescription model.
@@ -23,9 +24,25 @@ class StudyDescriptionController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -71,7 +88,7 @@ class StudyDescriptionController extends Controller
         $model = new StudyDescription();
         $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
-       // search model by trial_id, if it exists redirect to update action
+        // search model by trial_id, if it exists redirect to update action
         $studyDescription = StudyDescription::find()->where(['trial_id' => $model->trial_id])->one();
         if ($studyDescription) {
             $model->id = $studyDescription->id;
@@ -104,7 +121,7 @@ class StudyDescriptionController extends Controller
     {
         $model = $this->findModel($id);
         // if $model is null and trial_id isset find model by  trial_id
-        if(!$model && $trial_id) {
+        if (!$model && $trial_id) {
             $model = StudyDescription::find()->where(['trial_id' => $trial_id])->one();
         }
 

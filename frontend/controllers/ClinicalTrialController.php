@@ -85,7 +85,7 @@ class ClinicalTrialController extends Controller
                 'studyDescription',
                 'studyIntervention',
                 'studyResults',
-                'openDataAccess'
+                'opendataAccess'
             ])
             ->where(['clinical_trial.id' => $id])
             ->distinct()  // avoids duplication from hasMany relations

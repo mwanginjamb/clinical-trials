@@ -357,7 +357,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <!-- Section 11: Data Access & Stats -->
                     <section class="section-anchor pb-20" id="stats">
-                        <?php $stats = $model->openDataAccess; ?>
+                        <?php $stats = $model->opendataAccess; ?>
                         <div class="grid grid-cols-12 gap-8">
                             <div class="col-span-12 md:col-span-4">
                                 <h3 class="text-xl font-bold font-headline mb-2">11. Data Access &amp; Stats</h3>

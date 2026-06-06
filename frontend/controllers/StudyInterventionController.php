@@ -4,10 +4,11 @@ namespace frontend\controllers;
 
 use frontend\models\StudyIntervention;
 use frontend\models\StudyInterventionSearch;
+use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use Yii;
 
 /**
  * StudyInterventionController implements the CRUD actions for StudyIntervention model.
@@ -23,9 +24,25 @@ class StudyInterventionController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]

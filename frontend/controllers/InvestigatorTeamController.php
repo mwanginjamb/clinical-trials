@@ -6,6 +6,7 @@ use frontend\models\InvestigatorTeam;
 use frontend\models\InvestigatorTeamSearch;
 use Yii;
 use yii\base\Response;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
@@ -26,10 +27,26 @@ class InvestigatorTeamController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
                         'save-member' => ['POST', 'PUT'], // Only allow POST and PUT for the saveMember action
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]

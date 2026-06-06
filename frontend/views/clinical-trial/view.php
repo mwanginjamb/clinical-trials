@@ -325,8 +325,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <!-- Section 10: Publication Ledger -->
                     <section class="section-anchor" id="publication">
                         <h3 class="text-xl font-bold font-headline mb-6">10. Publication Ledger</h3>
-                        <?php if (!empty($model->studyResults)): ?>
-                            <?php foreach ($model->studyResults as $result): ?>
+                        <?php $result = $model->studyResults; ?>
+                        <?php if ($result && is_object($model->studyResults)): ?>
                             <div class="bg-surface-container-lowest border border-outline-variant/15 rounded-2xl overflow-hidden mb-6">
                                 <div class="p-6 border-b border-outline-variant/10 flex items-center justify-between">
                                     <div class="flex items-center gap-4">
@@ -349,7 +349,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <p class="text-sm leading-relaxed"><?= Html::encode($result->summary_results) ?></p>
                                 </div>
                             </div>
-                            <?php endforeach; ?>
+                            
                         <?php else: ?>
                             <div class="bg-surface-container-lowest border border-outline-variant/15 rounded-2xl p-6 text-center text-gray-500">No publications recorded.</div>
                         <?php endif; ?>

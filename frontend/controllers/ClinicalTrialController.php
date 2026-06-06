@@ -4,11 +4,12 @@ namespace frontend\controllers;
 
 use frontend\models\ClinicalTrial;
 use frontend\models\ClinicalTrialSearch;
+use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use Yii;
 
 /**
  * ClinicalTrialController implements the CRUD actions for ClinicalTrial model.
@@ -24,9 +25,25 @@ class ClinicalTrialController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -57,7 +74,7 @@ class ClinicalTrialController extends Controller
      */
     public function actionView($id)
     {
-         $model = ClinicalTrial::find()
+        $model = ClinicalTrial::find()
             ->joinWith([
                 'purpose',
                 'studyPopulationEligibility',
@@ -73,6 +90,8 @@ class ClinicalTrialController extends Controller
             ->where(['clinical_trial.id' => $id])
             ->distinct()  // avoids duplication from hasMany relations
             ->one();
+
+
 
         if (!$model) {
             throw new NotFoundHttpException('The requested trial does not exist.');
@@ -120,17 +139,17 @@ class ClinicalTrialController extends Controller
     {
         $model = $this->findModel($id);
         if($model)
-            {
-                Yii::$app->session->set('clinical_trial_id', $model->id);
-            }
+        {
+            Yii::$app->session->set('clinical_trial_id', $model->id);
+        }
         
         // if model is null , find it by trial_id
         if (!$model && $trial_id) {
             $model = ClinicalTrial::find()->where(['id' => $trial_id])->one();
         }
-        
+
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            
+
             // save model ID for wizard step
             Yii::$app->wizard->registerModel('clinical-trial', $model->id);
             return $this->redirect(Url::toRoute(['study-purpose/update', 'trial_id' => $model->id]));

@@ -30,7 +30,7 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout', 'signup'],
+                'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
@@ -38,7 +38,7 @@ class SiteController extends Controller
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['logout'],
+                        'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -79,25 +79,27 @@ class SiteController extends Controller
         $this->layout = 'dashboard';
         // Recent trials
         $recentTrials = ClinicalTrial::find()
-            ->joinWith([
-                'timeline',
+            ->alias('trial')
+            ->with([
                 'investigators' => function ($query) {
-                    $query->where(['role' => 1])->limit(1); // Get only the PI
+                    $query->where(['role' => 1]); // Get only PIs
                 },
+                'timeline',
                 'purpose'
             ])
-            // ->where(['not', ['registration_status' => 3]]) // Exclude rejected trials
+            ->joinWith(['timeline', 'purpose']) // For sorting
             ->orderBy([
-                'IFNULL(study_timeline.anticipated_start_date, clinical_trial.created_at)' => SORT_DESC
+                'IFNULL(study_timeline.anticipated_start_date, trial.created_at)' => SORT_DESC
             ])
             ->limit(5)
-            //->asArray()
+            // ->asArray()
             ->all();
 
-        /*print '<pre>';
-        print_r($recentTrials);
-        print '</pre>';
-        exit;*/
+        /* print '<pre>';
+         print_r($recentTrials);
+         print '</pre>';
+         exit;
+         */
 
 
 
@@ -182,6 +184,7 @@ class SiteController extends Controller
      */
     public function actionSignup()
     {
+        $this->layout = 'guest';
         $model = new SignupForm();
         if ($model->load(Yii::$app->request->post()) && $model->signup()) {
             Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');

@@ -4,10 +4,11 @@ namespace frontend\controllers;
 
 use frontend\models\StudyPopulationEligibility;
 use frontend\models\StudyPopulationEligibilitySearch;
+use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use Yii;
 
 /**
  * StudyPopulationEligibilityController implements the CRUD actions for StudyPopulationEligibility model.
@@ -23,9 +24,25 @@ class StudyPopulationEligibilityController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -93,17 +110,17 @@ class StudyPopulationEligibilityController extends Controller
      * @return string|\yii\web\Response
      * @throws NotFoundHttpException if the model cannot be found
      */
-    public function actionUpdate($id = null,$trial_id = null)
+    public function actionUpdate($id = null, $trial_id = null)
     {
-        if($id){
+        if ($id) {
             $model = $this->findModel($id);
-        }elseif($trial_id) { // Find model by trial_id
+        } elseif ($trial_id) { // Find model by trial_id
             $model = $this->findModelByTrialId($trial_id);
         }
-$model->trial_id = Yii::$app->session->get('clinical_trial_id');
+        $model->trial_id = Yii::$app->session->get('clinical_trial_id');
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             Yii::$app->wizard->registerModel('study-population-eligibility', $model->id);
-            return $this->redirect(Yii::$app->urlManager->createUrl(['study-timeline/update','trial_id' => $model->trial_id]));
+            return $this->redirect(Yii::$app->urlManager->createUrl(['study-timeline/update', 'trial_id' => $model->trial_id]));
         }
 
         return $this->render('update', [
@@ -140,7 +157,7 @@ $model->trial_id = Yii::$app->session->get('clinical_trial_id');
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-    
+
     /**
      * Finds the StudyPopulationEligibility model based on trial_id.
      * If the model is not found, a 404 HTTP exception will be thrown.

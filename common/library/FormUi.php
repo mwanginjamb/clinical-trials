@@ -1,7 +1,7 @@
 <?php
 namespace common\library;
 
-use yii\html5\Html;
+use yii\bootstrap5\Html;
 
 /**
  * A generator class for form elements UI aspects
@@ -101,47 +101,117 @@ class FormUi
         ];
     }
 
+
     /**
-     * Field template Config
-     * Usage: Shared field config — preserves the "bottom-border only" input aesthetic
-     * Example: <?= $form->field($model, 'username', FormUi::fieldTemplateConfig("{label}\n{input}\n{error}"))->textInput(['class' => FormUi::inputClass()]) ?>
-     */
+ * Holds the icon-side padding class computed by the last fieldConfig() call
+ * so inputOptions() callers can retrieve it without repeating the logic.
+ *
+ * @internal  Set by fieldConfig(); read via iconInputClass().
+ */
+private static string $_iconInputPadding = '';
 
-    public static function fieldConfig(): array
-    {
+/**
+ * Returns the input padding class that matches the last fieldConfig() icon call.
+ *
+ * Usage — pair with fieldConfig():
+ *   $form->field($model, 'password', FormUi::fieldConfig('lock')['base'])
+ *       ->passwordInput(['class' => FormUi::inputClass() . ' ' . FormUi::iconInputClass()])
+ *
+ * @return string  e.g. 'pr-11', 'pl-11', or '' when no icon was set.
+ */
+public static function iconInputClass(): string
+{
+    return self::$_iconInputPadding;
+}
 
-        // ---------------------------------------------------------------------------
-        // BASE field template (wraps label + input + hint + error)
-        // ---------------------------------------------------------------------------
-        $baseField = [
-            'template' => "{label}\n{input}\n{hint}\n{error}",
-            'options' => ['class' => 'space-y-2'],          // <div> wrapper
-            'labelOptions' => [
-                'class' => 'block text-xs font-bold uppercase tracking-wider text-on-surface-variant',
-            ],
-            'errorOptions' => [
-                'tag' => 'p',
-                'class' => 'text-xs text-error mt-1',
-            ],
-            'hintOptions' => [
-                'tag' => 'p',
-                'class' => 'text-xs text-on-surface-variant mt-1',
-            ],
-        ];
-        // ---------------------------------------------------------------------------
-        // VARIANT: no label (for toggle rows that have their own inline label)
-        // ---------------------------------------------------------------------------
-        $noLabelField = array_merge($baseField, [
-            'template' => "{input}\n{error}",
-            'options' => ['class' => ''],
-        ]);
+    /**
+ * Field template config.
+ *
+ * @param string|null $icon      Material Symbol name e.g. 'lock', 'mail'.
+ *                               Pass null (default) for no icon.
+ * @param string      $position  'right' (default) | 'left'
+ *
+ * Usage (no icon — existing behaviour preserved):
+ *   $form->field($model, 'name', FormUi::fieldConfig()['base'])
+ *
+ * Usage (with icon):
+ *   $form->field($model, 'password', FormUi::fieldConfig('lock')['base'])
+ *   $form->field($model, 'email',    FormUi::fieldConfig('mail', 'left')['base'])
+ *
+ * formConfig() still works unchanged — it calls fieldConfig() with no args.
+ */
+public static function fieldConfig(?string $icon = null, string $position = 'right'): array
+{
+    // ------------------------------------------------------------------
+    // Icon injection — build the wrapper HTML if an icon was requested
+    // ------------------------------------------------------------------
+    $inputBlock = '{input}';
 
+    if ($icon !== null) {
+        $pos = match($position) {
+            'left'  => ['wrapper' => 'absolute left-4 top-1/2 -translate-y-1/2',  'input' => 'pl-11'],
+            default => ['wrapper' => 'absolute right-4 top-1/2 -translate-y-1/2', 'input' => 'pr-11'],
+        };
 
-        return [
-            'base' => $baseField,
-            'noLabel' => $noLabelField,
-        ];
+        $iconHtml = Html::tag(
+            'div',
+            Html::tag('span', $icon, ['class' => 'material-symbols-outlined text-xl']),
+            [
+                'class' => trim(
+                    $pos['wrapper'] . ' '
+                    . 'text-outline opacity-40 '
+                    . 'group-focus-within:text-primary group-focus-within:opacity-100 transition-all'
+                ),
+            ]
+        );
+
+        // Wrap {input} in a relative+group div so the icon is anchored
+        // to the input and group-focus-within: variants fire correctly
+        $inputBlock = Html::tag(
+            'div',
+            "{input}\n" . $iconHtml,
+            ['class' => 'relative group']
+        );
+
+        // Stash the extra padding class so callers can retrieve it via
+        // FormUi::iconInputClass($position) without re-deriving it
+        self::$_iconInputPadding = $pos['input'];
+    } else {
+        self::$_iconInputPadding = '';
     }
+
+    // ------------------------------------------------------------------
+    // BASE field template
+    // ------------------------------------------------------------------
+    $baseField = [
+        'template'     => "{label}\n{$inputBlock}\n{hint}\n{error}",
+        'options'      => ['class' => 'space-y-2'],
+        'labelOptions' => [
+            'class' => 'block text-xs font-bold uppercase tracking-wider text-on-surface-variant',
+        ],
+        'errorOptions' => [
+            'tag'   => 'p',
+            'class' => 'text-xs text-error mt-1',
+        ],
+        'hintOptions'  => [
+            'tag'   => 'p',
+            'class' => 'text-xs text-on-surface-variant mt-1',
+        ],
+    ];
+
+    // ------------------------------------------------------------------
+    // VARIANT: no label (toggle rows, etc.)
+    // ------------------------------------------------------------------
+    $noLabelField = array_merge($baseField, [
+        'template' => "{input}\n{error}",
+        'options'  => ['class' => ''],
+    ]);
+
+    return [
+        'base'    => $baseField,
+        'noLabel' => $noLabelField,
+    ];
+}
 
 
     public static function buttonClass(): string
@@ -153,17 +223,7 @@ class FormUi
         ';
     }
 
-    public static function linkClass($color = false, $underline = false): string
-    {
-        return '
-            text-' . ($color ?: 'primary') . '
-            font-bold
-            text-sm
-            hover:text-on-secondary-fixed-variant
-            transition-colors
-            ' . ($underline ? 'underline' : '') . '
-        ';
-    }
+   
 
 
     /*
@@ -229,7 +289,17 @@ class FormUi
         ];
     }
 
-
+ public static function linkClass($color = false, $underline = false): string
+    {
+        return '
+            text-' . ($color ?: 'primary') . '
+            font-bold
+            text-sm
+            hover:text-on-secondary-fixed-variant
+            transition-colors
+            ' . ($underline ? 'underline' : '') . '
+        ';
+    }
 
     /**
      * Link element generator
@@ -546,6 +616,22 @@ class FormUi
                       . 'bg-gradient-to-br from-primary to-primary-container text-white '
                       . 'rounded-xl font-bold shadow-[0_12px_32px_rgba(0,26,72,0.12)] '
                       . 'hover:scale-[1.02] transition-all active:scale-95 w-full sm:w-auto',
+            'encode' => false,
+        ]);
+    }
+
+    // Submit button
+
+    public static function submitButton(string $label, string $icon): string
+    {
+        $inner = Html::tag('span', $icon, ['class' => 'material-symbols-outlined'])
+               . Html::tag('span', Html::encode($label));
+
+        return Html::submitButton($inner, [
+            'class' => 'editorial-gradient w-full py-4 rounded-xl text-on-primary font-bold
+                        tracking-tight text-lg shadow-[0_8px_20px_-4px_rgba(0,59,83,0.3)]
+                        hover:scale-[1.02] active:scale-[0.98] transition-all duration-200
+                        flex items-center justify-center gap-2',
             'encode' => false,
         ]);
     }

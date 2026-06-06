@@ -4,10 +4,11 @@ namespace frontend\controllers;
 
 use frontend\models\EthicalApproval;
 use frontend\models\EthicalApprovalSearch;
+use Yii;
+use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
-use yii\filters\VerbFilter;
-use Yii;
 
 /**
  * EthicalApprovalController implements the CRUD actions for EthicalApproval model.
@@ -23,9 +24,25 @@ class EthicalApprovalController extends Controller
             parent::behaviors(),
             [
                 'verbs' => [
-                    'class' => VerbFilter::className(),
+                    'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                    ],
+                ],
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' => ['signup'],
+                            'allow' => true,
+                            'roles' => ['?'],
+                        ],
+                        [
+                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
                     ],
                 ],
             ]
@@ -59,7 +76,7 @@ class EthicalApprovalController extends Controller
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
-    }                                                                                           
+    }
 
     /**
      * Creates a new EthicalApproval model.
@@ -110,7 +127,7 @@ class EthicalApprovalController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             Yii::$app->wizard->registerModel('ethical-approval', $model->id);
-            return $this->redirect(Yii::$app->urlManager->createUrl(['funding/create','trial_id' => $model->trial_id]));
+            return $this->redirect(Yii::$app->urlManager->createUrl(['funding/create', 'trial_id' => $model->trial_id]));
         }
 
         return $this->render('update', [

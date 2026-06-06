@@ -32,14 +32,14 @@ return [
             // and configure a transport for the mailer to send real emails.
             //
             // SMTP server example:
-                'transport' => [
-                    'scheme' => 'smtp',
-                    'host' => env('SMTP_HOST'),
-                    'username' => env('SMTP_USERNAME'),
-                    'password' => env('SMTP_PASSWORD'),
-                    'port' => 465,
-                   // 'dsn' => 'native://default',
-                ],
+            'transport' => [
+                'scheme' => 'smtp',
+                'host' => env('SMTP_HOST'),
+                'username' => env('SMTP_USERNAME'),
+                'password' => env('SMTP_PASSWORD'),
+                'port' => env('SMTP_PORT', 587),
+                // 'dsn' => 'native://default',
+            ],
             //
             // DSN example:
             //    'transport' => [

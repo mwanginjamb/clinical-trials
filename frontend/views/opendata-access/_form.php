@@ -75,7 +75,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
     <?= $form->field($model, 'handling_missing_data',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter handling missing data'])) ?>
 
-    <?= $form->field($model, 'document_path',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter document path'])) ?>
+    <?php $form->field($model, 'document_path',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter document path'])) ?>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -87,7 +87,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
     <?= $form->field($model, 'study_limitation',FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['textarea'], ['rows' => 6])) ?>
 
-    <?= $form->field($model, 'funding_source',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter funding source'])) ?>
+    <?php $form->field($model, 'funding_source',FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter funding source'])) ?>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">

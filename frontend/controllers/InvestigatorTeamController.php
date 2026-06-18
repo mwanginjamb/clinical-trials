@@ -68,14 +68,18 @@ class InvestigatorTeamController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(int $trialId)
     {
         $searchModel = new InvestigatorTeamSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $params = $this->request->queryParams();
+        $params['InvestigatorTeamSearch']['trial_id'] = $trialId;
+
+        $dataProvider = $searchModel->search($params);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'trial_id' => $trialId
         ]);
     }
 

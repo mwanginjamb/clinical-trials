@@ -113,6 +113,7 @@ class StudyPurposeController extends Controller
      */
     public function actionUpdate($id = null, $trial_id = null)
     {
+        $model = null;
         if ($id) {
             $model = $this->findModel($id);
         } elseif ($trial_id) {

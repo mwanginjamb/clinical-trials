@@ -68,14 +68,18 @@ class InvestigatorTeamController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(int $trialId)
     {
         $searchModel = new InvestigatorTeamSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $params = $this->request->queryParams();
+        $params['InvestigatorTeamSearch']['trial_id'] = $trialId;
+
+        $dataProvider = $searchModel->search($params);
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'trial_id' => $trialId
         ]);
     }
 
@@ -109,6 +113,8 @@ class InvestigatorTeamController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                // save model ID for wizard step
+                Yii::$app->wizard->registerModel('investigator-team', $model->id);
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -133,6 +139,8 @@ class InvestigatorTeamController extends Controller
         $model = $this->findModel($id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            // save model ID for wizard step
+                Yii::$app->wizard->registerModel('investigator-team', $model->id);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -210,7 +218,7 @@ class InvestigatorTeamController extends Controller
             'postal_address' => $body['postal_address'] ?? null,
             'email_address' => $body['email_address'] ?? null,
             'mobile_number' => $body['mobile_number'] ?? null,
-            'trial_id' => Yii::$app->session->get('trial_id') ?? 1, // Fallback to session if not provided in payload
+            'trial_id' => Yii::$app->session->get('clinical_trial_id') ?? 0, // Fallback to session if not provided in payload
         ]);
 
 
@@ -228,8 +236,9 @@ class InvestigatorTeamController extends Controller
         // Return validation errors so the front end can display them if needed
         return [
             'success' => false,
-            'message' => 'Validation failed.',
+            'message' => 'Validation failed - '.(Yii::$app->session->get('clinical_trial_id') ?? 'NS'),
             'errors' => $model->getFirstErrors(),
+           
         ];
 
 

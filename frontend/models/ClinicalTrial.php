@@ -212,9 +212,9 @@ class ClinicalTrial extends \yii\db\ActiveRecord
     }
 
     // Get Open Data Access
-    public function getOpenDataAccess()
+    public function getOpendataAccess()
     {
-        return $this->hasOne(OpenDataAccess::class, ['trial_id' => 'id']);
+        return $this->hasOne(OpendataAccess::class, ['trial_id' => 'id']);
     }
 
 

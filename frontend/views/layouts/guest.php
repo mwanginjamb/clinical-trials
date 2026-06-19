@@ -83,7 +83,7 @@ $this->registerCssFile(
         <footer class="mt-8 text-center">
             <p class="text-xs text-on-surface-variant opacity-60">
                 &copy;
-                <?= date('Y') ?> Clinical Curator Enterprise. Precision Data Infrastructure.
+                <?= date('Y') ?> KEMRI Clinical Trials Curator.
             </p>
         </footer>
 

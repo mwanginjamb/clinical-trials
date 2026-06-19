@@ -101,12 +101,14 @@ class InvestigatorTeamController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
-    public function actionCreate()
+    public function actionCreate($trial_id)
     {
         $model = new InvestigatorTeam();
-
         $searchModel = new InvestigatorTeamSearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $params = $this->request->queryParams();
+        $params['InvestigatorTeamSearch']['trial_id'] = $trial_id;
+
+        $dataProvider = $searchModel->search($params);
 
         // Load all records for pre-rendering into the table
         $members = $dataProvider->getModels();
@@ -140,7 +142,7 @@ class InvestigatorTeamController extends Controller
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
             // save model ID for wizard step
-                Yii::$app->wizard->registerModel('investigator-team', $model->id);
+            Yii::$app->wizard->registerModel('investigator-team', $model->id);
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -236,9 +238,9 @@ class InvestigatorTeamController extends Controller
         // Return validation errors so the front end can display them if needed
         return [
             'success' => false,
-            'message' => 'Validation failed - '.(Yii::$app->session->get('clinical_trial_id') ?? 'NS'),
+            'message' => 'Validation failed - ' . (Yii::$app->session->get('clinical_trial_id') ?? 'NS'),
             'errors' => $model->getFirstErrors(),
-           
+
         ];
 
 

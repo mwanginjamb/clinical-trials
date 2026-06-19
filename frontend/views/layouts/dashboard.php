@@ -10,7 +10,7 @@
 use common\library\FormUi;
 use frontend\assets\DashAsset;
 use yii\helpers\Html;
-
+use yii\helpers\Url;
 
 
 // ── External fonts & icon font ────────────────────────────────────────────────
@@ -18,11 +18,11 @@ use yii\helpers\Html;
 // <head> via $this->head() before any local CSS — avoids FOUT.
 
 
-$this->registerLinkTag(['rel' => 'preconnect', 'href' => 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap']);
-$this->registerLinkTag(['rel' => 'preconnect', 'href' => 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap']);
+//$this->registerLinkTag(['rel' => 'preconnect', 'href' => 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap']);
+//$this->registerLinkTag(['rel' => 'preconnect', 'href' => 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap']);
 
 DashAsset::register($this);
-
+$userAvatar = "https://placehold.co/150/cccccc/FFFFFF.webp/?text=" . (Yii::$app->user->identity->username ?? 'User');
 
 ?>
 <?php $this->beginPage() ?>
@@ -198,7 +198,7 @@ DashAsset::register($this);
                 <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-slate-200 overflow-hidden
                         border-2 border-white shadow-sm">
                     <?= Html::img(
-                        'https://lh3.googleusercontent.com/aida-public/AB6AXuDbUjMISHuEoOLTVh20Srs2iirQxVpUBoLOTFiMqjyExCT2bVw3mHLN-Xyw0EPZGG5_o5JfXQuU_90vapGKEo4w8gr_Le7YeJv7ZLDnIJOLfxolvK7OgFhbnrgayjlZUhubQWd1BVZkug5MBT3Scl9F5-EOjpryHCC7TX-0wNS9GFO_3uGbMe9qbX_Lm37mJRVWqV6DIN3YPuLN_Wr_pa3C3xrXBG9Mx07QpoWyhJT3Y2uNfEhdQBW3BPg5qk0t95t2YsM408yjP68',
+                        Yii::$app->user->identity->avatarUrl ?? Url::to($userAvatar),
                         ['alt' => 'Researcher Profile', 'class' => 'w-full h-full object-cover']
                     ) ?>
                 </div>

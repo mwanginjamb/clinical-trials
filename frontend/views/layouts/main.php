@@ -9,13 +9,13 @@ use frontend\assets\DashAsset;
 
 DashAsset::register($this);
 
-$controllerId = Yii::$app->controller->id;
-$actionId = Yii::$app->controller->action->id;
+$controllerId = \Yii::$app->controller->id;
+$actionId = \Yii::$app->controller->action->id;
 
-$this->registerCssFile('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap', ['depends' => []]);
-$this->registerCssFile('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap', ['depends' => []]);
+// $this->registerCssFile('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap', ['depends' => []]);
+// $this->registerCssFile('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap', ['depends' => []]);
 
-
+$userAvatar = "https://placehold.co/150/cccccc/FFFFFF.webp/?text=" . (Yii::$app->user->identity->username ?? 'User');
 /*
  * Nav helper: returns the CSS classes for a sidebar nav link.
  * Active when the current controller matches $ctrl (and optionally $action).
@@ -84,7 +84,7 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                 ) ?>
                 <div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/30">
                     <?= Html::img(
-                        Yii::$app->user->identity->avatarUrl ?? Url::to('@web/img/avatar-placeholder.png'),
+                        Yii::$app->user->identity->avatarUrl ?? Url::to($userAvatar),
                         [
                             'alt' => 'Researcher Profile',
                             'class' => 'w-full h-full object-cover',
@@ -114,7 +114,7 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                         </div>
                         <div>
                             <h2 class="text-lg font-black text-[#005470] font-headline leading-tight">
-                                
+
                                 <?= Yii::$app->name ?>
                             </h2>
                             <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Enterprise

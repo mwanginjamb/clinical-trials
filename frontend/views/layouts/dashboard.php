@@ -18,8 +18,9 @@ use yii\helpers\Url;
 // <head> via $this->head() before any local CSS — avoids FOUT.
 
 
-//$this->registerLinkTag(['rel' => 'preconnect', 'href' => 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap']);
-//$this->registerLinkTag(['rel' => 'preconnect', 'href' => 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap']);
+$this->registerCssFile('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap', ['depends' => []]);
+$this->registerCssFile('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap', ['depends' => []]);
+
 
 DashAsset::register($this);
 $userAvatar = "https://placehold.co/150/cccccc/FFFFFF.webp/?text=" . (Yii::$app->user->identity->username ?? 'User');

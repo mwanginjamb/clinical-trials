@@ -19,10 +19,10 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="max-w-4xl">
             <div class="flex items-center gap-3 mb-3">
             <span class="px-3 py-1 bg-tertiary-container text-on-tertiary-fixed font-semibold text-[10px] tracking-widest uppercase rounded-full">Approved</span>
-            <span class="text-on-surface-variant font-label text-xs tracking-tighter">PROTOCOL ID: CC-2024-QX-892</span>
+            <span class="text-on-surface-variant font-label text-xs tracking-tighter">PROTOCOL ID: <?= $model->protocol_number ?? '' ?></span>
             </div>
             <h2 class="text-3xl font-extrabold font-headline text-on-surface tracking-tight leading-tight">
-                                    Efficacy and Safety of Novel mTOR Inhibitor Compound-X2 in Stage III Non-Small Cell Lung Cancer: A Randomized, Double-Blind, Phase III Registry Study
+                                    <?= Html::encode($model->scientific_title ?? '') ?>
                                 </h2>
             </div>
             <div class="flex gap-3">

@@ -105,7 +105,12 @@ class InvestigatorTeamController extends Controller
     {
         $model = new InvestigatorTeam();
         $searchModel = new InvestigatorTeamSearch();
-        $params = $this->request->queryParams();
+        $params = $this->request->queryParams;
+
+        if (!isset($params['InvestigatorTeamSearch'])) {
+            $params['InvestigatorTeamSearch'] = [];
+        }
+
         $params['InvestigatorTeamSearch']['trial_id'] = $trial_id;
 
         $dataProvider = $searchModel->search($params);

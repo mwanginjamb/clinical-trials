@@ -193,13 +193,7 @@ $this->title = 'Trials Library';
         <?= Html::activeDropDownList(
             $searchModel,
             'registration_status',
-            [
-                '' => 'All Status',
-                'approved' => 'Approved',
-                'active' => 'In Progress',
-                'on_hold' => 'On Hold',
-                'pending' => 'Pending',
-            ],
+            array_merge(['' => 'All Statuses '], ClinicalTrial::getRegistrationStatusOptions()),
             [
                 'class' => 'w-full bg-surface-container-lowest border border-outline-variant '
                     . 'rounded-xl text-sm py-2.5 px-4',
@@ -342,14 +336,16 @@ $this->title = 'Trials Library';
                     'active' => ['bg-secondary-container', 'text-on-secondary-container', 'In Progress'],
                     'on_hold' => ['bg-error-container', 'text-on-error-container', 'On Hold'],
                     'pending' => ['bg-surface-container-high', 'text-on-surface-variant', 'Pending'],
+                    'rejected' => ['bg-error-container', 'text-on-error-container', 'Rejected'],
                 ];
-                $key = strtolower($model->registration_status ?? '');
-                [$bg, $fg, $label] = $map[$key]
+                $status = $model::getRegistrationStatusOptions()[$model->registration_status] ?? 'Unknown';
+                $key = strtolower($status);
+                [$bg, $fg, $status] = $map[$key]
                     ?? ['bg-surface-container-high', 'text-on-surface-variant', ucfirst($key) ?: '—'];
 
                 return Html::tag(
                     'span',
-                    $label,
+                    $status,
                     [
                         'class' => "inline-flex px-3 py-1 $bg $fg rounded-full "
                             . 'text-[10px] font-bold uppercase tracking-wider'

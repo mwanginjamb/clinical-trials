@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\models\InvestigatorTeam;
 use frontend\models\InvestigatorTeamSearch;
+use frontend\models\Town;
 use Yii;
 use yii\base\Response;
 use yii\filters\AccessControl;
@@ -56,7 +57,7 @@ class InvestigatorTeamController extends Controller
     // Exclude 'save-member' from CSRF validation since it's an AJAX endpoint that may be called from JS without a CSRF token
     public function beforeAction($action)
     {
-        if ($action->id === 'save-member') {
+        if ($action->id === 'save-member' || $action->id === 'towns-dd') {
             $this->enableCsrfValidation = false;
         }
 
@@ -250,4 +251,26 @@ class InvestigatorTeamController extends Controller
 
 
     }
+
+    // Towns DropDown
+
+    public function actionTownsDd($id)
+    {
+        $data = Town::find()->select(['id', 'name'])->where(['country_id' => $id])->all();
+        if (count($data)) {
+            ob_start();
+            echo '<option value="0">Select...</option>';
+            foreach ($data as $key => $val) {
+                echo "<option value='" . $val->id . "'>" . $val->name . "</option>";
+                $listData = ob_get_contents();
+            }
+            ob_end_clean();
+            echo $listData;
+            exit;
+        } else {
+            echo "<option value=''>No data Available</option>";
+        }
+    }
 }
+
+

@@ -117,10 +117,10 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
                                 <div class="space-y-3">
                                     <div class="flex gap-2">
                                         <input name="team[<?= $i ?>][country]" placeholder="Country"
-                                            value="<?= Html::encode($member->country) ?>"
+                                            value="<?= Html::encode($member->countryModel?->name ?? '') ?>"
                                             class="w-1/2 bg-transparent border-0 border-b text-xs p-0">
                                         <input name="team[<?= $i ?>][city]" placeholder="City"
-                                            value="<?= Html::encode($member->city) ?>"
+                                            value="<?= Html::encode($member->cityModel?->name ?? '') ?>"
                                             class="w-1/2 bg-transparent border-0 border-b text-xs p-0">
                                     </div>
                                     <input name="team[<?= $i ?>][postal_address]" placeholder="Postal Address"
@@ -193,14 +193,29 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
                                 'InvestigatorTeam[__INDEX__][country]',
                                 null,
                                 $model->countryOptions, // Assuming you have a method in your model that returns country options
-                                array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select Country...'])
+                                array_merge(
+                                    FormUi::inputOptions()['select'],
+                                    [
+                                        'prompt' => 'Select Country...',
+                                        'onchange' => '$.post( "' . Yii::$app->urlManager->createUrl('investigator-team/towns-dd?id=') . '" + $(this).val(), function( data ) {
+                                        $( "select.town-dd" ).html( data );
+                                });
+                                '
+                                    ]
+                                )
                             ) ?>
 
                             <?= Html::dropDownList(
                                 'InvestigatorTeam[__INDEX__][city]',
                                 null,
                                 $model->cityOptions, // Assuming you have a method in your model that returns city options
-                                array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select City...'])
+                                array_merge(
+                                    FormUi::inputOptions()['select'],
+                                    [
+                                        'prompt' => 'Select City...',
+                                        'class' => 'town-dd'
+                                    ]
+                                )
                             ) ?>
                         </div>
 

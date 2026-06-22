@@ -2,7 +2,10 @@
 
 namespace frontend\models;
 
+use frontend\models\Country;
+use frontend\models\Town;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "investigator_team".
@@ -84,6 +87,20 @@ class InvestigatorTeam extends \yii\db\ActiveRecord
         return $this->hasOne(ClinicalTrial::class, ['id' => 'trial_id']);
     }
 
+    // Country Relationship
+
+    public function getCountryModel()
+    {
+        return $this->hasOne(Country::class, ['id' => 'country']);
+    }
+
+    // City Relationship
+
+    public function getCityModel()
+    {
+        return $this->hasOne(Town::class, ['id' => 'city']);
+    }
+
     /**
      * {@inheritdoc}
      * @return \frontend\models\query\InvestigatorTeamQuery the active query used by this AR class.
@@ -106,30 +123,16 @@ class InvestigatorTeam extends \yii\db\ActiveRecord
     // get Country Options
     public function getCountryOptions()
     {
-        return [
-            1 => 'Kenya',
-            2 => 'Uganda',
-            3 => 'United Kingdom',
-            4 => 'Canada',
-            5 => 'Australia',
-            6 => 'Germany',
-            // Add more countries as needed
-        ];
+        $countries = Country::find()->all();
+        return ArrayHelper::map($countries, 'id', 'name');
     }
 
     // Get City Options
 
     public function getCityOptions()
     {
-        return [
-            1 => 'Nairobi',
-            2 => 'Kampala',
-            3 => 'London',
-            4 => 'Toronto',
-            5 => 'Sydney',
-            6 => 'Berlin',
-            // Add more cities as needed
-        ];
+        $cities = Town::find()->all();
+        return ArrayHelper::map($cities, 'id', 'name');
     }
 
 

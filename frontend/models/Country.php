@@ -45,6 +45,8 @@ class Country extends \yii\db\ActiveRecord
         return [
             [['code', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['name'], 'required'],
+            ['name', 'unique'],
+            ['code', 'unique'],
             [['code', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
         ];

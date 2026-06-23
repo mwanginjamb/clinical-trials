@@ -49,6 +49,8 @@ class Town extends \yii\db\ActiveRecord
             [['code', 'country_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['name'], 'string', 'max' => 255],
             [['country_id'], 'exist', 'skipOnError' => true, 'targetClass' => Country::class, 'targetAttribute' => ['country_id' => 'id']],
+            ['name', 'unique'],
+            ['code', 'unique'],
         ];
     }
 

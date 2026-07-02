@@ -2,11 +2,13 @@
 
 namespace frontend\controllers;
 
+use frontend\models\Country;
 use frontend\models\Funding;
 use frontend\models\FundingSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -105,8 +107,13 @@ class FundingController extends Controller
             $model->loadDefaultValues();
         }
 
+        $countries = ArrayHelper::merge(
+            ['other' => 'other'],
+            ArrayHelper::map(Country::find()->all(),'id','name')
+            );
         return $this->render('create', [
             'model' => $model,
+            'countries' => $countries
         ]);
     }
 
@@ -130,8 +137,14 @@ class FundingController extends Controller
             return $this->redirect(Yii::$app->urlManager->createUrl(['study-description/create']));
         }
 
+         $countries = ArrayHelper::merge(
+            ['other' => 'other'],
+            ArrayHelper::map(Country::find()->all(),'id','name')
+            );
+
         return $this->render('update', [
             'model' => $model,
+            'countries' => $countries
         ]);
     }
 

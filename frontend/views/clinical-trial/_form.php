@@ -16,7 +16,7 @@ $activeIndex = 0;
 
 // show next/prev buttons based on current step index not more than 3 steps away from current step to prevent navigation to non-sequential steps
 foreach ($steps as $i => $step) {
-    if ($step['controller'] === Yii::$app->controller->id && $step['action'] === Yii::$app->controller->action->id) {
+    if ($step['controller'] === Yii::$app->controller->id &&  in_array($step['action'],['create','update'])) {
         $activeIndex = $i;
         break;
     }
@@ -38,11 +38,10 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
             <?= $totalSteps ?>
         </span>
         <h1 class="text-4xl font-extrabold tracking-tight text-primary mt-2">
-            Study Purpose and Design
+            Trial Genaral Details
         </h1>
         <p class="text-on-surface-variant max-w-2xl mt-3 leading-relaxed">
-            Define the scientific intent and methodological framework for the upcoming
-            clinical investigation. This data ensures protocol compliance and regulatory alignment.
+            Define the clinical trial general details.
         </p>
     </header>
 

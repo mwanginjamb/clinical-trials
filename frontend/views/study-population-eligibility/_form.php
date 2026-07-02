@@ -14,7 +14,7 @@ $totalSteps = count($steps);
 
 $activeIndex = 0;
 foreach ($steps as $i => $step) {
-    if ($step['action'] === $actionId) {
+    if ($step['controller'] === Yii::$app->controller->id &&  in_array($step['action'],['create','update'])) {
         $activeIndex = $i;
         break;
     }

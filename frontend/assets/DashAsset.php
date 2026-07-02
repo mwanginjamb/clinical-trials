@@ -43,6 +43,7 @@ class DashAsset extends AssetBundle
      */
     public $js = [
         'js/app.js',
+        '//cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/js/select2.min.js'
     ];
 
     /** @var array Yii asset dependencies (none required at this time). */

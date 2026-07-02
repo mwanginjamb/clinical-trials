@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use common\library\CurrencyHelper;
 use Yii;
 
 /**
@@ -17,6 +18,7 @@ use Yii;
  * @property int|null $updated_at
  * @property int|null $created_by
  * @property int|null $update_by
+ * @property string $currency
  *
  * @property ClinicalTrial $trial
  */
@@ -51,7 +53,10 @@ class Funding extends \yii\db\ActiveRecord
             [['Amount'], 'number'],
             ['sponsor_name', 'string', 'max' => 250],
             [['trial_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClinicalTrial::class, 'targetAttribute' => ['trial_id' => 'id']],
-        ];
+            ['currency','string','max' => 3],
+            ['currency','required'],
+            ['currency', 'in', 'range' => array_keys(CurrencyHelper::getSymbolList())],
+            ];
     }
 
     /**

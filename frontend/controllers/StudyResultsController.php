@@ -7,6 +7,7 @@ use frontend\models\StudyResultsSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -103,8 +104,11 @@ class StudyResultsController extends Controller
             $model->loadDefaultValues();
         }
 
+        $publishers = ArrayHelper::merge(['other' => 'Other'], ArrayHelper::map(\frontend\models\Publisher::find()->all(), 'publisher', 'publisher'));
+
         return $this->render('create', [
             'model' => $model,
+            'publishers' => $publishers,
         ]);
     }
 
@@ -129,8 +133,11 @@ class StudyResultsController extends Controller
             return $this->redirect(Yii::$app->urlManager->createUrl(['opendata-access/create', 'trial_id' => $model->trial_id]));
         }
 
+        $publishers = ArrayHelper::merge(['other' => 'Other'], ArrayHelper::map(\frontend\models\Publisher::find()->all(), 'publisher', 'publisher'));
+
         return $this->render('update', [
             'model' => $model,
+            'publishers' => $publishers,
         ]);
     }
 

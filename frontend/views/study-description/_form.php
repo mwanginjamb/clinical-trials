@@ -14,7 +14,7 @@ $totalSteps = count($steps);
 
 $activeIndex = 0;
 foreach ($steps as $i => $step) {
-    if ($step['controller'] === Yii::$app->controller->id &&  in_array($step['action'],['create','update'])) {
+    if ($step['controller'] === Yii::$app->controller->id && in_array($step['action'], ['create', 'update'])) {
         $activeIndex = $i;
         break;
     }
@@ -29,7 +29,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 <div class="study-description-form">
 
 
-<?php /* ── Editorial Header ────────────────────────────────────────────── */ ?>
+    <?php /* ── Editorial Header ────────────────────────────────────────────── */ ?>
     <header class="mb-12 border-l-4 border-primary pl-8">
         <span class="text-label-sm font-bold tracking-[0.1em] text-on-surface-variant uppercase">
             Step
@@ -45,10 +45,12 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     </header>
 
 
-     <?php /* ── Progress Tracker partial (active state auto-resolved internally) */ ?>
+    <?php /* ── Progress Tracker partial (active state auto-resolved internally) */ ?>
     <?= $this->render('/clinical-trial/_progress_tracker') ?>
 
     <?php $form = ActiveForm::begin(FormUi::formConfig('study-description-form')); ?>
+
+    <?= $form->errorSummary($model, ['class' => 'alert alert-danger alert-dismissible fade show', 'role' => 'alert']) ?>
 
     <?php
     /* -------------------------------------------------------------------
@@ -62,26 +64,26 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <?= $form->field($model, 'study_website',FormUi::fieldConfig()['base'])->textInput(array_merge(['maxlength' => true,'type' => 'url','placeholder' => 'https://example.com'], FormUi::inputOptions()['text']))->hint('The URL of the study website') ?>
+            <?= $form->field($model, 'study_website', FormUi::fieldConfig()['base'])->textInput(array_merge(['maxlength' => true, 'type' => 'url', 'placeholder' => 'https://example.com'], FormUi::inputOptions()['text']))->hint('The URL of the study website') ?>
 
-            <?= $form->field($model, 'lay_summary',FormUi::fieldConfig()['base'])->textarea(array_merge(['rows' => 6], FormUi::inputOptions()['textarea']))->hint('A simplified explanation of the study for the general public') ?>
+            <?= $form->field($model, 'lay_summary', FormUi::fieldConfig()['base'])->textarea(array_merge(['rows' => 6], FormUi::inputOptions()['textarea']))->hint('A simplified explanation of the study for the general public') ?>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <?= $form->field($model, 'scientific_summary',FormUi::fieldConfig()['base'])->textarea(array_merge(['rows' => 6], FormUi::inputOptions()['textarea']))->hint('A detailed explanation of the study for researchers and clinicians') ?>
+            <?= $form->field($model, 'scientific_summary', FormUi::fieldConfig()['base'])->textarea(array_merge(['rows' => 6], FormUi::inputOptions()['textarea']))->hint('A detailed explanation of the study for researchers and clinicians') ?>
 
             <?= $form->field($model, 'trial_id')->textInput(array_merge(['readonly' => true], FormUi::inputOptions()['text'])) ?>
         </div>
-    
+
 
 
     </div>
 
-     <!-- ═══════════════════════════════════════════════════════
+    <!-- ═══════════════════════════════════════════════════════
          Form Actions
      ═══════════════════════════════════════════════════════ -->
     <div class="flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
 
-       
+
 
         <?= Html::submitButton(
             'Save and Continue',

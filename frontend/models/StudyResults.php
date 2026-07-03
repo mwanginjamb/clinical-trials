@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use frontend\models\Publisher;
 use Yii;
 
 /**
@@ -27,6 +28,7 @@ class StudyResults extends \yii\db\ActiveRecord
 {
 
 
+    public $other_publisher_name;
     /**
      * {@inheritdoc}
      */
@@ -61,7 +63,7 @@ class StudyResults extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['permission_to_publish', 'summary_results', 'authority_committe_name', 'publisher', 'url_doi', 'publication_type', 'publication_title', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
+            [['permission_to_publish', 'summary_results', 'authority_committe_name', 'url_doi', 'publication_type', 'publication_title', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['permission_to_publish', 'publication_type', 'trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['summary_results'], 'string'],
             [['trial_id'], 'required'],
@@ -69,6 +71,29 @@ class StudyResults extends \yii\db\ActiveRecord
             [['url_doi', 'publication_title'], 'string', 'max' => 250],
             [['url_doi'], 'url'],
             [['trial_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClinicalTrial::class, 'targetAttribute' => ['trial_id' => 'id']],
+            ['publisher', 'safe'],
+            ['other_publisher_name', 'string', 'max' => 250],
+            [
+                'other_publisher_name',
+                'required',
+                'when' => function ($model) {
+                    return $model->publisher === 'other';
+                },
+                'whenClient' => "function (attribute, value) {
+                return $('#studyresults-publisher').val() === 'other';
+            }"
+            ],
+            [
+                'publisher',
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Publisher::class,
+                'targetAttribute' => ['publisher' => 'publisher'],
+                'message' => 'The selected publisher does not exist in the database.',
+                'when' => function ($model) {
+                    return $model->publisher !== 'other'; // Only validate existence if publisher is not 'other'
+                },
+            ]
         ];
     }
 
@@ -83,6 +108,7 @@ class StudyResults extends \yii\db\ActiveRecord
             'summary_results' => Yii::t('app', 'Summary Results'),
             'authority_committe_name' => Yii::t('app', 'Authority Committe Name'),
             'publisher' => Yii::t('app', 'Publisher'),
+            'other_publisher_name' => Yii::t('app', 'Other Publisher Name'),
             'url_doi' => Yii::t('app', 'Url / DOI'),
             'publication_type' => Yii::t('app', 'Publication Type'),
             'publication_title' => Yii::t('app', 'Publication Title'),
@@ -165,6 +191,29 @@ class StudyResults extends \yii\db\ActiveRecord
             4 => 'Report',
             5 => 'Other',
         ];
+    }
+
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($this->publisher == 'other' && !empty($this->other_publisher_name)) {
+                // check wheather the other publisher already exists in the database
+                $existingPublisher = Publisher::find()->where(['publisher' => $this->other_publisher_name])->one();
+                // create the publisher if it doesn't exist
+                if (!$existingPublisher || $existingPublisher === null) {
+                    $publisher = new Publisher();
+                    $publisher->publisher = $this->other_publisher_name;
+                    if (!$publisher->save()) {
+                        return false; // stop saving if the publisher could not be saved
+                    }
+                }
+                // set publisher to the value of other_publisher_name for saving in study_results table
+                $this->publisher = $this->other_publisher_name;
+            }
+            return true;
+        }
+        return false;
     }
 
 }

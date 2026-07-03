@@ -79,7 +79,7 @@ $this->params['brandSubtitle'] = 'Institutional Research Portal';
                 ])->label(false) ?>
                 <div class="absolute right-4 top-3 text-outline opacity-40
                         group-focus-within:text-primary group-focus-within:opacity-100 transition-all">
-                    <span class="material-symbols-outlined text-xl">mail</span>
+                    <span class="material-symbols-outlined text-xl">person</span>
                 </div>
             </div>
         </div>

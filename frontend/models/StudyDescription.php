@@ -63,6 +63,10 @@ class StudyDescription extends \yii\db\ActiveRecord
             [['trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['study_website'], 'string', 'max' => 255],
             [['trial_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClinicalTrial::class, 'targetAttribute' => ['trial_id' => 'id']],
+
+            ['scientific_summary', 'required', 'message' => 'Scientific Summary is required.'],
+            ['lay_summary', 'required', 'message' => 'Lay Summary is required.'],
+            ['study_website', 'url', 'defaultScheme' => 'https', 'message' => 'Study Website must be a valid URL.'],
         ];
     }
 

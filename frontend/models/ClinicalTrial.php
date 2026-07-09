@@ -30,7 +30,7 @@ use yii\behaviors\TimestampBehavior;
 class ClinicalTrial extends \yii\db\ActiveRecord
 {
 
-
+    public $other_area_of_specialization;
     /**
      * {@inheritdoc}
      */
@@ -38,6 +38,7 @@ class ClinicalTrial extends \yii\db\ActiveRecord
     {
         return 'clinical_trial';
     }
+
 
     public function behaviors()
     {
@@ -56,8 +57,36 @@ class ClinicalTrial extends \yii\db\ActiveRecord
             [['scientific_title', 'public_title', 'scientific_acronym', 'protocol_version', 'registration_status', 'protocol_number', 'registration_number', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['registration_status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['scientific_title', 'public_title', 'scientific_acronym', 'protocol_version', 'protocol_number', 'registration_number'], 'string', 'max' => 255],
-            [['scientific_title', 'protocol_number', 'registration_status'], 'required', 'message' => 'This field is required.'],
-            [['area_of_specialization', 'specialization_sub_section'], 'integer'],
+            // [['scientific_title', 'protocol_number', 'registration_status'], 'required', 'message' => 'This field is required.'],
+            ['scientific_title', 'required', 'message' => 'Scientific title is required.'],
+            ['protocol_number', 'required', 'message' => 'Protocol number is required.'],
+            ['registration_status', 'required', 'message' => 'Registration status is required.'],
+            [['specialization_sub_section'], 'integer'],
+            ['area_of_specialization', 'safe'],
+            ['other_area_of_specialization', 'string', 'max' => 255],
+            [
+                'other_area_of_specialization',
+                'required',
+                'when' => function ($model) {
+                    return $model->area_of_specialization === 'other';
+                },
+                'whenClient' => "function (attribute, value) {
+                    return $('#clinicaltrial-area_of_specialization').val() === 'other';
+                }",
+                'message' => 'Please specify the other area of specialization.'
+            ],
+            [
+                'area_of_specialization',
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => AreaOfSpecialization::class,
+                'targetAttribute' => ['area_of_specialization' => 'id'],
+                'message' => 'Please select a valid area of specialization.',
+                'when' => function ($model) {
+                    return $model->area_of_specialization !== 'other'; // exclude validation when "other" is selected
+                },
+            ],
+
         ];
     }
 
@@ -79,7 +108,7 @@ class ClinicalTrial extends \yii\db\ActiveRecord
             'updated_at' => Yii::t('app', 'Updated At'),
             'created_by' => Yii::t('app', 'Created By'),
             'updated_by' => Yii::t('app', 'Updated By'),
-            'area_of_specialization' => Yii::t('app', 'Broad Study Area of Specialization'),
+            'area_of_specialization' => Yii::t('app', 'Broad Study Area of Study'),
             'specialization_sub_section' => Yii::t('app', 'Specialization Sub Section'),
         ];
     }
@@ -221,8 +250,8 @@ class ClinicalTrial extends \yii\db\ActiveRecord
 
 
     /*
-    * Markup helper functions for grid
-    */
+     * Markup helper functions for grid
+     */
 
     // Add status badge helper
     public function getStatusBadge()
@@ -288,6 +317,32 @@ class ClinicalTrial extends \yii\db\ActiveRecord
             return Yii::$app->formatter->asDate($this->timeline->anticipated_start_date, 'php:M d, Y');
         }
         return 'TBD';
+    }
+
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            // If area_of_specialization is 'other', set it to null and save the other_area_of_specialization
+            if ($this->area_of_specialization === 'other' && !empty($this->other_area_of_specialization)) {
+                $this->area_of_specialization = null;
+                // Check if the other_area_of_specialization already exists in the database
+                $existingSpecialization = AreaOfSpecialization::find()->where(['title' => $this->other_area_of_specialization])->one();
+                // Create the specialization if it doesn't exist
+                if (!$existingSpecialization) {
+                    $specialization = new AreaOfSpecialization();
+                    $specialization->title = $this->other_area_of_specialization;
+                    if (!$specialization->save()) {
+                        return false; // stop saving if the specialization could not be saved
+                    }
+                }
+                // Set area_of_specialization to the value of other_area_of_specialization for saving in clinicaltrial table
+                $this->area_of_specialization = $specialization->id;
+
+            }
+            return true;
+        }
+        return false;
     }
 
 }

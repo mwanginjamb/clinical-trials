@@ -7,6 +7,7 @@ use frontend\models\ClinicalTrialSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -123,8 +124,14 @@ class ClinicalTrialController extends Controller
             $model->loadDefaultValues();
         }
 
+        // Area of study
+        $studyAreas = ArrayHelper::merge(
+            ['other' => 'Other'],
+            ArrayHelper::map(\frontend\models\AreaOfSpecialization::find()->asArray()->all(), 'id', 'title')
+        );
         return $this->render('create', [
             'model' => $model,
+            'studyAreas' => $studyAreas,
         ]);
     }
 
@@ -138,11 +145,10 @@ class ClinicalTrialController extends Controller
     public function actionUpdate($id = null, $trial_id = null)
     {
         $model = $this->findModel($id);
-        if($model)
-        {
+        if ($model) {
             Yii::$app->session->set('clinical_trial_id', $model->id);
         }
-        
+
         // if model is null , find it by trial_id
         if (!$model && $trial_id) {
             $model = ClinicalTrial::find()->where(['id' => $trial_id])->one();
@@ -155,8 +161,15 @@ class ClinicalTrialController extends Controller
             return $this->redirect(Url::toRoute(['study-purpose/update', 'trial_id' => $model->id]));
         }
 
+        // Area of study
+        $studyAreas = ArrayHelper::merge(
+            ['other' => 'Other'],
+            ArrayHelper::map(\frontend\models\AreaOfSpecialization::find()->asArray()->all(), 'id', 'title')
+        );
+
         return $this->render('update', [
             'model' => $model,
+            'studyAreas' => $studyAreas,
         ]);
     }
 

@@ -16,7 +16,7 @@ $activeIndex = 0;
 
 // show next/prev buttons based on current step index not more than 3 steps away from current step to prevent navigation to non-sequential steps
 foreach ($steps as $i => $step) {
-    if ($step['controller'] === Yii::$app->controller->id &&  in_array($step['action'],['create','update'])) {
+    if ($step['controller'] === Yii::$app->controller->id && in_array($step['action'], ['create', 'update'])) {
         $activeIndex = $i;
         break;
     }
@@ -38,7 +38,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
             <?= $totalSteps ?>
         </span>
         <h1 class="text-4xl font-extrabold tracking-tight text-primary mt-2">
-            Trial Genaral Details
+            Trial General Details
         </h1>
         <p class="text-on-surface-variant max-w-2xl mt-3 leading-relaxed">
             Define the clinical trial general details.
@@ -51,6 +51,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <?php $form = ActiveForm::begin(FormUi::formConfig('clinical-trial-form')); ?>
 
+    <?= $form->errorSummary($model, ['class' => 'alert alert-danger alert-dismissible fade show', 'role' => 'alert']) ?>
     <?php
     /* -------------------------------------------------------------------
        SECTION 1 – Scientific Rationale
@@ -66,13 +67,18 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
         <div class="grid grid-cols-1 gap-10">
             <?= $form->field($model, 'area_of_specialization', FormUi::fieldConfig()['base'])
                 ->dropDownList(
-                    $model::getAreaOfSpecializationOptions(),
+                    $studyAreas,
                     array_merge(FormUi::inputOptions()['select'], [
                         'prompt' => 'Select an area of specialization...',
                     ])
                 )
                 ->hint($model->getAttributeHint('area_of_specialization'))
                 ?>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10" id="other_area_of_specialization"
+            style="<?= $model->area_of_specialization === 'other' ? '' : 'display:none' ?>">
+            <?= $form->field($model, 'other_area_of_specialization', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true])) ?>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -150,3 +156,26 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <?php ActiveForm::end() ?>
 </div>
+
+<?php
+
+$script = <<<JS
+    function toggleOtherInstitution() {
+        const institution = $('#clinicaltrial-area_of_specialization').val();
+
+        if (institution === 'other') {
+            $('#other_area_of_specialization').slideDown();
+        } else {
+            $('#other_area_of_specialization').slideUp();
+            $('#clinicaltrial-other_area_of_specialization').val('');
+        }
+    }
+
+    toggleOtherInstitution();
+
+    $('#clinicaltrial-area_of_specialization').on('change', function () {
+        toggleOtherInstitution();
+    });
+JS;
+$this->registerJs($script);
+?>

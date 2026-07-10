@@ -19,9 +19,10 @@ return [
         ],
         'user' => [
             'identityClass' => 'common\models\User',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
-            'authTimeout' => 3600, //1 hr
+            'authTimeout' => 1800, //30 min
+            'absoluteAuthTimeout' => 1800, // 30 min
         ],
         'session' => [
             // this is the name of the session cookie used for login on the frontend

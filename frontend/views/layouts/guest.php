@@ -86,6 +86,7 @@ AppAsset::register($this);
         <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
 
             <div class="p-8 sm:p-10">
+                <?= $this->render('_flash_alerts') ?>
                 <?= $content ?>
             </div>
 

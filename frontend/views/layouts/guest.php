@@ -1,101 +1,105 @@
 <?php
 
-/**
- * Clinical Curator — Guest Layout
- *
- * Used for all unauthenticated views: login, register, forgot-password, etc.
- * No sidebar, no topbar — full-screen centred card over a decorative background.
- *
- * @var \yii\web\View $this
- * @var string        $content Rendered view output injected by Yii.
- */
-
-use frontend\assets\DashAsset;
 use yii\helpers\Html;
+use frontend\assets\AppAsset;
 
-DashAsset::register($this);
+AppAsset::register($this);
 
-$this->registerCssFile(
-    'https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800'
-    . '&family=Inter:wght@400;500;600&display=swap',
-    ['rel' => 'stylesheet']
-);
-$this->registerCssFile(
-    'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined'
-    . ':wght,FILL@100..700,0..1&display=swap',
-    ['rel' => 'stylesheet']
-);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="<?= Yii::$app->language ?>">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="<?= Yii::$app->charset ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <?= Html::csrfMetaTags() ?>
+
     <title>
-        <?= Html::encode($this->title) ?>
+        <?= Html::encode($this->title) ?> | <?= Html::encode(Yii::$app->name) ?>
     </title>
+    <!-- Favicons all common sizes -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+
+
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
+
+
+
+
+
+
+
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background:
+                linear-gradient(rgba(255, 255, 255, .85),
+                    rgba(255, 255, 255, .85)),
+                url('<?= Yii::getAlias('@web') . '/images/screen.png' ?>');
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+
     <?php $this->head() ?>
 </head>
 
-<body class="bg-background min-h-screen flex items-center justify-center overflow-hidden">
+<body class="h-full antialiased text-gray-900">
     <?php $this->beginBody() ?>
 
-    <!-- ════════════════════════════════════════════════════════════════════════════
-     Decorative background layer
-     ════════════════════════════════════════════════════════════════════════════ -->
-    <div class="fixed inset-0 z-0">
-        <?= Html::img(
-            'https://lh3.googleusercontent.com/aida-public/AB6AXuAF9qoRSY9fpKyShvEfVp4HLlRDvmB98He-uwIoGqK_WY1SE8aMdxWo7YP5TCrLh3fXlooNN5XppY-aJ3xsrV1LDTkj8EAQ_tznRBjbG2VQ7YU1GnVCwe0q1mLT47WAsQ_OFc4Bh5MOoS3GFgbkWwADB_labyDXahPudgFlMoAJa89-mHCmMcvNvEgvFTueORbEpYzT8OgTmoS8O8yGoIfhlSX_r8CwGxMP6fHNebK0fVyGUw_x29R7z9GgZqtq-pgGjzHhs8GSsM4',
-            [
-                'alt' => '',
-                'class' => 'w-full h-full object-cover opacity-20 filter grayscale contrast-125',
-            ]
-        ) ?>
-        <div class="absolute inset-0 bg-gradient-to-tr from-surface via-surface/80 to-transparent"></div>
-    </div>
+    <main class="min-h-screen flex flex-col justify-center items-center p-4 sm:p-6 overflow-y-auto">
 
-    <!-- ════════════════════════════════════════════════════════════════════════════
-     Guest content — view-specific card/form rendered here
-     ════════════════════════════════════════════════════════════════════════════ -->
-    <main class="relative z-10 w-full max-w-[580px] px-6 ">
+        <!-- Brand Section -->
+        <header class="w-full max-w-md text-center mb-8">
 
-        <!-- Shared branding anchor (views may override $this->params['brandSubtitle']) -->
-        <div class="text-center mb-12">
-            <div class="inline-flex items-center justify-center p-4 mb-6 rounded-xl
-                    bg-surface-container-lowest
-                    shadow-[0_12px_32px_-4px_rgba(0,59,83,0.08)]">
-                <span class="material-symbols-outlined text-primary text-4xl">clinical_notes</span>
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-xl shadow-sm border border-gray-100 mb-6 mx-auto">
+
+                <!-- Replace with KEMRI Logo -->
+                <img src="<?= Yii::getAlias('@web') . '/icons/icon-512x512.png' ?>" alt="KEMRI Logo"
+                    class="w-12 h-12 object-contain">
+
             </div>
-            <h1 class="text-3xl font-extrabold tracking-tight text-primary leading-tight">
-                <?= Yii::$app->params['appTitle'] ?>
+
+            <h1 class="text-2xl font-extrabold text-brand-accent tracking-tight leading-tight">
+                KEMRI Clinical Trials Management System
             </h1>
-            <p class="text-on-surface-variant font-label text-sm uppercase tracking-widest mt-2">
-                <?= Html::encode($this->params['brandSubtitle'] ?? 'Institutional Research Portal') ?>
+
+            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-gray-500">
+                Institutional Research Portal
             </p>
+
+        </header>
+
+        <!-- Auth Card -->
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+
+            <div class="p-8 sm:p-10">
+                <?= $content ?>
+            </div>
+
         </div>
 
-        <?= $this->render('_flash_alerts') ?>
-        <?= $content ?>
-
-        <!-- Shared footer -->
+        <!-- Footer -->
         <footer class="mt-8 text-center">
-            <p class="text-xs text-on-surface-variant opacity-60">
-                &copy;
-                <?= date('Y') ?> KEMRI Clinical Trials Curator.
+            <p class="text-[10px] text-gray-400 font-medium">
+                ©
+                <?= date('Y') ?> KEMRI Clinical Trials Management. All Rights Reserved.
             </p>
         </footer>
 
     </main>
-
-    <!-- ════════════════════════════════════════════════════════════════════════════
-     Ambient decorative blurs (cosmetic only)
-     ════════════════════════════════════════════════════════════════════════════ -->
-    <div class="fixed top-12 left-12 w-64 h-64 bg-primary-container/5
-            rounded-full blur-[100px] pointer-events-none"></div>
-    <div class="fixed bottom-12 right-12 w-96 h-96 bg-tertiary-container/5
-            rounded-full blur-[120px] pointer-events-none"></div>
 
     <?php $this->endBody() ?>
 </body>

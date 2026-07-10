@@ -25,6 +25,18 @@ $this->registerCssFile('https://fonts.googleapis.com/css2?family=Material+Symbol
 DashAsset::register($this);
 $userAvatar = "https://placehold.co/150/cccccc/FFFFFF.webp/?text=" . (Yii::$app->user->identity->username ?? 'User');
 
+$controllerId = \Yii::$app->controller->id;
+$actionId = \Yii::$app->controller->action->id;
+/*
+ * Nav helper: returns the CSS classes for a sidebar nav link.
+ * Active when the current controller matches $ctrl (and optionally $action).
+ */
+$navClass = function (string $ctrl, string $action = '') use ($controllerId, $actionId): string {
+    $isActive = $controllerId === $ctrl && ($action === '' || $actionId === $action);
+    return $isActive
+        ? 'flex items-center gap-3 px-4 py-3 bg-[#c4e7ff] text-[#001e2c] rounded-lg font-headline text-sm font-bold'
+        : 'flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-200 transition-all rounded-lg font-headline text-sm font-medium';
+};
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -36,6 +48,22 @@ $userAvatar = "https://placehold.co/150/cccccc/FFFFFF.webp/?text=" . (Yii::$app-
     <title>
         <?= Html::encode($this->title) ?>
     </title>
+    <?= Html::csrfMetaTags() ?>
+
+    <!-- Favicons all common sizes -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+
+
+
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
+
+
     <?php $this->head() ?>
 </head>
 
@@ -135,13 +163,12 @@ $userAvatar = "https://placehold.co/150/cccccc/FFFFFF.webp/?text=" . (Yii::$app-
                 ]
             ) ?>
             <?= Html::a(
-                '<span class="material-symbols-outlined">logout</span><span>Sign Out</span>',
-                ['/site/logout'],
+                '<span class="material-symbols-outlined">logout</span> Sign Out',
+                Url::to(['/site/logout']),
                 [
-                    'class' => 'text-slate-600 dark:text-slate-400 hover:bg-slate-200
-                                   dark:hover:bg-slate-800 rounded-lg flex items-center gap-3
-                                   px-4 py-3 transition-all',
+                    'class' => $navClass('site', 'logout'),
                     'data-method' => 'post',
+                    'data-confirm' => 'Are you sure you want to sign out?',
                 ]
             ) ?>
         </div>

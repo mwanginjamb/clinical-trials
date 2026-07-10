@@ -55,7 +55,12 @@ module.exports = {
                 "error": "#ba1a1a",
                 "on-primary-container": "#90c6e7",
                 "primary-fixed": "#c4e7ff",
-                "surface-container-high": "#e7e8e9"
+                "surface-container-high": "#e7e8e9",
+                "brand": {
+                    primary: '#005470', // Primary Clinical Curator Brand Color
+                    accent: '#007bff',
+                    light: '#f0f7ff',
+                }
             },
             "borderRadius": {
                 "DEFAULT": "0.125rem",

@@ -1,6 +1,6 @@
 {
-    "name": "KEMRI Clinical Repository",
-    "short_name": "KEMRI Clinical Repository",
+    "name": "KEMRI Clinical Trials Open Data Access Platform",
+    "short_name": "KEMRI Clinical Trials Repository",
     "description": "Enterprise Research Platform",
     "start_url": "/",
     "display": "standalone",

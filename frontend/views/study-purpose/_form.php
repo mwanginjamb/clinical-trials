@@ -17,7 +17,7 @@ $activeIndex = 0;
 
 // show next/prev buttons based on current step index not more than 3 steps away from current step to prevent navigation to non-sequential steps
 foreach ($steps as $i => $step) {
-    if ($step['controller'] === Yii::$app->controller->id &&  in_array($step['action'],['create','update'])) {
+    if ($step['controller'] === Yii::$app->controller->id && in_array($step['action'], ['create', 'update'])) {
         $activeIndex = $i;
         break;
     }
@@ -30,7 +30,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
 <div class="study-purpose-form">
 
-     <header class="mb-12 border-l-4 border-primary pl-8">
+    <header class="mb-12 border-l-4 border-primary pl-8">
         <span class="text-label-sm font-bold tracking-[0.1em] text-on-surface-variant uppercase">
             Step
             <?= $stepNumber ?> /
@@ -40,7 +40,8 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
             Study Purpose and Design
         </h1>
         <p class="text-on-surface-variant max-w-2xl mt-3 leading-relaxed">
-            Define the scientific intent and methodological framework for the upcoming clinical investigation. This data ensures protocol compliance and regulatory alignment.
+            Define the scientific intent and methodological framework for the upcoming clinical investigation. This data
+            ensures protocol compliance and regulatory alignment.
         </p>
     </header>
     <?php /* ── Progress Tracker partial (active state auto-resolved internally) */ ?>
@@ -49,53 +50,53 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <?php $form = ActiveForm::begin(FormUi::formConfig('clinical-trial-form')); ?>
 
-     <div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm space-y-8">
+    <div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm space-y-8">
         <h2 class="text-xl font-bold text-primary border-b border-surface-container pb-4">
-            Study Purpose and Design
+            Study Purpose and Objective
         </h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <?= $form->field($model, 'study_purpose', FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['textarea'], ['rows' => 3])) ?>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <?= $form->field($model, 'study_purpose', FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['textarea'], ['rows' => 3])) ?>
 
-        <?= $form->field($model, 'study_objective', FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['textarea'], ['rows' => 3])) ?>
+            <?= $form->field($model, 'study_objective', FormUi::fieldConfig()['base'])->textarea(array_merge(FormUi::inputOptions()['textarea'], ['rows' => 3])) ?>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <?= $form->field($model, 'study_hypothesis', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter study hypothesis...']))->hint($model->getAttributeHint('study_hypothesis')) ?>
+
+            <?= $form->field($model, 'type_of_study', FormUi::fieldConfig()['base'])->dropDownList($model->typeOfStudy, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select type of study...'])) ?>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+            <?= $form->field($model, 'intervention', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter intervention...']))->hint($model->getAttributeHint('intervention')) ?>
+
+            <?= $form->field($model, 'control_group_name', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter control group name...']))->hint($model->getAttributeHint('control_group_name')) ?>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+            <?= $form->field($model, 'design_control_group_presence', FormUi::fieldConfig()['base'])->checkbox(array_merge(FormUi::inputOptions())) ?>
+
+            <?= $form->field($model, 'phase_of_study', FormUi::fieldConfig()['base'])->dropDownList($model->phaseOfStudy, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select phase of study...'])) ?>
+
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+            <?= $form->field($model, 'randomization_method_name', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter randomization method name...']))->hint($model->getAttributeHint('randomization_method_name')) ?>
+
+            <?= $form->field($model, 'masking_description', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter masking description...']))->hint($model->getAttributeHint('masking_description')) ?>
+
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+            <?= $form->field($model, 'masking_status', FormUi::fieldConfig()['base'])->checkbox(array_merge(FormUi::inputOptions())) ?>
+
+            <?= $form->field($model, 'trial_id', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['readonly' => true]))->hint($model->getAttributeHint('trial_id')) ?>
+
+        </div>
+
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <?= $form->field($model, 'study_hypothesis', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter study hypothesis...']))->hint($model->getAttributeHint('study_hypothesis')) ?>
-
-        <?= $form->field($model, 'type_of_study', FormUi::fieldConfig()['base'])->dropDownList($model->typeOfStudy, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select type of study...'])) ?>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-
-        <?= $form->field($model, 'intervention', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter intervention...']))->hint($model->getAttributeHint('intervention')) ?>
-
-        <?= $form->field($model, 'control_group_name', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter control group name...']))->hint($model->getAttributeHint('control_group_name')) ?>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-
-        <?= $form->field($model, 'design_control_group_presence', FormUi::fieldConfig()['base'])->checkbox(array_merge(FormUi::inputOptions())) ?>
-
-        <?= $form->field($model, 'phase_of_study', FormUi::fieldConfig()['base'])->dropDownList($model->phaseOfStudy, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select phase of study...'])) ?>
-
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-
-        <?= $form->field($model, 'randomization_method_name', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter randomization method name...']))->hint($model->getAttributeHint('randomization_method_name')) ?>
-
-        <?= $form->field($model, 'masking_description', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter masking description...']))->hint($model->getAttributeHint('masking_description')) ?>
-
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-
-        <?= $form->field($model, 'masking_status', FormUi::fieldConfig()['base'])->checkbox(array_merge(FormUi::inputOptions())) ?>
-
-        <?= $form->field($model, 'trial_id', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['readonly' => true]))->hint($model->getAttributeHint('trial_id')) ?>
-
-    </div>
-
-</div>
 
 
 

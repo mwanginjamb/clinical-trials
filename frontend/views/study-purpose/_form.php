@@ -37,7 +37,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
             <?= $totalSteps ?>
         </span>
         <h1 class="text-4xl font-extrabold tracking-tight text-primary mt-2">
-            Study Purpose and Design
+            Study Purpose and Objective
         </h1>
         <p class="text-on-surface-variant max-w-2xl mt-3 leading-relaxed">
             Define the scientific intent and methodological framework for the upcoming clinical investigation. This data

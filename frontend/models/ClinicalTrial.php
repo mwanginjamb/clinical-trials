@@ -98,7 +98,7 @@ class ClinicalTrial extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('app', 'ID'),
             'scientific_title' => Yii::t('app', 'Scientific Title'),
-            'public_title' => Yii::t('app', 'Public Title'),
+            'public_title' => Yii::t('app', 'Lay Title'),
             'scientific_acronym' => Yii::t('app', 'Scientific Acronym'),
             'protocol_version' => Yii::t('app', 'Protocol Version'),
             'registration_status' => Yii::t('app', 'Registration Status'),

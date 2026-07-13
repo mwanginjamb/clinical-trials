@@ -65,7 +65,7 @@ class StudyTimeline extends \yii\db\ActiveRecord
             'anticipated_start_date' => Yii::t('app', 'Anticipated Start Date'),
             'anticipated_end_date' => Yii::t('app', 'Anticipated End Date'),
             'recruitment_status' => Yii::t('app', 'Recruitment Status'),
-            'recruiting_country' => Yii::t('app', 'Recruiting Country'),
+            'recruiting_country' => Yii::t('app', 'Participating Country'),
             'centre_pysical_address' => Yii::t('app', 'Centre Pysical Address'),
             'centre_region' => Yii::t('app', 'Centre Region'),
             'trial_id' => Yii::t('app', 'Trial ID'),

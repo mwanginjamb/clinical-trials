@@ -2,11 +2,13 @@
 
 namespace frontend\controllers;
 
+use frontend\models\Country;
 use frontend\models\StudyTimeline;
 use frontend\models\StudyTimelineSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
@@ -98,8 +100,14 @@ class StudyTimelineController extends Controller
             $model->loadDefaultValues();
         }
 
+        $countries = ArrayHelper::merge(
+            ['other' => 'Other'],
+            ArrayHelper::map(Country::find()->all(),'id','name'),
+        );
+
         return $this->render('create', [
             'model' => $model,
+            'countries' => $countries
         ]);
     }
 
@@ -128,8 +136,14 @@ class StudyTimelineController extends Controller
             return $this->redirect(Yii::$app->urlManager->createUrl(['investigator-team/create', 'trial_id' => $model->trial_id]));
         }
 
+         $countries = ArrayHelper::merge(
+            ['other' => 'Other'],
+            ArrayHelper::map(Country::find()->all(),'id','name'),
+        );
+
         return $this->render('update', [
             'model' => $model,
+            'countries' => $countries
         ]);
     }
 

@@ -49,6 +49,8 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
 
     <?php $form = ActiveForm::begin(FormUi::formConfig($model->formName())); ?>
 
+    <?= $form->errorSummary($model, ['class' => 'alert alert-danger alert-dismissible fade show', 'role' => 'alert']) ?>
+
 
     <div class="bg-surface-container-lowest p-10 rounded-xl shadow-sm space-y-8">
         <h2 class="text-xl font-bold text-primary border-b border-surface-container pb-4">
@@ -74,11 +76,15 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <?= $form->field($model, 'recruiting_country', FormUi::fieldConfig()['base'])->dropDownList($model->recruitingCountry, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select recruiting country...'])) ?>
+        <?= $form->field($model, 'recruiting_country', FormUi::fieldConfig()['base'])->dropDownList($countries, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select recruiting country...'])) ?>
         <?= $form->field($model, 'centre_pysical_address', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true, 'placeholder' => 'Enter centre physical address...'])) ?>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+
+        <div id="other_country" style="<?= $model->recruiting_country === 'other' ? '' : 'display:none' ?>">
+        <?= $form->field($model, 'other_country', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true, 'placeholder' => 'Enter preferred participating country']))->hint('Presumably a missing country from above participating country dropdown') ?>
+        </div>
         <?= $form->field($model, 'centre_region', FormUi::fieldConfig()['base'])->dropDownList($model->centreRegion, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select centre region...'])) ?>
     </div>
 
@@ -108,3 +114,26 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+
+$script = <<<JS
+    function toggleOtherInstitution() {
+        const institution = $('#studytimeline-recruiting_country').val();
+
+        if (institution === 'other') {
+            $('#other_country').slideDown();
+        } else {
+            $('#other_country').slideUp();
+            $('#studytimeline-other_country').val('');
+        }
+    }
+
+    toggleOtherInstitution();
+
+    $('#studytimeline-recruiting_country').on('change', function () {
+        toggleOtherInstitution();
+    });
+JS;
+$this->registerJs($script);
+?>

@@ -122,12 +122,14 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
                 ->hint($model->getAttributeHint('protocol_number'))
                 ?>
 
-            <?= $form->field($model, 'registration_number', FormUi::fieldConfig()['base'])
-                ->textInput(array_merge(FormUi::inputOptions()['text'], [
-                    'placeholder' => 'Enter the registration number...',
-                ]))
-                ->hint($model->getAttributeHint('registration_number'))
-                ?>
+            <div id="reg-number" style="<?= $model->registration_status == 1 ? '' : 'display:none' ?>">
+                <?= $form->field($model, 'registration_number', FormUi::fieldConfig()['base'])
+                    ->textInput(array_merge(FormUi::inputOptions()['text'], [
+                        'placeholder' => 'Enter the registration number...',
+                    ]))
+                    ->hint($model->getAttributeHint('registration_number'))
+                    ?>
+            </div>
         </div>
 
     </div>
@@ -136,7 +138,7 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     <!-- ═══════════════════════════════════════════════════════
          Form Actions
      ═══════════════════════════════════════════════════════ -->
-    <div class="flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
+    <div class=" flex items-center justify-end gap-6 pt-6 border-t border-outline-variant/20">
 
         <?php Html::a(
             'Cancel',
@@ -175,6 +177,21 @@ $script = <<<JS
 
     $('#clinicaltrial-area_of_specialization').on('change', function () {
         toggleOtherInstitution();
+    });
+
+
+    function toggleRegStatus() {
+        const status = $('#clinicaltrial-registration_status').val();
+        if (status == 1) { // Assuming 'Registered' has a value of 1
+            $('#reg-number').slideDown();
+        } else {
+            $('#reg-number').slideUp();
+            $('#clinicaltrial-registration_number').val('');
+        }
+    }
+
+    $('#clinicaltrial-registration_status').on('change', function () {
+        toggleRegStatus();
     });
 JS;
 $this->registerJs($script);

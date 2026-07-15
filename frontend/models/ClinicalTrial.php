@@ -86,6 +86,17 @@ class ClinicalTrial extends \yii\db\ActiveRecord
                     return $model->area_of_specialization !== 'other'; // exclude validation when "other" is selected
                 },
             ],
+            [
+                'registration_number',
+                'required',
+                'when' => function ($model) {
+                    return $model->registration_status === 1; // Assuming 'Registered' has a value of 1
+                },
+                'whenClient' => "function (attribute, value) {
+                    return $('#clinicaltrial-registration_status').val() === '1'; // Assuming 'Registered' has a value of 1
+                }",
+                'message' => 'Please specify the registration number.'
+            ],
 
         ];
     }

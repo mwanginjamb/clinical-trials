@@ -377,7 +377,57 @@ $this->title = 'Trials Library';
             },
             ],
 
-            // ④ Actions (view · edit · delete)
+            // creator
+            [
+                'attribute' => 'created_by',
+                'label' => 'Created By',
+                'format' => 'raw',
+                'headerOptions' => [
+                    'class' => 'text-[10px] font-bold text-outline uppercase tracking-widest pb-3 text-center',
+                    'style' => "font-family:'Inter',sans-serif;",
+                ],
+                'contentOptions' => ['class' => 'py-5 text-center align-middle'],
+                'value' => function ($model) {
+                return Html::tag(
+                    'span',
+                    Html::encode($model->creator->username ?? 'System'),
+                    [
+                        'class' => 'text-sm font-medium text-on-surface',
+                        'style' => "font-family:'Manrope',sans-serif;",
+                    ]
+                );
+            },
+            ],
+
+            // Creation timeline
+    
+            [
+                'attribute' => 'created_at',
+                'label' => 'Created',
+                'format' => 'raw',
+                'headerOptions' => [
+                    'class' => 'text-[10px] font-bold text-outline uppercase tracking-widest pb-3 text-center',
+                    'style' => "font-family:'Inter',sans-serif;",
+                ],
+                'contentOptions' => ['class' => 'py-5 text-center align-middle'],
+                'value' => function ($model) {
+
+                if (empty($model->created_at)) {
+                    return '—';
+                }
+
+                return Html::tag(
+                    'span',
+                    Yii::$app->formatter->asDatetime($model->created_at, 'long'),
+                    [
+                        'class' => 'text-sm text-on-surface-variant',
+                        'style' => "font-family:'Manrope',sans-serif;",
+                    ]
+                );
+            },
+            ],
+
+            // Actions (view · edit · delete)
             [
                 'class' => ActionColumn::class,
                 'header' => 'Actions',
@@ -391,6 +441,12 @@ $this->title = 'Trials Library';
                 return Url::toRoute([$action, 'id' => $model->id]);
             },
                 'template' => '{view} {update} {delete}',
+                'visibleButtons' => [
+                    'delete' => function ($model, $key, $index) {
+                    // return Yii::$app->user->can('deleteClinicalTrial', ['trial' => $model]);
+                    return $model->created_by == Yii::$app->user->id;
+                }
+                ],
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                     return Html::a(

@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use common\models\User;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -256,6 +257,16 @@ class ClinicalTrial extends \yii\db\ActiveRecord
     {
         return $this->hasOne(OpendataAccess::class, ['trial_id' => 'id']);
     }
+
+
+    // Get Creator
+
+    public function getCreator()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
+    }
+
+
 
 
 

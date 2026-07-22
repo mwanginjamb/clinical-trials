@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use frontend\models\Country;
+use frontend\models\Region;
 use frontend\models\StudyTimeline;
 use frontend\models\StudyTimelineSearch;
 use Yii;
@@ -105,9 +106,15 @@ class StudyTimelineController extends Controller
             ArrayHelper::map(Country::find()->all(),'id','name'),
         );
 
+         $regions = ArrayHelper::merge(
+            ['other' => 'Other'],
+            ArrayHelper::map(Region::find()->all(),'id','name'),
+        );
+
         return $this->render('create', [
             'model' => $model,
-            'countries' => $countries
+            'countries' => $countries,
+            'regions' => $regions,
         ]);
     }
 
@@ -141,9 +148,15 @@ class StudyTimelineController extends Controller
             ArrayHelper::map(Country::find()->all(),'id','name'),
         );
 
+         $regions = ArrayHelper::merge(
+            ['other' => 'Other'],
+            ArrayHelper::map(Region::find()->all(),'id','name'),
+        );
+
         return $this->render('update', [
             'model' => $model,
-            'countries' => $countries
+            'countries' => $countries,
+            'regions' => $regions,
         ]);
     }
 

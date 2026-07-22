@@ -29,6 +29,7 @@ class StudyTimeline extends \yii\db\ActiveRecord
 {
 
     public $other_country;
+    public $other_region;
 
     /**
      * {@inheritdoc}
@@ -38,6 +39,26 @@ class StudyTimeline extends \yii\db\ActiveRecord
         return 'study_timeline';
     }
 
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => \yii\behaviors\TimestampBehavior::class,
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+            ],
+            'blameable' => [
+                'class' => \yii\behaviors\BlameableBehavior::class,
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_by', 'updated_by'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_by'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -45,12 +66,13 @@ class StudyTimeline extends \yii\db\ActiveRecord
     {
         return [
             [['study_duration', 'study_site_location', 'centre_postal_address', 'anticipated_start_date', 'anticipated_end_date', 'recruitment_status', 'recruiting_country', 'centre_pysical_address', 'centre_region', 'created_at', 'updated_at', 'updated_by', 'created_by'], 'default', 'value' => null],
-            [['study_duration', 'recruitment_status', 'centre_region', 'trial_id', 'created_at', 'updated_at', 'updated_by', 'created_by'], 'integer'],
+            [['study_duration', 'recruitment_status','trial_id', 'created_at', 'updated_at', 'updated_by', 'created_by'], 'integer'],
             [['anticipated_start_date', 'anticipated_end_date'], 'safe'],
             [['trial_id'], 'required'],
             [['study_site_location', 'centre_postal_address', 'centre_pysical_address'], 'string', 'max' => 255],
             [['trial_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClinicalTrial::class, 'targetAttribute' => ['trial_id' => 'id']],
             ['recruiting_country', 'safe'],
+            ['centre_region','safe'],
             ['other_country', 'string', 'max' => 200],
             [
                 'other_country',
@@ -73,7 +95,30 @@ class StudyTimeline extends \yii\db\ActiveRecord
                 'when' => function ($model) {
                     return $model->recruiting_country !== 'other'; // Only validate existence if publisher is not 'other'
                 },
-            ]
+            ],
+            ['other_region', 'string'],
+            [
+                'other_region',
+                'required',
+                'message' => 'Select Other Option for Preferred Study Centre / Region',
+                'when' => function ($model) {
+                    return $model->centre_region === 'other';
+                },
+                'whenClient' => "function (attribute, value) {
+                return $('#studytimeline-centre_region').val() === 'other';
+            }"
+            ],
+            [
+                'centre_region',
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Region::class,
+                'targetAttribute' => ['centre_region' => 'id'],
+                'message' => 'The selected centre / Region does not exist in the database.',
+                'when' => function ($model) {
+                    return $model->centre_region !== 'other'; // Only validate existence if publisher is not 'other'
+                },
+            ],
 
         ];
     }
@@ -168,6 +213,22 @@ class StudyTimeline extends \yii\db\ActiveRecord
                 }
                 // set country to the value of other_country for saving in country table
                 $this->recruiting_country = $country->id;
+            }
+
+            $region = new Region();
+            // persist new centre_region
+            if ($this->centre_region == 'other' && !empty($this->centre_region)) {
+                // check wheather the other_region already exists in the database
+                $existing = Region::find()->where(['name' => $this->other_region])->one();
+                // create the publisher if it doesn't exist
+                if (!$existing || $existing === null) {
+                    $region->name = $this->other_region;
+                    if (!$region->save()) {
+                        return false; // stop saving if the publisher could not be saved
+                    }
+                }
+                // set country to the value of other_country for saving in country table
+                $this->centre_region = $region->id;
             }
             return true;
         }

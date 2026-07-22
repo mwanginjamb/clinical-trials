@@ -85,8 +85,16 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
         <div id="other_country" style="<?= $model->recruiting_country === 'other' ? '' : 'display:none' ?>">
         <?= $form->field($model, 'other_country', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true, 'placeholder' => 'Enter preferred participating country']))->hint('Presumably a missing country from above participating country dropdown') ?>
         </div>
-        <?= $form->field($model, 'centre_region', FormUi::fieldConfig()['base'])->dropDownList($model->centreRegion, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select centre region...'])) ?>
+        <?= $form->field($model, 'centre_region', FormUi::fieldConfig()['base'])->dropDownList($regions, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select centre region...'])) ?>
     </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div id="other_region" style="<?= $model->centre_region === 'other' ? '' : 'display:none' ?>">
+        <?= $form->field($model, 'other_region', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['maxlength' => true, 'placeholder' => 'Enter preferred participating centre or region.']))->hint('Presumably a missing centre / region from above participating country dropdown') ?>
+        </div>
+        
+    </div>
+
 
     <?= $form->field($model, 'trial_id')->hiddenInput(['readonly' => true])->label(false) ?>
 
@@ -134,6 +142,25 @@ $script = <<<JS
     $('#studytimeline-recruiting_country').on('change', function () {
         toggleOtherInstitution();
     });
+
+    // toggle centre_region
+
+    function toggleOtherCentre() {
+        const centre = $('#studytimeline-centre_region').val();
+
+        if (centre === 'other') {
+            $('#other_region').slideDown();
+        } else {
+            $('#other_region').slideUp();
+            $('#studytimeline-centre_region').val('');
+        }
+    }
+
+    $('#studytimeline-centre_region').on('change', function () {
+        toggleOtherCentre();
+    });
+
+
 JS;
 $this->registerJs($script);
 ?>

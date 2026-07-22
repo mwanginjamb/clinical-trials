@@ -2,6 +2,7 @@
 
 namespace frontend\models;
 
+use common\models\User;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -85,6 +86,17 @@ class ClinicalTrial extends \yii\db\ActiveRecord
                 'when' => function ($model) {
                     return $model->area_of_specialization !== 'other'; // exclude validation when "other" is selected
                 },
+            ],
+            [
+                'registration_number',
+                'required',
+                'when' => function ($model) {
+                    return $model->registration_status === 1; // Assuming 'Registered' has a value of 1
+                },
+                'whenClient' => "function (attribute, value) {
+                    return $('#clinicaltrial-registration_status').val() === '1'; // Assuming 'Registered' has a value of 1
+                }",
+                'message' => 'Please specify the registration number.'
             ],
 
         ];
@@ -245,6 +257,16 @@ class ClinicalTrial extends \yii\db\ActiveRecord
     {
         return $this->hasOne(OpendataAccess::class, ['trial_id' => 'id']);
     }
+
+
+    // Get Creator
+
+    public function getCreator()
+    {
+        return $this->hasOne(User::class, ['id' => 'created_by']);
+    }
+
+
 
 
 

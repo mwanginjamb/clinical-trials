@@ -1,6 +1,7 @@
 <?php
 
 namespace frontend\models;
+use frontend\models\Studytype;
 
 use Yii;
 
@@ -30,13 +31,33 @@ use Yii;
 class StudyPurpose extends \yii\db\ActiveRecord
 {
 
-
+    public $other_type_of_study;
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'study_purpose';
+    }
+
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => \yii\behaviors\TimestampBehavior::class,
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+            ],
+            'blameable' => [
+                'class' => \yii\behaviors\BlameableBehavior::class,
+                'attributes' => [
+                    \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['created_by', 'updated_by'],
+                    \yii\db\ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_by'],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -47,9 +68,35 @@ class StudyPurpose extends \yii\db\ActiveRecord
         return [
             [['study_purpose', 'study_objective', 'study_hypothesis', 'type_of_study', 'intervention', 'control_group_name', 'design_control_group_presence', 'phase_of_study', 'randomization_method_name', 'masking_description', 'masking_status', 'trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['study_purpose', 'study_objective', 'control_group_name'], 'string'],
-            [['type_of_study', 'design_control_group_presence', 'phase_of_study', 'masking_status', 'trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            [['design_control_group_presence', 'phase_of_study', 'masking_status', 'trial_id', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
             [['study_hypothesis', 'intervention', 'randomization_method_name', 'masking_description'], 'string', 'max' => 255],
             [['trial_id'], 'exist', 'skipOnError' => true, 'targetClass' => ClinicalTrial::class, 'targetAttribute' => ['trial_id' => 'id']],
+
+            ['type_of_study', 'safe'],
+            [['other_type_of_study'], 'string', 'max' => 255],
+            [
+                'other_type_of_study',
+                'required',
+                'message' => 'Specify Other Type of Study Option for Type of Study',
+                'when' => function ($model) {
+                    return $model->type_of_study === 'other';
+                },
+                'whenClient' => "function (attribute, value) {
+                return $('#studypurpose-type_of_study').val() === 'other';
+            }"
+            ],
+            [
+                'type_of_study',
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Studytype::class,
+                'targetAttribute' => ['type_of_study' => 'id'],
+                'message' => 'The selected type of study does not exist in the database.',
+                'when' => function ($model) {
+                    return $model->type_of_study !== 'other'; // Only validate existence if publisher is not 'other'
+                },
+            ],
+
         ];
     }
 
@@ -113,6 +160,29 @@ class StudyPurpose extends \yii\db\ActiveRecord
             5 => 'Phase 5',
             6 => 'Other',
         ];
+    }
+
+    // prepare model for saving, set type_of_study to other_type_of_study if type_of_study is 'other'
+    public function beforeSave($insert)
+    {
+        $studyType = new Studytype();
+        if (parent::beforeSave($insert)) {
+            if ($this->type_of_study === 'other' && !empty($this->other_type_of_study)) {
+                // check wheather the other publisher already exists in the database
+                $existing = Studytype::find()->where(['name' => $this->other_type_of_study])->one();
+                // create the publisher if it doesn't exist
+                if (!$existing || $existing === null) {
+                    $studyType->name = $this->other_type_of_study;
+                    if (!$studyType->save()) {
+                        return false; // stop saving if the study type could not be saved
+                    }
+                }
+                // set study type to the value of other_type_of_study for saving in study type table
+                $this->type_of_study = $studyType->id;
+            }
+            return true;
+        }
+        return false;
     }
 
 }

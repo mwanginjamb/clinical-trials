@@ -4,9 +4,11 @@ namespace frontend\controllers;
 
 use frontend\models\StudyPurpose;
 use frontend\models\StudyPurposeSearch;
+use frontend\models\Studytype;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -99,8 +101,15 @@ class StudyPurposeController extends Controller
             $model->loadDefaultValues();
         }
 
+        $studyTypes = ArrayHelper::merge(
+            ['other' => 'Other'],
+            ArrayHelper::map(Studytype::find()->all(), 'id', 'name'),
+        );
+
+
         return $this->render('create', [
             'model' => $model,
+            'studyTypes' => $studyTypes,
         ]);
     }
 
@@ -125,8 +134,14 @@ class StudyPurposeController extends Controller
             return $this->redirect(Url::toRoute(['study-population-eligibility/update', 'trial_id' => $model->trial_id]));
         }
 
+        $studyTypes = ArrayHelper::merge(
+            ['other' => 'Other'],
+            ArrayHelper::map(Studytype::find()->all(), 'id', 'name'),
+        );
+
         return $this->render('update', [
             'model' => $model,
+            'studyTypes' => $studyTypes,
         ]);
     }
 

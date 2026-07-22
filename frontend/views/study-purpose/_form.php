@@ -64,7 +64,15 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
             <?= $form->field($model, 'study_hypothesis', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter study hypothesis...']))->hint($model->getAttributeHint('study_hypothesis')) ?>
 
-            <?= $form->field($model, 'type_of_study', FormUi::fieldConfig()['base'])->dropDownList($model->typeOfStudy, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select type of study...'])) ?>
+            <?= $form->field($model, 'type_of_study', FormUi::fieldConfig()['base'])->dropDownList($studyTypes, array_merge(FormUi::inputOptions()['select'], ['prompt' => 'Select type of study...'])) ?>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div id="other_study_type" style="<?= $model->type_of_study === 'other' ? '' : 'display:none' ?>">
+                <?= $form->field($model, 'other_type_of_study', FormUi::fieldConfig()['base'])->textInput(array_merge(FormUi::inputOptions()['text'], ['placeholder' => 'Enter other type of study...']))->hint($model->getAttributeHint('Preferred Type Of Study Option, not provided above.')) ?>
+            </div>
+
+
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -117,3 +125,26 @@ $nextStep = $activeIndex < $totalSteps - 1 ? $steps[$activeIndex + 1] : null;
     <?php ActiveForm::end(); ?>
 
 </div>
+
+<?php
+
+$script = <<<JS
+function toggleOtherInstitution() {
+        const type = $('#studypurpose-type_of_study').val();
+
+        if (type === 'other') {
+            $('#other_study_type').slideDown();
+        } else {
+            $('#other_study_type').slideUp();
+            $('#studypurpose-other_type_of_study').val('');
+        }
+    }
+
+    toggleOtherInstitution();
+
+    $('#studypurpose-type_of_study').on('change', function () {
+        toggleOtherInstitution();
+    });
+JS;
+
+$this->registerJs($script, yii\web\View::POS_READY);

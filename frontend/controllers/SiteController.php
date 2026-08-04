@@ -89,7 +89,7 @@ class SiteController extends Controller
             ])
             ->joinWith(['timeline', 'purpose']) // For sorting
             ->orderBy([
-                'IFNULL(study_timeline.anticipated_start_date, trial.created_at)' => SORT_DESC
+                'IFNULL(study_timeline.anticipated_start_date, trial.id)' => SORT_DESC
             ])
             ->limit(5)
             // ->asArray()

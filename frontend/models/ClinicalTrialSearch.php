@@ -47,6 +47,12 @@ class ClinicalTrialSearch extends ClinicalTrial
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+            'pageSize' => 10, // <-- controls records per page
+            ],
+             'sort' => [
+                'defaultOrder' => ['created_at' => SORT_DESC],
+            ],
         ]);
 
         $this->load($params, $formName);

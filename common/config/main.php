@@ -50,5 +50,8 @@ return [
             // Or if you use a 3rd party service, see:
             // https://symfony.com/doc/current/mailer.html#using-a-3rd-party-transport
         ],
+        'dashboard' => [
+            'class' => \common\library\DashboardComponent::class
+        ]
     ],
 ];

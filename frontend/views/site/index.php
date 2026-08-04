@@ -123,14 +123,10 @@ $this->title = 'SERCEA Research Repository — Clinical Curator';
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
             <h3 class="font-headline text-xl md:text-2xl font-bold text-primary">Recent Trials</h3>
-            <p class="text-on-surface-variant text-xs md:text-sm">Last updated 42 minutes ago.</p>
+            <!-- <p class="text-on-surface-variant text-xs md:text-sm">Last updated 42 minutes ago.</p> -->
         </div>
         <div class="flex gap-2 w-full sm:w-auto">
-            <button class="flex-1 sm:flex-none px-4 py-2 bg-surface-container-low
-                           text-on-surface-variant text-xs md:text-sm font-semibold rounded-lg
-                           hover:bg-surface-container-high transition-colors">
-                Export
-            </button>
+            
             <?= Html::a(
                 'View All',
                 ['clinical-trial/index'],
@@ -192,7 +188,7 @@ $this->title = 'SERCEA Research Repository — Clinical Curator';
                 Protocol Integrity
             </h4>
             <p class="text-on-surface-variant text-sm mb-4 md:mb-6">
-                Automated compliance checks are currently monitoring 412 active protocols
+                Automated compliance checks are currently monitoring <?= Yii::$app->dashboard->allTrials ?> active protocols
                 for data drift.
             </p>
         </div>

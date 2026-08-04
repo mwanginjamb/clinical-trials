@@ -128,7 +128,7 @@ $this->title = 'Trials Library';
             </p>
         </div>
         <div class="flex items-center gap-3">
-            <?= Html::a(
+            <?php Html::a(
                 '<span class="material-symbols-outlined text-lg">download</span> Export CSV',
                 ['export'],
                 [
@@ -223,6 +223,7 @@ $this->title = 'Trials Library';
     </div>
 
     <?php ActiveForm::end(); ?>
+    <!-- End  -->
 
     <!-- ── GridView ─────────────────────────────────────────────────── -->
     <?= GridView::widget([
@@ -260,13 +261,13 @@ $this->title = 'Trials Library';
             'nextPageLabel' => '<span class="material-symbols-outlined">chevron_right</span>',
             'maxButtonCount' => 5,
             'activePageCssClass' => 'active',
-            'disabledPageCssClass' => 'disabled',
+            'disabledPageCssClass' => 'disabled'
         ],
 
         /* ── Columns ─────────────────────────────────────────────── */
         'columns' => [
 
-            // ① Protocol & ID (scientific_title + acronym + public_title)
+            // Protocol & ID (scientific_title + acronym + public_title)
             [
                 'attribute' => 'scientific_title',
                 'label' => 'Protocol & ID',
@@ -354,7 +355,7 @@ $this->title = 'Trials Library';
             },
             ],
 
-            // ③ Protocol Version
+            //  Protocol Version
             [
                 'attribute' => 'protocol_version',
                 'label' => 'Version',
@@ -442,10 +443,10 @@ $this->title = 'Trials Library';
             },
                 'template' => '{view} {update} {delete}',
                 'visibleButtons' => [
-                    'delete' => function ($model, $key, $index) {
-                    // return Yii::$app->user->can('deleteClinicalTrial', ['trial' => $model]);
-                    return $model->created_by == Yii::$app->user->id;
-                }
+                            'delete' => function ($model, $key, $index) {
+                            // return Yii::$app->user->can('deleteClinicalTrial', ['trial' => $model]);
+                            return $model->created_by == Yii::$app->user->id;
+                        }
                 ],
                 'buttons' => [
                     'view' => function ($url, $model, $key) {

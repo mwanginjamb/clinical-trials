@@ -169,6 +169,7 @@ class ClinicalTrial extends \yii\db\ActiveRecord
             1 => 'Registered',
             2 => 'Pending',
             3 => 'Rejected',
+            4 => 'Ongoing'
         ];
     }
 

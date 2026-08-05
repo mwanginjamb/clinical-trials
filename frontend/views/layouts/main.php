@@ -68,6 +68,7 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                 <nav class="hidden md:flex gap-6 items-center">
                     <?= Html::a('Dashboard', Url::to(['/site/index']), ['class' => $topNavClass('dashboard')]) ?>
                     <?= Html::a('Clinical Trials', Url::to(['/clinical-trial/index']), ['class' => $topNavClass('clinical-trial')]) ?>
+                    <?= Html::a('Bulk Trials Import ', Url::to(['/trial-import/import']), ['class' => $topNavClass('trial-import')]) ?>
 
                 </nav>
             </div>
@@ -134,6 +135,11 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                         '<span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;">clinical_notes</span> Clinical Trials',
                         Url::to(['/clinical-trial/index']),
                         ['class' => $navClass('clinical-trial', 'index')]
+                    ) ?>
+                    <?= Html::a(
+                        '<span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;">upload</span> Bulk Trial Import',
+                        Url::to(['/trial-import/import']),
+                        ['class' => $navClass('trial-import', 'import')]
                     ) ?>
 
 

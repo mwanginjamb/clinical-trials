@@ -33,96 +33,41 @@ class TrialBatchImporter
     public const SHEET_COLUMNS = [
         'Trials' => [
             'trial_ref',
-            'scientific_title',
-            'public_title',
-            'scientific_acronym',
-            'protocol_version',
-            'registration_status',
-            'protocol_number',
-            'registration_number',
-            'area_of_specialization',
-            'specialization_sub_section',
-            'timeline_study_duration',
-            'timeline_study_site_location',
-            'timeline_centre_postal_address',
-            'timeline_anticipated_start_date',
-            'timeline_anticipated_end_date',
-            'timeline_recruitment_status',
-            'timeline_recruiting_country',
-            'timeline_centre_pysical_address',
-            'timeline_centre_region',
-            'ethics_ethical_regulatory_body',
-            'ethics_approved_by_ethical_committee',
-            'ethics_document_number',
+            'scientific_title', 'public_title', 'scientific_acronym', 'protocol_version',
+            'registration_status', 'protocol_number', 'registration_number',
+            'area_of_specialization', 'specialization_sub_section',
+            'timeline_study_duration', 'timeline_study_site_location', 'timeline_centre_postal_address',
+            'timeline_anticipated_start_date', 'timeline_anticipated_end_date', 'timeline_recruitment_status',
+            'timeline_recruiting_country', 'timeline_centre_pysical_address', 'timeline_centre_region',
+            'ethics_ethical_regulatory_body', 'ethics_approved_by_ethical_committee', 'ethics_document_number',
             'ethics_document_path',
-            'funding_sponsor_name',
-            'funding_amount',
-            'funding_country',
-            'funding_sector',
-            'description_study_website',
-            'description_lay_summary',
-            'description_scientific_summary',
-            'intervention_name',
-            'intervention_description',
-            'intervention_control_comparator',
-            'intervention_type_of_outcome',
-            'intervention_outcome_description',
-            'results_permission_to_publish',
-            'results_summary_results',
-            'results_authority_committe_name',
-            'results_publisher',
-            'results_url_doi',
-            'results_publication_type',
-            'results_publication_title',
-            'opendata_allow_publishing',
-            'opendata_repository_name',
-            'opendata_study_identification_variable',
-            'opendata_sensitivity_analysis_result',
-            'opendata_effective_size_value',
-            'opendata_adjustable_miltiple_comparison',
-            'opendata_handling_missing_data',
-            'opendata_quality_assessment_variable',
-            'opendata_risk_of_bias_assessment',
-            'opendata_study_limitation',
-            'opendata_potential_conflict_of_interest',
-            'opendata_publication_bias_indicator',
-            'opendata_heterogenity_measure',
-            'opendata_confidential_interval',
-            'opendata_significant_p_value',
+            'funding_sponsor_name', 'funding_amount', 'funding_country', 'funding_sector',
+            'description_study_website', 'description_lay_summary', 'description_scientific_summary',
+            'intervention_name', 'intervention_description', 'intervention_control_comparator',
+            'intervention_type_of_outcome', 'intervention_outcome_description',
+            'results_permission_to_publish', 'results_summary_results', 'results_authority_committe_name',
+            'results_publisher', 'results_url_doi', 'results_publication_type', 'results_publication_title',
+            'opendata_allow_publishing', 'opendata_repository_name', 'opendata_study_identification_variable',
+            'opendata_sensitivity_analysis_result', 'opendata_effective_size_value',
+            'opendata_adjustable_miltiple_comparison', 'opendata_handling_missing_data',
+            'opendata_quality_assessment_variable', 'opendata_risk_of_bias_assessment',
+            'opendata_study_limitation', 'opendata_potential_conflict_of_interest',
+            'opendata_publication_bias_indicator', 'opendata_heterogenity_measure',
+            'opendata_confidential_interval', 'opendata_significant_p_value',
             'opendata_statistical_method_used',
         ],
         'StudyPurposes' => [
-            'trial_ref',
-            'study_purpose',
-            'study_objective',
-            'study_hypothesis',
-            'type_of_study',
-            'intervention',
-            'control_group_name',
-            'design_control_group_presence',
-            'phase_of_study',
-            'randomization_method_name',
-            'masking_description',
-            'masking_status',
+            'trial_ref', 'study_purpose', 'study_objective', 'study_hypothesis', 'type_of_study',
+            'intervention', 'control_group_name', 'design_control_group_presence', 'phase_of_study',
+            'randomization_method_name', 'masking_description', 'masking_status',
         ],
         'PopulationEligibility' => [
-            'trial_ref',
-            'health_condition_studied',
-            'type_of_eligibility',
-            'participant_target_number',
-            'sample_size',
-            'final_number_of_participants',
+            'trial_ref', 'health_condition_studied', 'type_of_eligibility', 'participant_target_number',
+            'sample_size', 'final_number_of_participants',
         ],
         'Investigators' => [
-            'trial_ref',
-            'role',
-            'institution',
-            'country',
-            'name',
-            'mobile_number',
-            'email_address',
-            'postal_address',
-            'city',
+            'trial_ref', 'role', 'institution', 'country', 'name', 'mobile_number', 'email_address',
+            'postal_address', 'city',
         ],
     ];
 
@@ -133,20 +78,20 @@ class TrialBatchImporter
      * same save() boilerplate seven times.
      */
     private const ONE_TO_ONE_CHILDREN = [
-        'timeline_' => StudyTimeline::class,
-        'ethics_' => EthicalApproval::class,
-        'funding_' => Funding::class,
-        'description_' => StudyDescription::class,
+        'timeline_'     => StudyTimeline::class,
+        'ethics_'       => EthicalApproval::class,
+        'funding_'      => Funding::class,
+        'description_'  => StudyDescription::class,
         'intervention_' => StudyIntervention::class,
-        'results_' => StudyResults::class,
-        'opendata_' => OpendataAccess::class,
+        'results_'      => StudyResults::class,
+        'opendata_'     => OpendataAccess::class,
     ];
 
     /** Sheet name => [modelClass, multiple-rows-per-trial] for the one-to-many child sheets. */
     private const ONE_TO_MANY_CHILDREN = [
-        'StudyPurposes' => StudyPurpose::class,
-        'PopulationEligibility' => StudyPopulationEligibility::class,
-        'Investigators' => InvestigatorTeam::class,
+        'StudyPurposes'          => StudyPurpose::class,
+        'PopulationEligibility'  => StudyPopulationEligibility::class,
+        'Investigators'          => InvestigatorTeam::class,
     ];
 
     /** @var TrialImportResult */
@@ -168,7 +113,7 @@ class TrialBatchImporter
         $childrenByRef = [];
         foreach (self::ONE_TO_MANY_CHILDREN as $sheetName => $modelClass) {
             foreach ($sheets[$sheetName] ?? [] as $row) {
-                $ref = trim((string) ($row['trial_ref'] ?? ''));
+                $ref = trim((string)($row['trial_ref'] ?? ''));
                 if ($ref === '') {
                     continue;
                 }
@@ -185,13 +130,11 @@ class TrialBatchImporter
 
     private function importOneTrial(int $rowNumber, array $row, array $childrenByRef): void
     {
-        $ref = trim((string) ($row['trial_ref'] ?? ''));
+        $ref = trim((string)($row['trial_ref'] ?? ''));
         $context = "Trials row {$rowNumber} (trial_ref='{$ref}')";
 
-        if (
-            $ref === '' || trim((string) ($row['scientific_title'] ?? '')) === ''
-            || trim((string) ($row['public_title'] ?? '')) === ''
-        ) {
+        if ($ref === '' || trim((string)($row['scientific_title'] ?? '')) === ''
+            || trim((string)($row['public_title'] ?? '')) === '') {
             $this->result->addError($context, 'trial_ref, scientific_title and public_title are required.');
             return;
         }
@@ -200,17 +143,17 @@ class TrialBatchImporter
         try {
             $trial = new ClinicalTrial();
             $trial->setAttributes([
-                'scientific_title' => $row['scientific_title'],
-                'public_title' => $row['public_title'],
-                'scientific_acronym' => $row['scientific_acronym'] ?: null,
-                'protocol_version' => $row['protocol_version'] ?: null,
-                'registration_status' => $this->intOrNull($row['registration_status']),
-                'protocol_number' => $row['protocol_number'] ?: null,
-                'registration_number' => $row['registration_number'] ?: null,
-                'area_of_specialization' => $this->intOrNull($row['area_of_specialization']),
-                'specialization_sub_section' => $this->intOrNull($row['specialization_sub_section']),
-                'created_by' => Yii::$app->user->id ?? null,
-                'updated_by' => Yii::$app->user->id ?? null,
+                'scientific_title'          => $row['scientific_title'],
+                'public_title'              => $row['public_title'],
+                'scientific_acronym'        => $row['scientific_acronym'] ?: null,
+                'protocol_version'          => $row['protocol_version'] ?: null,
+                'registration_status'       => $this->intOrNull($row['registration_status']),
+                'protocol_number'           => $row['protocol_number'] ?: null,
+                'registration_number'       => $row['registration_number'] ?: null,
+                'area_of_specialization'    => $this->intOrNull($row['area_of_specialization']),
+                'specialization_sub_section'=> $this->intOrNull($row['specialization_sub_section']),
+                'created_by'                => Yii::$app->user->id ?? null,
+                'updated_by'                => Yii::$app->user->id ?? null,
             ], false);
 
             if (!$trial->save()) {
@@ -272,7 +215,9 @@ class TrialBatchImporter
             for ($r = 2; $r <= $highestRow; $r++) {
                 $assoc = [];
                 foreach (array_values($columns) as $col => $header) {
-                    $cellValue = $sheet->getCellByColumnAndRow($col + 1, $r)->getFormattedValue();
+                    // getCellByColumnAndRow() was removed in PhpSpreadsheet 2.0+; use the
+                    // [columnIndex, rowIndex] coordinate form of getCell() instead.
+                    $cellValue = $sheet->getCell([$col + 1, $r])->getFormattedValue();
                     $assoc[$header] = is_string($cellValue) ? trim($cellValue) : $cellValue;
                 }
                 if ($this->allBlank($assoc)) {
@@ -307,6 +252,6 @@ class TrialBatchImporter
 
     private function intOrNull($value): ?int
     {
-        return ($value === null || $value === '') ? null : (int) $value;
+        return ($value === null || $value === '') ? null : (int)$value;
     }
 }

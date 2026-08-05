@@ -57,8 +57,8 @@ class ClinicalTrial extends \yii\db\ActiveRecord
         return [
             [['scientific_title', 'public_title', 'scientific_acronym', 'protocol_version', 'registration_status', 'protocol_number', 'registration_number', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['registration_status', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
-            [['scientific_title', 'public_title', 'scientific_acronym', 'protocol_version', 'protocol_number', 'registration_number'], 'string', 'max' => 255],
-            // [['scientific_title', 'protocol_number', 'registration_status'], 'required', 'message' => 'This field is required.'],
+            [['scientific_acronym', 'protocol_version', 'protocol_number', 'registration_number'], 'string', 'max' => 255],
+            [['scientific_title', 'public_title'], 'string', 'max' => 65535], //text type in mysql is 65535 characters
             ['scientific_title', 'required', 'message' => 'Scientific title is required.'],
             ['protocol_number', 'required', 'message' => 'Protocol number is required.'],
             ['registration_status', 'required', 'message' => 'Registration status is required.'],

@@ -2,8 +2,11 @@
 
 namespace frontend\services;
 
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 /**
@@ -13,6 +16,15 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  */
 class TrialTemplateBuilder
 {
+    /**
+     * Columns that must stay text even though their values look numeric — otherwise Excel's
+     * auto-detection reformats things like "+254700000000" into scientific notation
+     * (2.547E+11) or strips leading zeros from IDs.
+     */
+    private const FORCE_TEXT_COLUMNS = [
+        'mobile_number', 'protocol_number', 'registration_number', 'document_number',
+    ];
+
     /**
      * @return Spreadsheet
      */
@@ -29,12 +41,19 @@ class TrialTemplateBuilder
             $sheet->setTitle($sheetName);
 
             foreach (array_values($columns) as $col => $header) {
-                $letter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col + 1);
+                $letter = Coordinate::stringFromColumnIndex($col + 1);
                 $sheet->setCellValue("{$letter}1", $header);
+
+                if (in_array($header, self::FORCE_TEXT_COLUMNS, true)) {
+                    // Applied to the whole column (not just the header) so any value a user
+                    // types in later — not just our example row — is stored/displayed as text.
+                    $sheet->getStyle("{$letter}:{$letter}")
+                        ->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_TEXT);
+                }
             }
 
             $colCount = count($columns);
-            $lastCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colCount);
+            $lastCol = Coordinate::stringFromColumnIndex($colCount);
             $headerRange = "A1:{$lastCol}1";
             $sheet->getStyle($headerRange)->getFont()->setBold(true)->getColor()->setRGB('FFFFFF');
             $sheet->getStyle($headerRange)->getFill()
@@ -45,15 +64,23 @@ class TrialTemplateBuilder
                 ->getStartColor()->setRGB('BF9000'); // trial_ref column stands out
             $sheet->freezePane('A2');
             for ($i = 1; $i <= $colCount; $i++) {
-                $letter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i);
+                $letter = Coordinate::stringFromColumnIndex($i);
                 $sheet->getColumnDimension($letter)->setWidth(22);
             }
 
             // Example row (row 2), shaded green, trial_ref column shaded gold like the header.
             $example = self::EXAMPLE_ROWS[$sheetName] ?? [];
+            $headerList = array_values($columns);
             foreach ($example as $i => $value) {
-                $letter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($i + 1);
-                $sheet->setCellValue("{$letter}2", $value);
+                $letter = Coordinate::stringFromColumnIndex($i + 1);
+                if (in_array($headerList[$i] ?? null, self::FORCE_TEXT_COLUMNS, true)) {
+                    // setCellValue() would let the default value binder re-interpret a numeric-
+                    // looking string as a number; setCellValueExplicit(..., TYPE_STRING) stores
+                    // it as text no matter what it looks like.
+                    $sheet->setCellValueExplicit("{$letter}2", (string)$value, DataType::TYPE_STRING);
+                } else {
+                    $sheet->setCellValue("{$letter}2", $value);
+                }
                 $sheet->getStyle("{$letter}2")->getFill()
                     ->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()->setRGB($i === 0 ? 'FFF2CC' : 'E2EFDA');
@@ -153,7 +180,7 @@ class TrialTemplateBuilder
             '24', 'Nairobi Hospital Site A', 'PO Box 100, Nairobi', '2026-09-01', '2027-09-01', '1',
             '1', '123 Hospital Rd, Nairobi', '1',
             '2', '1', 'ETH/2026/001', '/docs/eth_2026_001.pdf',
-            'Acme Health Foundation', '150000', '1', '2',
+            'Acme Health Foundation', '150000', '1', '2','USD',
             'https://trial-x.example.org', 'This study tests whether Drug X helps adults with asthma.',
             'A randomised, double-blind, placebo-controlled trial evaluating Drug X in adult asthma.',
             'Drug X 10mg', 'Oral tablet once daily for 12 weeks', 'Placebo tablet', '1',
@@ -186,10 +213,28 @@ class TrialTemplateBuilder
         $spreadsheet = $this->build();
         $writer = new Xlsx($spreadsheet);
 
+        // Write to a temp file first rather than streaming straight to php://output.
+        // Streaming directly is fragile: if anything else in the request (debug toolbar,
+        // a stray PHP notice, whitespace outside a <?php  tag, output buffering/gzip)
+        // writes even one byte into the response before or during the save, it corrupts
+        // the zip. PhpSpreadsheet/Excel then silently drops whichever worksheet XML parts
+        // land after the corruption point — typically the last sheets written, which
+        // matches "PopulationEligibility" and "Investigators" coming up empty.
+        $tmpFile = tempnam(sys_get_temp_dir(), 'trial_tpl_') . '.xlsx';
+        $writer->save($tmpFile);
+
+        // Make sure nothing else has written to (or buffered into) the output for this
+        // request before we send the file.
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . filesize($tmpFile));
         header('Cache-Control: max-age=0');
 
-        $writer->save('php://output');
+        readfile($tmpFile);
+        unlink($tmpFile);
     }
 }

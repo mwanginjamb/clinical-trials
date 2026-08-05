@@ -41,7 +41,7 @@ class TrialBatchImporter
             'timeline_recruiting_country', 'timeline_centre_pysical_address', 'timeline_centre_region',
             'ethics_ethical_regulatory_body', 'ethics_approved_by_ethical_committee', 'ethics_document_number',
             'ethics_document_path',
-            'funding_sponsor_name', 'funding_amount', 'funding_country', 'funding_sector',
+            'funding_sponsor_name', 'funding_amount', 'funding_country', 'funding_sector','funding_currency',
             'description_study_website', 'description_lay_summary', 'description_scientific_summary',
             'intervention_name', 'intervention_description', 'intervention_control_comparator',
             'intervention_type_of_outcome', 'intervention_outcome_description',

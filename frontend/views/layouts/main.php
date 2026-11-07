@@ -54,18 +54,24 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
      TOP NAV BAR
 ════════════════════════════════════════════════════════ -->
     <header
-        class="bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md docked full-width top-0 sticky z-50 shadow-[0_12px_32px_-4px_rgba(0,59,83,0.08)]">
-        <div class="flex justify-between items-center px-8 py-3 w-full">
+        class="h-16 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md top-0 sticky z-50 shadow-[0_12px_32px_-4px_rgba(0,59,83,0.08)] print:hidden">
+        <div class="flex justify-between items-center h-full px-[1rem] sm:px-8 w-full gap-[1rem]">
 
             <!-- Brand + Top Nav Links -->
-            <div class="flex items-center gap-8">
+            <div class="flex items-center gap-3 sm:gap-8 min-w-0">
+                <!-- Mobile menu toggle (sidebar is hidden below lg) -->
+                <button type="button" id="sidebar-toggle" aria-controls="app-sidebar" aria-expanded="false"
+                    class="lg:hidden p-2 -ml-2 rounded-lg text-[#005470] hover:bg-slate-200 transition-colors">
+                    <span class="material-symbols-outlined">menu</span>
+                    <span class="sr-only">Open menu</span>
+                </button>
                 <?= Html::a(
-                    '<span class="text-xl font-bold tracking-tight text-[#005470] dark:text-cyan-500 font-headline">' . Yii::$app->name . '</span>',
+                    '<span class="text-lg sm:text-xl font-bold tracking-tight text-[#005470] dark:text-cyan-500 font-headline truncate">' . Html::encode(Yii::$app->name) . '</span>',
                     Url::to(['/site/index']),
-                    ['class' => 'no-underline']
+                    ['class' => 'no-underline min-w-0 truncate']
                 ) ?>
 
-                <nav class="hidden md:flex gap-6 items-center">
+                <nav class="hidden md:flex gap-6 items-center shrink-0">
                     <?= Html::a('Dashboard', Url::to(['/site/index']), ['class' => $topNavClass('dashboard')]) ?>
                     <?= Html::a('Clinical Trials', Url::to(['/clinical-trial/index']), ['class' => $topNavClass('clinical-trial')]) ?>
                     <?php if (Yii::$app->user->can('importTrials')): ?>
@@ -76,7 +82,7 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
             </div>
 
             <!-- Right-Side Actions -->
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-1 sm:gap-4 shrink-0">
                 <button class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
                     <span class="material-symbols-outlined text-[#005470]">notifications</span>
                 </button>
@@ -104,27 +110,15 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
         <!-- ═══════════════════════════════════════════════════════
          SIDE NAV BAR
     ════════════════════════════════════════════════════════ -->
-        <aside class="h-screen w-64 fixed left-0 top-0 bg-slate-100 dark:bg-slate-900 z-40 hidden lg:block">
-            <div class="flex flex-col h-full py-6 space-y-2">
+        <!-- Backdrop for the mobile drawer -->
+        <div id="sidebar-backdrop" class="fixed inset-0 top-16 z-30 bg-slate-900/50 hidden lg:hidden print:hidden"></div>
 
-                <!-- Brand Mark -->
-                <div class="px-6 mb-8">
-                    <div class="flex items-center gap-3">
-                        <div
-                            class="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white">
-                            <span class="material-symbols-outlined"
-                                style="font-variation-settings: 'FILL' 1;">science</span>
-                        </div>
-                        <div>
-                            <h2 class="text-lg font-black text-[#005470] font-headline leading-tight">
-
-                                <?= Yii::$app->name ?>
-                            </h2>
-                            <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Enterprise
-                                Research</p>
-                        </div>
-                    </div>
-                </div>
+        <!-- Sits BELOW the sticky header (top-16), so nothing is hidden behind it.
+             Below lg it is an off-canvas drawer toggled by #sidebar-toggle. -->
+        <aside id="app-sidebar"
+            class="w-64 fixed left-0 top-16 h-[calc(100vh-4rem)] overflow-y-auto bg-slate-100 dark:bg-slate-900 z-40
+                   -translate-x-full lg:translate-x-0 transition-transform duration-200 print:hidden">
+            <div class="flex flex-col min-h-full py-6 space-y-2">
 
                 <!-- Primary Nav -->
                 <nav class="flex-1 px-4 space-y-1">
@@ -151,23 +145,17 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                 </nav>
 
                 <!-- CTA Button -->
+                <?php if (Yii::$app->user->can('createTrial')): ?>
                 <div class="px-6 pt-4 border-t border-slate-200/50">
-                    <?php Html::a(
-                        'New Trial',
-                        Url::to(['/clinical-trial/create']),
-                        ['class' => 'block w-full py-3 bg-primary text-white rounded-xl font-headline text-sm font-bold shadow-md hover:opacity-90 transition-opacity text-center']
-                    ) ?>
-
-
                     <?= Html::a(
-                        '<span class="material-symbols-outlined block lg:hidden" data-icon="add">add</span>' .
-                        '<span class="hidden lg:block">New Trial</span>',
-                        ['clinical-trial/create'], // Replace with your actual route
+                        '<span class="material-symbols-outlined text-[18px]">add</span> New Trial',
+                        ['/clinical-trial/create'],
                         [
-                            'class' => 'w-full mt-4 bg-primary text-white p-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center'
+                            'class' => 'w-full mt-4 bg-primary text-white p-2.5 rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2'
                         ]
                     ) ?>
                 </div>
+                <?php endif; ?>
 
                 <!-- Secondary Nav (Bottom) -->
                 <div class="px-4 mt-auto">
@@ -193,8 +181,12 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
         <!-- ═══════════════════════════════════════════════════════
          MAIN CONTENT AREA
     ════════════════════════════════════════════════════════ -->
-        <main class="flex-1 lg:ml-64 p-8 bg-surface">
-            <?= $this->render('_bread_crumbs') ?>
+        <!-- min-w-0 lets this flex child shrink below its content width; without it, any wide
+             child (e.g. a nowrap tab strip or table) widens the whole page and causes horizontal scroll. -->
+        <main class="flex-1 min-w-0 lg:ml-64 px-[1rem] py-6 sm:px-6 lg:p-8 bg-surface print:ml-0 print:p-0">
+            <div class="print:hidden">
+                <?= $this->render('_bread_crumbs') ?>
+            </div>
             <?= $this->render('_flash_alerts') ?>
             <?= $content ?>
         </main>
@@ -204,13 +196,35 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
     <!-- ═══════════════════════════════════════════════════════
      FIXED EDITORIAL SUPPORT FAB
 ════════════════════════════════════════════════════════ -->
-    <div class="fixed bottom-8 right-8 z-50">
+    <div class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-40 print:hidden">
         <?= Html::a(
             '<span class="material-symbols-outlined">contact_support</span>',
             Url::to(['/site/support']),
-            ['class' => 'w-14 h-14 bg-primary text-white rounded-2xl editorial-shadow flex items-center justify-center hover:scale-110 active:scale-95 transition-all']
+            [
+                'class' => 'w-12 h-12 sm:w-14 sm:h-14 bg-primary text-white rounded-2xl shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-all',
+                'title' => 'Support',
+                'aria-label' => 'Support',
+            ]
         ) ?>
     </div>
+
+    <?php $this->registerJs(<<<'JS'
+(function () {
+    var btn = document.getElementById('sidebar-toggle');
+    var aside = document.getElementById('app-sidebar');
+    var backdrop = document.getElementById('sidebar-backdrop');
+    if (!btn || !aside || !backdrop) return;
+    function setOpen(open) {
+        aside.classList.toggle('-translate-x-full', !open);
+        backdrop.classList.toggle('hidden', !open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function () { setOpen(aside.classList.contains('-translate-x-full')); });
+    backdrop.addEventListener('click', function () { setOpen(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', function () { setOpen(false); });
+})();
+JS); ?>
 
     <?php $this->endBody() ?>
 </body>

@@ -70,8 +70,9 @@ class ClinicalTrialController extends AuthenticatedController
      */
     public function actionView($id)
     {
+        // Eager-load every section with one query per relation (no JOIN fan-out from hasMany).
         $model = ClinicalTrial::find()
-            ->joinWith([
+            ->with([
                 'purpose',
                 'studyPopulationEligibility',
                 'timeline',
@@ -83,8 +84,7 @@ class ClinicalTrialController extends AuthenticatedController
                 'studyResults',
                 'opendataAccess'
             ])
-            ->where(['clinical_trial.id' => $id])
-            ->distinct()  // avoids duplication from hasMany relations
+            ->where(['id' => $id])
             ->one();
 
 

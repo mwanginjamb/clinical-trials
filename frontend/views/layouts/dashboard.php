@@ -104,43 +104,10 @@ $navClass = function (string $ctrl, string $action = '') use ($controllerId, $ac
         </div>
 
         <!-- Primary navigation -->
-        <nav class="flex-1 px-2 space-y-1">
-            <?php
-            $navItems = [
-                [
-                    'label' => 'Dashboard',
-                    'icon' => 'dashboard',
-                    'filled' => true,
-                    'url' => ['/site/index'],
-                    'active' => true,
-                ],
-                [
-                    'label' => 'Clinical Trials',
-                    'icon' => 'clinical_notes',
-                    'filled' => false,
-                    'url' => ['/clinical-trial/index'],
-                    'active' => false,
-                ],
-
-            ];
-
-            foreach ($navItems as $item):
-                $activeClass = $item['active']
-                    ? 'bg-[#c4e7ff] dark:bg-[#003b53] text-[#001e2c] dark:text-[#c4e7ff]'
-                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800';
-                $fillSetting = $item['filled']
-                    ? "font-variation-settings:'FILL' 1;"
-                    : '';
-                ?>
-                <?= Html::a(
-                    '<span class="material-symbols-outlined" style="' . $fillSetting . '">'
-                    . Html::encode($item['icon']) . '</span>'
-                    . '<span>' . Html::encode($item['label']) . '</span>',
-                    $item['url'],
-                    ['class' => $activeClass . ' rounded-lg mx-2 flex items-center gap-3 px-4 py-3 transition-all']
-                ) ?>
-            <?php endforeach; ?>
-        </nav>
+        <!-- Shared with main.php -->
+        <div class="flex-1 overflow-y-auto">
+            <?= $this->render('_sidebar_nav') ?>
+        </div>
 
         <!-- Bottom utility area -->
         <div class="mt-auto px-4 space-y-1">

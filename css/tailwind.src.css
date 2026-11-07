@@ -95,3 +95,12 @@
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 }
+/* --------------------------------------------------------------------------
+   Pagination (rbac/_pager.php → yii\widgets\LinkPager)
+   LinkPager puts the active class on the <li>, so style its link here.
+   -------------------------------------------------------------------------- */
+@layer components {
+    .tw-pager .tw-pager-active > a {
+        @apply bg-primary text-white hover:bg-primary;
+    }
+}

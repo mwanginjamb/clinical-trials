@@ -60,14 +60,9 @@ class SignupForm extends Model
         $user->generateAuthKey();
         $user->generateEmailVerificationToken();
 
-        if (!$user->save()) {
-            return false;
-        }
-
-        $auth = Yii::$app->authManager;
-        $auth->assign($auth->getRole('researcher'), $user->id);
-
-        return $this->sendEmail($user);
+        // No role yet: the default role is granted once the email is verified
+        // (VerifyEmailForm::verifyEmail) or an admin activates the account.
+        return $user->save() && $this->sendEmail($user);
     }
 
     /**

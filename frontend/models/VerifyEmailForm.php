@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use common\models\User;
+use common\rbac\Rbac;
 use yii\base\InvalidArgumentException;
 use yii\base\Model;
 
@@ -47,6 +48,13 @@ class VerifyEmailForm extends Model
     {
         $user = $this->_user;
         $user->status = User::STATUS_ACTIVE;
-        return $user->save(false) ? $user : null;
+        if (!$user->save(false)) {
+            return null;
+        }
+
+        // Account validated: grant the default role (researcher). Admins escalate later.
+        Rbac::assignDefaultRole($user->id);
+
+        return $user;
     }
 }

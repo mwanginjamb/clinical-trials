@@ -120,29 +120,8 @@ $topNavClass = function (string $ctrl) use ($controllerId): string {
                    -translate-x-full lg:translate-x-0 transition-transform duration-200 print:hidden">
             <div class="flex flex-col min-h-full py-6 space-y-2">
 
-                <!-- Primary Nav -->
-                <nav class="flex-1 px-4 space-y-1">
-                    <?= Html::a(
-                        '<span class="material-symbols-outlined">dashboard</span> Dashboard',
-                        Url::to(['/site/index']),
-                        ['class' => $navClass('site', 'index')]
-                    ) ?>
-                    <?= Html::a(
-                        '<span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;">clinical_notes</span> Clinical Trials',
-                        Url::to(['/clinical-trial/index']),
-                        ['class' => $navClass('clinical-trial', 'index')]
-                    ) ?>
-                    <?php if (Yii::$app->user->can('importTrials')): ?>
-                    <?= Html::a(
-                        '<span class="material-symbols-outlined" style="font-variation-settings: \'FILL\' 1;">upload</span> Bulk Trial Import',
-                        Url::to(['/trial-import/import']),
-                        ['class' => $navClass('trial-import', 'import')]
-                    ) ?>
-                    <?php endif; ?>
-
-
-
-                </nav>
+                <!-- Primary Nav (shared with dashboard.php) -->
+                <?= $this->render('_sidebar_nav') ?>
 
                 <!-- CTA Button -->
                 <?php if (Yii::$app->user->can('createTrial')): ?>

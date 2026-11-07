@@ -54,7 +54,7 @@ class RoleForm extends Model
         $name = $this->$attribute;
         $isRename = $this->scenario === self::SCENARIO_UPDATE && $name !== $this->originalName;
 
-        if ($isRename && in_array($this->originalName, Rbac::SYSTEM_ROLES, true)) {
+        if ($isRename && Rbac::isSystemItem($this->originalName)) {
             $this->addError($attribute, "'{$this->originalName}' is a system role and cannot be renamed.");
             return;
         }

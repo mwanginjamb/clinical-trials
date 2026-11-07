@@ -4,20 +4,34 @@ namespace common\rbac;
 
 use Yii;
 use yii\db\Query;
+use yii\rbac\Item;
 
 /**
- * Single source of truth for RBAC names and the rules that keep the system usable.
+ * RBAC names used by code, plus helpers that keep the system usable.
  *
  * Roles
  *   admin       – full access; manages RBAC (manageRbac)
  *   researcher  – default role, given to every user once their account is validated
  *
- * "System" items are referenced from code (controllers, views, rules). They can be
- * edited (descriptions, grants) from the RBAC screens but never renamed or deleted,
- * because that would silently break access checks.
+ * System items
+ *   A role or permission that code depends on (a can() check, an AccessControl rule, a
+ *   business rule) is flagged in the database: auth_item.data = ['system' => true].
+ *   The RBAC screens let admins edit its description and grants but never rename or
+ *   delete it, because that would silently break access checks.
+ *
+ *   Items created in the UI are never system items and need no code changes.
+ *
+ *   When code starts depending on a NEW item, create it in a migration and flag it:
+ *       $perm = $auth->createPermission('exportTrials');
+ *       Rbac::markSystem($perm);
+ *       $auth->add($perm);
+ *   (Optionally add a constant below so code can reference it without typos.)
  */
 final class Rbac
 {
+    /** Key in auth_item.data that marks an item the code depends on. */
+    public const SYSTEM_FLAG = 'system';
+
     public const ROLE_ADMIN = 'admin';
     public const ROLE_RESEARCHER = 'researcher';
 
@@ -33,22 +47,29 @@ final class Rbac
     public const PERM_MANAGE_LOOKUPS = 'manageLookups';
     public const PERM_MANAGE_RBAC = 'manageRbac';
 
-    public const SYSTEM_ROLES = [self::ROLE_ADMIN, self::ROLE_RESEARCHER];
-
-    public const SYSTEM_PERMISSIONS = [
-        self::PERM_VIEW_TRIAL,
-        self::PERM_CREATE_TRIAL,
-        self::PERM_UPDATE_TRIAL,
-        self::PERM_UPDATE_OWN_TRIAL,
-        self::PERM_DELETE_TRIAL,
-        self::PERM_IMPORT_TRIALS,
-        self::PERM_MANAGE_LOOKUPS,
-        self::PERM_MANAGE_RBAC,
-    ];
-
-    public static function isSystemItem(string $name): bool
+    /**
+     * Whether a role/permission is flagged as a system item (see class docs).
+     * Accepts the item itself or its name; unknown names are not system items.
+     */
+    public static function isSystemItem(Item|string|null $item): bool
     {
-        return in_array($name, self::SYSTEM_ROLES, true) || in_array($name, self::SYSTEM_PERMISSIONS, true);
+        if (is_string($item)) {
+            $item = self::item($item);
+        }
+        return $item !== null
+            && is_array($item->data)
+            && !empty($item->data[self::SYSTEM_FLAG]);
+    }
+
+    /**
+     * Flags an item as a system item. Sets the in-memory data only: call before
+     * $auth->add($item), or follow with $auth->update($item->name, $item).
+     * Intended for migrations, not the UI.
+     */
+    public static function markSystem(Item $item): Item
+    {
+        $item->data = array_merge(is_array($item->data) ? $item->data : [], [self::SYSTEM_FLAG => true]);
+        return $item;
     }
 
     /**
@@ -72,7 +93,7 @@ final class Rbac
     }
 
     /** A role or permission by name (DbManager::getItem() is protected). */
-    public static function item(string $name): ?\yii\rbac\Item
+    public static function item(string $name): ?Item
     {
         $auth = Yii::$app->authManager;
         return $auth->getRole($name) ?? $auth->getPermission($name);

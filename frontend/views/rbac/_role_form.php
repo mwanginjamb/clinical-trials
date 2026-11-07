@@ -11,7 +11,7 @@ use common\rbac\Rbac;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-$isSystem = in_array($model->originalName, Rbac::SYSTEM_ROLES, true);
+$isSystem = $model->originalName !== null && Rbac::isSystemItem($model->originalName);
 ksort($permissions);
 $options = array_map(fn($p) => $p->description, $permissions);
 ?>

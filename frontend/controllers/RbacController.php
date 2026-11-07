@@ -21,7 +21,7 @@ use yii\web\NotFoundHttpException;
  * RBAC administration: roles, permissions, hierarchy, user-role assignment, system users.
  *
  * Only users with `manageRbac` (granted to the admin role) can reach any action.
- * System roles/permissions (see common\rbac\Rbac) can be edited but not renamed or deleted,
+ * System items (flagged in auth_item.data, see common\rbac\Rbac) can be edited but not renamed or deleted,
  * and the admin role always keeps `manageRbac` so the screens can't lock themselves out.
  */
 class RbacController extends AuthenticatedController
@@ -62,7 +62,7 @@ class RbacController extends AuthenticatedController
                 'childRoles' => array_keys(array_filter($children, fn($c) => $c instanceof Role)),
                 'effectiveCount' => count($auth->getPermissionsByRole($role->name)),
                 'userCount' => count($auth->getUserIdsByRole($role->name)),
-                'system' => in_array($role->name, Rbac::SYSTEM_ROLES, true),
+                'system' => Rbac::isSystemItem($role),
             ];
         }
 
@@ -147,7 +147,7 @@ class RbacController extends AuthenticatedController
     {
         $role = $this->findRole($name);
 
-        if (in_array($role->name, Rbac::SYSTEM_ROLES, true)) {
+        if (Rbac::isSystemItem($role)) {
             Yii::$app->session->setFlash('error', "'{$role->name}' is a system role and cannot be deleted.");
             return $this->redirect(['index']);
         }
@@ -280,7 +280,7 @@ class RbacController extends AuthenticatedController
                 'rule' => $permission->ruleName,
                 'roles' => array_values(array_filter($parents, fn($p) => isset($roles[$p]))),
                 'parentPermissions' => array_values(array_filter($parents, fn($p) => !isset($roles[$p]))),
-                'system' => in_array($permission->name, Rbac::SYSTEM_PERMISSIONS, true),
+                'system' => Rbac::isSystemItem($permission),
             ];
         }
 
@@ -369,7 +369,7 @@ class RbacController extends AuthenticatedController
 
         if ($permission === null) {
             Yii::$app->session->setFlash('error', "Permission '{$name}' not found.");
-        } elseif (in_array($permission->name, Rbac::SYSTEM_PERMISSIONS, true)) {
+        } elseif (Rbac::isSystemItem($permission)) {
             Yii::$app->session->setFlash('error', "'{$permission->name}' is used by the application and cannot be deleted.");
         } elseif ($this->auth()->remove($permission)) {
             Yii::$app->session->setFlash('success', "Permission '{$permission->name}' deleted.");

@@ -12,7 +12,7 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 $auth = Yii::$app->authManager;
-$isSystem = in_array($model->originalName, Rbac::SYSTEM_PERMISSIONS, true);
+$isSystem = $model->originalName !== null && Rbac::isSystemItem($model->originalName);
 
 // name => description for the checkbox grid
 $groups = [];

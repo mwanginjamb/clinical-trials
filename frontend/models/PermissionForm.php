@@ -55,7 +55,7 @@ class PermissionForm extends Model
         $name = $this->$attribute;
         $isRename = $this->scenario === self::SCENARIO_UPDATE && $name !== $this->originalName;
 
-        if ($isRename && in_array($this->originalName, Rbac::SYSTEM_PERMISSIONS, true)) {
+        if ($isRename && Rbac::isSystemItem($this->originalName)) {
             $this->addError($attribute, "'{$this->originalName}' is used by the application and cannot be renamed.");
             return;
         }

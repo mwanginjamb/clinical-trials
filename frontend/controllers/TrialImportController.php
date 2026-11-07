@@ -5,27 +5,14 @@ namespace frontend\controllers;
 use frontend\models\TrialImportForm;
 use frontend\services\TrialBatchImporter;
 use frontend\services\TrialTemplateBuilder;
+use frontend\components\AuthenticatedController;
 use Yii;
-use yii\filters\AccessControl;
-use yii\web\Controller;
 use yii\web\UploadedFile;
 
-class TrialImportController extends Controller
+class TrialImportController extends AuthenticatedController
 {
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'rules' => [
-                    [
-                        'allow' => true,
-                        'roles' => ['@'], // authenticated users only; tighten to a specific role/permission as needed
-                    ],
-                ],
-            ],
-        ];
-    }
+    /** Bulk onboarding is an administrative task. */
+    protected ?string $requiredPermission = 'importTrials';
 
     /**
      * GET /trial-import/template

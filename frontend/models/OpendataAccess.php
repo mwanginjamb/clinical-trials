@@ -34,7 +34,7 @@ use Yii;
  *
  * @property ClinicalTrial $trial
  */
-class OpendataAccess extends \yii\db\ActiveRecord
+class OpendataAccess extends TrialChildRecord
 {
 
 

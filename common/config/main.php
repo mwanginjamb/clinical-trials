@@ -17,6 +17,11 @@ return [
             'password' => env('DB_PASSWORD'),
             'charset' => 'utf8',
         ],
+        'authManager' => [
+            // Roles/permissions are seeded by console/migrations/m261107_090000_init_rbac.php
+            'class' => \yii\rbac\DbManager::class,
+            'cache' => 'cache',
+        ],
         'wizard' => [
             'class' => \common\library\WizardComponent::class,
         ],

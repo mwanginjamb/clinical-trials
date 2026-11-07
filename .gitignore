@@ -51,3 +51,5 @@ phpunit.phar
 # Node
 node_modules/
 package-lock.json
+# Cygwin/Git-Bash crash dumps
+*.stackdump

@@ -28,7 +28,7 @@ use Yii;
  *
  * @property ClinicalTrial $trial
  */
-class StudyPurpose extends \yii\db\ActiveRecord
+class StudyPurpose extends TrialChildRecord
 {
 
     public $other_type_of_study;

@@ -443,9 +443,11 @@ $this->title = 'Trials Library';
             },
                 'template' => '{view} {update} {delete}',
                 'visibleButtons' => [
+                            'update' => function ($model, $key, $index) {
+                            return Yii::$app->user->can('updateTrial', ['trial' => $model]);
+                        },
                             'delete' => function ($model, $key, $index) {
-                            // return Yii::$app->user->can('deleteClinicalTrial', ['trial' => $model]);
-                            return $model->created_by == Yii::$app->user->id;
+                            return Yii::$app->user->can('deleteTrial');
                         }
                 ],
                 'buttons' => [

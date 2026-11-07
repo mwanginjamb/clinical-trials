@@ -5,16 +5,15 @@ namespace frontend\controllers;
 use frontend\models\StudyResults;
 use frontend\models\StudyResultsSearch;
 use Yii;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
+use frontend\components\AuthenticatedController;
 use yii\web\NotFoundHttpException;
 
 /**
  * StudyResultsController implements the CRUD actions for StudyResults model.
  */
-class StudyResultsController extends Controller
+class StudyResultsController extends AuthenticatedController
 {
     /**
      * @inheritDoc
@@ -28,22 +27,6 @@ class StudyResultsController extends Controller
                     'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
-                    ],
-                ],
-                'access' => [
-                    'class' => AccessControl::class,
-                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
-                    'rules' => [
-                        [
-                            'actions' => ['signup'],
-                            'allow' => true,
-                            'roles' => ['?'],
-                        ],
-                        [
-                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
-                            'allow' => true,
-                            'roles' => ['@'],
-                        ],
                     ],
                 ],
             ]

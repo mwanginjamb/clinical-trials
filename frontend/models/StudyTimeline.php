@@ -25,7 +25,7 @@ use Yii;
  *
  * @property ClinicalTrial $trial
  */
-class StudyTimeline extends \yii\db\ActiveRecord
+class StudyTimeline extends TrialChildRecord
 {
 
     public $other_country;

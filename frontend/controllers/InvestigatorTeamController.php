@@ -6,18 +6,16 @@ use frontend\models\InvestigatorTeam;
 use frontend\models\InvestigatorTeamSearch;
 use frontend\models\Town;
 use Yii;
-use yii\base\Response;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Json;
 use yii\web\BadRequestHttpException;
-use yii\web\Controller;
+use frontend\components\AuthenticatedController;
 use yii\web\NotFoundHttpException;
 
 /**
  * InvestigatorTeamController implements the CRUD actions for InvestigatorTeam model.
  */
-class InvestigatorTeamController extends Controller
+class InvestigatorTeamController extends AuthenticatedController
 {
     /**
      * @inheritDoc
@@ -34,34 +32,8 @@ class InvestigatorTeamController extends Controller
                         'save-member' => ['POST', 'PUT'], // Only allow POST and PUT for the saveMember action
                     ],
                 ],
-                'access' => [
-                    'class' => AccessControl::class,
-                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
-                    'rules' => [
-                        [
-                            'actions' => ['signup'],
-                            'allow' => true,
-                            'roles' => ['?'],
-                        ],
-                        [
-                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
-                            'allow' => true,
-                            'roles' => ['@'],
-                        ],
-                    ],
-                ],
             ]
         );
-    }
-
-    // Exclude 'save-member' from CSRF validation since it's an AJAX endpoint that may be called from JS without a CSRF token
-    public function beforeAction($action)
-    {
-        if ($action->id === 'save-member' || $action->id === 'towns-dd') {
-            $this->enableCsrfValidation = false;
-        }
-
-        return parent::beforeAction($action);
     }
 
     /**
@@ -72,7 +44,7 @@ class InvestigatorTeamController extends Controller
     public function actionIndex(int $trialId)
     {
         $searchModel = new InvestigatorTeamSearch();
-        $params = $this->request->queryParams();
+        $params = $this->request->queryParams;
         $params['InvestigatorTeamSearch']['trial_id'] = $trialId;
 
         $dataProvider = $searchModel->search($params);

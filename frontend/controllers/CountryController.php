@@ -4,15 +4,17 @@ namespace frontend\controllers;
 
 use frontend\models\Country;
 use frontend\models\CountrySearch;
-use yii\web\Controller;
+use frontend\components\AuthenticatedController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * CountryController implements the CRUD actions for Country model.
  */
-class CountryController extends Controller
+class CountryController extends AuthenticatedController
 {
+    protected ?string $requiredPermission = 'manageLookups';
+
     /**
      * @inheritDoc
      */

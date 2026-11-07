@@ -105,6 +105,6 @@ return [
 
     ],
 
-    'currencyFreaksApiKey' => 'a2a22a1b8d35414792214882f5c28470',
+    'currencyFreaksApiKey' => env('CURRENCY_FREAKS_API_KEY'),
     'currencyApi' => 'https://api.currencyfreaks.com/v2.0/currency-symbols',
 ];

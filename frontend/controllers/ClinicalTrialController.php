@@ -9,13 +9,13 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
-use yii\web\Controller;
+use frontend\components\AuthenticatedController;
 use yii\web\NotFoundHttpException;
 
 /**
  * ClinicalTrialController implements the CRUD actions for ClinicalTrial model.
  */
-class ClinicalTrialController extends Controller
+class ClinicalTrialController extends AuthenticatedController
 {
     /**
      * @inheritDoc
@@ -31,20 +31,15 @@ class ClinicalTrialController extends Controller
                         'delete' => ['POST'],
                     ],
                 ],
+                // Deny-by-default: an action not listed here is refused.
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
                     'rules' => [
-                        [
-                            'actions' => ['signup'],
-                            'allow' => true,
-                            'roles' => ['?'],
-                        ],
-                        [
-                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
-                            'allow' => true,
-                            'roles' => ['@'],
-                        ],
+                        ['actions' => ['index', 'view'], 'allow' => true, 'roles' => ['viewTrial']],
+                        ['actions' => ['create'], 'allow' => true, 'roles' => ['createTrial']],
+                        // ownership is checked inside actionUpdate (needs the loaded trial)
+                        ['actions' => ['update'], 'allow' => true, 'roles' => ['@']],
+                        ['actions' => ['delete'], 'allow' => true, 'roles' => ['deleteTrial']],
                     ],
                 ],
             ]
@@ -144,15 +139,11 @@ class ClinicalTrialController extends Controller
      */
     public function actionUpdate($id = null, $trial_id = null)
     {
-        $model = $this->findModel($id);
-        if ($model) {
-            Yii::$app->session->set('clinical_trial_id', $model->id);
-        }
+        // Accept either ?id= (grid, wizard) or ?trial_id= (legacy links)
+        $model = $this->findModel($id ?? $trial_id);
+        $this->requireTrialEditAccess($model);
 
-        // if model is null , find it by trial_id
-        if (!$model && $trial_id) {
-            $model = ClinicalTrial::find()->where(['id' => $trial_id])->one();
-        }
+        Yii::$app->session->set('clinical_trial_id', $model->id);
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
 

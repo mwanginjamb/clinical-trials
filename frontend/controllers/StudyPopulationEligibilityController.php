@@ -5,15 +5,14 @@ namespace frontend\controllers;
 use frontend\models\StudyPopulationEligibility;
 use frontend\models\StudyPopulationEligibilitySearch;
 use Yii;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
-use yii\web\Controller;
+use frontend\components\AuthenticatedController;
 use yii\web\NotFoundHttpException;
 
 /**
  * StudyPopulationEligibilityController implements the CRUD actions for StudyPopulationEligibility model.
  */
-class StudyPopulationEligibilityController extends Controller
+class StudyPopulationEligibilityController extends AuthenticatedController
 {
     /**
      * @inheritDoc
@@ -27,22 +26,6 @@ class StudyPopulationEligibilityController extends Controller
                     'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
-                    ],
-                ],
-                'access' => [
-                    'class' => AccessControl::class,
-                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
-                    'rules' => [
-                        [
-                            'actions' => ['signup'],
-                            'allow' => true,
-                            'roles' => ['?'],
-                        ],
-                        [
-                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
-                            'allow' => true,
-                            'roles' => ['@'],
-                        ],
                     ],
                 ],
             ]

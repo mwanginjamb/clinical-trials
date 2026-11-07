@@ -27,7 +27,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property ClinicalTrial $trial
  */
-class InvestigatorTeam extends \yii\db\ActiveRecord
+class InvestigatorTeam extends TrialChildRecord
 {
 
 

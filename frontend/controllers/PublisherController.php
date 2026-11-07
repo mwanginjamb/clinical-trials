@@ -4,15 +4,17 @@ namespace frontend\controllers;
 
 use frontend\models\Publisher;
 use frontend\models\PublisherSearch;
-use yii\web\Controller;
+use frontend\components\AuthenticatedController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * PublisherController implements the CRUD actions for Publisher model.
  */
-class PublisherController extends Controller
+class PublisherController extends AuthenticatedController
 {
+    protected ?string $requiredPermission = 'manageLookups';
+
     /**
      * @inheritDoc
      */

@@ -6,15 +6,17 @@ use frontend\models\Country;
 use frontend\models\Town;
 use frontend\models\TownSearch;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
+use frontend\components\AuthenticatedController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * TownController implements the CRUD actions for Town model.
  */
-class TownController extends Controller
+class TownController extends AuthenticatedController
 {
+    protected ?string $requiredPermission = 'manageLookups';
+
     /**
      * @inheritDoc
      */

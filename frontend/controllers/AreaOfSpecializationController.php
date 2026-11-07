@@ -4,15 +4,17 @@ namespace frontend\controllers;
 
 use frontend\models\AreaOfSpecialization;
 use frontend\models\AreaOfSpecializationSearch;
-use yii\web\Controller;
+use frontend\components\AuthenticatedController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
  * AreaOfSpecializationController implements the CRUD actions for AreaOfSpecialization model.
  */
-class AreaOfSpecializationController extends Controller
+class AreaOfSpecializationController extends AuthenticatedController
 {
+    protected ?string $requiredPermission = 'manageLookups';
+
     /**
      * @inheritDoc
      */

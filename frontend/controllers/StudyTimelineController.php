@@ -7,16 +7,15 @@ use frontend\models\Region;
 use frontend\models\StudyTimeline;
 use frontend\models\StudyTimelineSearch;
 use Yii;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\ArrayHelper;
-use yii\web\Controller;
+use frontend\components\AuthenticatedController;
 use yii\web\NotFoundHttpException;
 
 /**
  * StudyTimelineController implements the CRUD actions for StudyTimeline model.
  */
-class StudyTimelineController extends Controller
+class StudyTimelineController extends AuthenticatedController
 {
     /**
      * @inheritDoc
@@ -30,22 +29,6 @@ class StudyTimelineController extends Controller
                     'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
-                    ],
-                ],
-                'access' => [
-                    'class' => AccessControl::class,
-                    'only' => ['logout', 'signup', 'index', 'view', 'create', 'update', 'delete'],
-                    'rules' => [
-                        [
-                            'actions' => ['signup'],
-                            'allow' => true,
-                            'roles' => ['?'],
-                        ],
-                        [
-                            'actions' => ['logout', 'index', 'view', 'create', 'update', 'delete'],
-                            'allow' => true,
-                            'roles' => ['@'],
-                        ],
                     ],
                 ],
             ]

@@ -17,6 +17,11 @@ return [
         '@npm'   => '@vendor/npm-asset',
     ],
     'controllerMap' => [
+        'migrate' => [
+            'class' => \yii\console\controllers\MigrateController::class,
+            // Yii's RBAC tables (auth_item, auth_assignment, ...) run alongside the app's own migrations.
+            'migrationPath' => ['@console/migrations', '@yii/rbac/migrations'],
+        ],
         'fixture' => [
             'class' => \yii\console\controllers\FixtureController::class,
             'namespace' => 'common\fixtures',

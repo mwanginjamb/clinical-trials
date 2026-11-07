@@ -20,7 +20,7 @@ use Yii;
  *
  * @property ClinicalTrial $trial
  */
-class EthicalApproval extends \yii\db\ActiveRecord
+class EthicalApproval extends TrialChildRecord
 {
 
 

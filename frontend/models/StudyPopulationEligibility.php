@@ -21,7 +21,7 @@ use Yii;
  *
  * @property ClinicalTrial $trial
  */
-class StudyPopulationEligibility extends \yii\db\ActiveRecord
+class StudyPopulationEligibility extends TrialChildRecord
 {
 
 

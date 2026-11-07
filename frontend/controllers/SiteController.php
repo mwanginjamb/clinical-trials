@@ -3,7 +3,6 @@
 namespace frontend\controllers;
 
 use common\models\LoginForm;
-use frontend\models\ClinicalTrial;
 use frontend\models\ContactForm;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResendVerificationEmailForm;
@@ -77,34 +76,10 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $this->layout = 'dashboard';
-        // Recent trials
-        $recentTrials = ClinicalTrial::find()
-            ->alias('trial')
-            ->with([
-                'investigators' => function ($query) {
-                    $query->where(['role' => 1]); // Get only PIs
-                },
-                'timeline',
-                'purpose'
-            ])
-            ->joinWith(['timeline', 'purpose']) // For sorting
-            ->orderBy([
-                'IFNULL(study_timeline.anticipated_start_date, trial.id)' => SORT_DESC
-            ])
-            ->limit(5)
-            // ->asArray()
-            ->all();
 
-        /* print '<pre>';
-         print_r($recentTrials);
-         print '</pre>';
-         exit;
-         */
-
-
-
+        // All figures come from common\library\DashboardComponent (Yii::$app->dashboard).
         return $this->render('index', [
-            'recentTrials' => $recentTrials,
+            'dash' => Yii::$app->dashboard,
         ]);
     }
 

@@ -276,19 +276,24 @@ class ClinicalTrial extends \yii\db\ActiveRecord
      * Markup helper functions for grid
      */
 
-    // Add status badge helper
+    /**
+     * Registration-status badge. Labels come from getRegistrationStatusOptions(), so they always
+     * match what the form saved (previously showed unrelated "Draft/Approved/In Progress" labels).
+     */
     public function getStatusBadge()
     {
-        $map = [
-            1 => ['label' => 'Draft', 'class' => 'bg-slate-200 text-slate-600'],
-            2 => ['label' => 'Approved', 'class' => 'bg-tertiary-container text-white'],
-            3 => ['label' => 'In Progress', 'class' => 'bg-secondary-container text-on-secondary-container'],
-            4 => ['label' => 'Completed', 'class' => 'bg-primary-container text-white'],
+        $classes = [
+            0 => 'bg-slate-200 text-slate-600',                               // Not Registered
+            1 => 'bg-tertiary-container text-white',                         // Registered
+            2 => 'bg-[#fff3cd] text-[#7a5c00]',                               // Pending
+            3 => 'bg-error-container text-on-error-container',               // Rejected
+            4 => 'bg-secondary-container text-on-secondary-container',       // Ongoing
         ];
+        $label = self::getRegistrationStatusOptions()[$this->registration_status] ?? 'Unknown';
+        $class = $classes[$this->registration_status] ?? 'bg-slate-200 text-slate-600';
 
-        $status = $map[$this->registration_status] ?? ['label' => 'Unknown', 'class' => 'bg-slate-200 text-slate-600'];
-
-        return '<span class="px-2 md:px-3 py-1 ' . $status['class'] . ' text-[9px] md:text-[10px] font-bold rounded-full uppercase tracking-tighter">' . $status['label'] . '</span>';
+        return '<span class="inline-flex px-2.5 py-0.5 ' . $class . ' text-[10px] font-bold rounded-full uppercase tracking-wider whitespace-nowrap">'
+            . \yii\helpers\Html::encode($label) . '</span>';
     }
 
     // Get display title (prioritize scientific, then public, then acronym)
@@ -317,9 +322,9 @@ class ClinicalTrial extends \yii\db\ActiveRecord
     // Get phase display
     public function getPhaseDisplay()
     {
-        $map = [1 => 'I', 2 => 'II', 3 => 'III', 4 => 'IV'];
+        // Same option list the Study Purpose form saves (1 => 'Phase 1' … 6 => 'Other').
         $phase = $this->purpose->phase_of_study ?? null;
-        return $map[$phase] ?? 'N/A';
+        return (new StudyPurpose())->getPhaseOfStudy()[$phase] ?? '—';
     }
 
     // Get primary investigator

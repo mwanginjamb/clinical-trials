@@ -28,33 +28,54 @@ class CurrencyHelper
         'XCD','XDR','XOF','XPF','YER','ZAR','ZMW','ZWL',
     ];
 
+    /**
+     * ISO code => symbol. Fetched from CurrencyFreaks and cached for a week.
+     *
+     * If the API is unreachable, misconfigured or returns nothing, falls back to the built-in
+     * ISO 4217 list (code => code) and does NOT cache the failure, so validation of the
+     * Funding currency keeps working and the next request retries the API.
+     */
     public static function getSymbolList($isoOnly = true)
     {
-
+        $cache = \Yii::$app->cache;
         $cacheKey = self::CACHE_KEY . ($isoOnly ? '-iso' : '-all');
-        return \Yii::$app->cache->getOrSet($cacheKey, function() use ($isoOnly) {
-            $client = new Client();
-            $response = $client->createRequest()
-                ->setMethod('GET')
-                ->setUrl(\Yii::$app->params['currencyApi'])
-                ->setData(['apiKey' => \Yii::$app->params['currencyFreaksApiKey']])
-                ->send();
 
-            if(!$response->isOK) {
-                return []; // degrade gracefully
+        $cached = $cache->get($cacheKey);
+        if (is_array($cached) && $cached !== []) {
+            return $cached;
+        }
+
+        $symbols = [];
+        try {
+            $apiKey = \Yii::$app->params['currencyFreaksApiKey'] ?? null;
+            if ($apiKey) {
+                $response = (new Client(['requestConfig' => ['options' => ['timeout' => 5]]]))
+                    ->createRequest()
+                    ->setMethod('GET')
+                    ->setUrl(\Yii::$app->params['currencyApi'])
+                    ->setData(['apiKey' => $apiKey])
+                    ->send();
+                if ($response->isOk) {
+                    $symbols = $response->data['currencySymbols'] ?? [];
+                }
             }
+        } catch (\Throwable $e) {
+            \Yii::warning('Currency API unavailable: ' . $e->getMessage(), __METHOD__);
+        }
 
-            $data = $response->data; // decode to array
-            $symbols = $data['currencySymbols'] ?? [];
+        if ($isoOnly && $symbols !== []) {
+            $symbols = array_intersect_key($symbols, array_flip(self::$iso4217Codes));
+        }
 
-            if ($isoOnly) {
-                $symbols = array_intersect_key($symbols, array_flip(self::$iso4217Codes));
-            }
+        if ($symbols === []) {
+            // Fallback: codes only, not cached.
+            return array_combine(self::$iso4217Codes, self::$iso4217Codes);
+        }
 
-            // sort alphabetically
-            asort($symbols);
-            return $symbols;
-        },self::CACHE_DURATION);
+        asort($symbols);
+        $cache->set($cacheKey, $symbols, self::CACHE_DURATION);
+
+        return $symbols;
     }
 
 }

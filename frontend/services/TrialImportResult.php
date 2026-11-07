@@ -3,62 +3,109 @@
 namespace frontend\services;
 
 /**
- * Collects a per-batch report so the controller/view can show the user exactly what
- * happened: which trial_refs imported (with the new trial IDs) and which failed and why.
+ * Report of one validation run or import: one entry per Trials row plus file-level issues.
  */
 class TrialImportResult
 {
-    /** @var array<int, array{ref:string,id:int}> */
-    private array $successes = [];
+    public const STATUS_OK = 'ok';            // valid (dry run) or imported
+    public const STATUS_ERROR = 'error';      // not imported: fix the messages
+    public const STATUS_SKIPPED = 'skipped';  // duplicate protocol number: deliberately not imported
 
-    /** @var array<int, array{context:string,message:string}> */
-    private array $errors = [];
+    /** @var bool true = nothing was saved (validation run) */
+    public bool $dryRun;
 
-    /** @var string[] */
-    private array $fatals = [];
+    /**
+     * @var array<string, array{ref:string,row:int,title:string,status:string,messages:string[],trialId:?int,children:array<string,int>}>
+     *      keyed by trial_ref
+     */
+    private array $trials = [];
 
-    public function addSuccess(string $ref, int $trialId): void
+    /** @var array<int, array{level:string,message:string}> problems not tied to one trial */
+    private array $fileIssues = [];
+
+    public function __construct(bool $dryRun)
     {
-        $this->successes[] = ['ref' => $ref, 'id' => $trialId];
+        $this->dryRun = $dryRun;
     }
 
-    public function addError(string $context, string $message): void
+    public function addTrial(string $ref, int $row, string $title): void
     {
-        $this->errors[] = ['context' => $context, 'message' => $message];
+        $this->trials[$ref] = [
+            'ref' => $ref,
+            'row' => $row,
+            'title' => $title,
+            'status' => self::STATUS_OK,
+            'messages' => [],
+            'trialId' => null,
+            'children' => [],
+        ];
     }
 
-    public function addFatal(string $message): void
+    public function hasTrial(string $ref): bool
     {
-        $this->fatals[] = $message;
+        return isset($this->trials[$ref]);
     }
 
-    public function getSuccesses(): array
+    public function addTrialError(string $ref, string $message): void
     {
-        return $this->successes;
+        $this->trials[$ref]['messages'][] = $message;
+        if ($this->trials[$ref]['status'] !== self::STATUS_SKIPPED) {
+            $this->trials[$ref]['status'] = self::STATUS_ERROR;
+        }
     }
 
-    public function getErrors(): array
+    public function skipTrial(string $ref, string $reason): void
     {
-        return $this->errors;
+        $this->trials[$ref]['status'] = self::STATUS_SKIPPED;
+        $this->trials[$ref]['messages'] = [$reason];
     }
 
-    public function getFatals(): array
+    public function trialStatus(string $ref): string
     {
-        return $this->fatals;
+        return $this->trials[$ref]['status'];
     }
 
-    public function successCount(): int
+    public function setSaved(string $ref, ?int $trialId, array $children): void
     {
-        return count($this->successes);
+        $this->trials[$ref]['trialId'] = $this->dryRun ? null : $trialId;
+        $this->trials[$ref]['children'] = array_filter($children);
     }
 
-    public function errorCount(): int
+    public function addFileIssue(string $message, string $level = 'error'): void
     {
-        return count($this->errors) + count($this->fatals);
+        $this->fileIssues[] = ['level' => $level, 'message' => $message];
     }
 
-    public function hasErrors(): bool
+    /** @return array<int, array> trials in sheet order */
+    public function getTrials(): array
     {
-        return $this->errorCount() > 0;
+        return array_values($this->trials);
+    }
+
+    public function getFileIssues(): array
+    {
+        return $this->fileIssues;
+    }
+
+    public function count(string $status): int
+    {
+        return count(array_filter($this->trials, fn($t) => $t['status'] === $status));
+    }
+
+    public function okCount(): int
+    {
+        return $this->count(self::STATUS_OK);
+    }
+
+    /** A fatal file problem (bad file, missing Trials sheet…) stops everything. */
+    public function hasFatal(): bool
+    {
+        return (bool) array_filter($this->fileIssues, fn($i) => $i['level'] === 'fatal');
+    }
+
+    public function hasProblems(): bool
+    {
+        return $this->count(self::STATUS_ERROR) > 0
+            || (bool) array_filter($this->fileIssues, fn($i) => $i['level'] !== 'info');
     }
 }

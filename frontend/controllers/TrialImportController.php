@@ -2,32 +2,55 @@
 
 namespace frontend\controllers;
 
+use common\rbac\Rbac;
+use frontend\components\AuthenticatedController;
 use frontend\models\TrialImportForm;
 use frontend\services\TrialBatchImporter;
 use frontend\services\TrialTemplateBuilder;
-use frontend\components\AuthenticatedController;
 use Yii;
+use yii\filters\VerbFilter;
+use yii\helpers\FileHelper;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
+/**
+ * Bulk onboarding of trials from the Excel template, in two steps:
+ *
+ *   1. POST import   upload → file kept under @runtime/trial-imports → full validation with
+ *                    nothing saved → report ("preview").
+ *   2. POST confirm  re-runs the same file for real and saves the valid trials.
+ *
+ * The stored file is referenced by a random token kept in the uploader's session, so one
+ * user can never confirm another's upload. Files expire after STORE_TTL seconds.
+ */
 class TrialImportController extends AuthenticatedController
 {
-    /** Bulk onboarding is an administrative task. */
-    protected ?string $requiredPermission = 'importTrials';
+    protected ?string $requiredPermission = Rbac::PERM_IMPORT_TRIALS;
 
-    /**
-     * GET /trial-import/template
-     * Streams the blank workbook the user fills in.
-     */
+    private const SESSION_KEY = 'trialImportUploads';
+    private const STORE_TTL = 3600;
+
+    public function behaviors()
+    {
+        return array_merge(parent::behaviors(), [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => ['confirm' => ['POST'], 'discard' => ['POST']],
+            ],
+        ]);
+    }
+
+    /** GET /trial-import/template: the blank workbook. */
     public function actionTemplate()
     {
-        Yii::$app->response->format = \yii\web\Response::FORMAT_RAW;
+        Yii::$app->response->format = Response::FORMAT_RAW;
         (new TrialTemplateBuilder())->outputAsDownload();
         Yii::$app->end();
     }
 
     /**
-     * GET  /trial-import/import  -> shows the upload form
-     * POST /trial-import/import  -> runs the batch import and shows a report
+     * GET  shows the upload form.
+     * POST stores the file and shows the validation report; nothing is saved.
      */
     public function actionImport()
     {
@@ -35,23 +58,115 @@ class TrialImportController extends AuthenticatedController
 
         if (Yii::$app->request->isPost) {
             $form->file = UploadedFile::getInstance($form, 'file');
-
             if ($form->validate()) {
-                $result = (new TrialBatchImporter())->import($form->file);
+                $this->purgeExpired();
+                $token = Yii::$app->security->generateRandomString(32);
+                $path = $this->storedPath($token);
+                if (!$form->file->saveAs($path)) {
+                    Yii::$app->session->setFlash('error', 'The upload could not be stored. Please try again.');
+                    return $this->refresh();
+                }
+                $uploads = Yii::$app->session->get(self::SESSION_KEY, []);
+                $uploads[$token] = ['name' => $form->file->name, 'time' => time()];
+                Yii::$app->session->set(self::SESSION_KEY, $uploads);
 
-                Yii::$app->session->setFlash(
-                    $result->hasErrors() ? 'warning' : 'success',
-                    "{$result->successCount()} trial(s) imported, {$result->errorCount()} failed."
-                );
+                $result = (new TrialBatchImporter())->import($path, true);
+                if ($result->okCount() === 0) {
+                    $this->forget($token); // nothing to confirm
+                    $token = null;
+                }
 
-                return $this->render('import-result', [
+                return $this->render('result', [
                     'result' => $result,
+                    'token' => $token,
+                    'fileName' => $form->file->name,
                 ]);
             }
         }
 
-        return $this->render('import', [
-            'form' => $form,
+        return $this->render('import', ['form' => $form]);
+    }
+
+    /** POST: import the previously checked file for real. */
+    public function actionConfirm()
+    {
+        $token = (string) Yii::$app->request->post('token');
+        $upload = $this->upload($token);
+        if ($upload === null) {
+            Yii::$app->session->setFlash('warning', 'That upload has expired or was already imported. Please upload the file again.');
+            return $this->redirect(['import']);
+        }
+
+        $result = (new TrialBatchImporter())->import($this->storedPath($token), false);
+        $this->forget($token);
+
+        $ok = $result->okCount();
+        Yii::$app->session->setFlash($ok ? 'success' : 'warning', $ok
+            ? "{$ok} trial(s) imported from {$upload['name']}."
+            : 'No trials were imported. See the report below.');
+
+        return $this->render('result', [
+            'result' => $result,
+            'token' => null,
+            'fileName' => $upload['name'],
         ]);
+    }
+
+    /** POST: drop a checked upload without importing. */
+    public function actionDiscard()
+    {
+        $this->forget((string) Yii::$app->request->post('token'));
+        return $this->redirect(['import']);
+    }
+
+    /* ───────────────────────── Stored uploads ───────────────────────── */
+
+    private function storeDir(): string
+    {
+        $dir = Yii::getAlias('@runtime/trial-imports');
+        FileHelper::createDirectory($dir);
+        return $dir;
+    }
+
+    private function storedPath(string $token): string
+    {
+        // token is generated by us; still, only allow its alphabet in a path.
+        return $this->storeDir() . DIRECTORY_SEPARATOR . preg_replace('/[^A-Za-z0-9_-]/', '', $token) . '.xlsx';
+    }
+
+    /** The session's upload record for $token, if it exists, is fresh and the file is present. */
+    private function upload(string $token): ?array
+    {
+        $uploads = Yii::$app->session->get(self::SESSION_KEY, []);
+        $upload = $uploads[$token] ?? null;
+        if ($upload === null || time() - $upload['time'] > self::STORE_TTL || !is_file($this->storedPath($token))) {
+            $this->forget($token);
+            return null;
+        }
+        return $upload;
+    }
+
+    private function forget(string $token): void
+    {
+        if ($token === '') {
+            return;
+        }
+        $uploads = Yii::$app->session->get(self::SESSION_KEY, []);
+        unset($uploads[$token]);
+        Yii::$app->session->set(self::SESSION_KEY, $uploads);
+        $path = $this->storedPath($token);
+        if (is_file($path)) {
+            @unlink($path);
+        }
+    }
+
+    /** Deletes stored uploads older than the TTL (anyone's), so abandoned files don't pile up. */
+    private function purgeExpired(): void
+    {
+        foreach (glob($this->storeDir() . DIRECTORY_SEPARATOR . '*.xlsx') ?: [] as $file) {
+            if (filemtime($file) < time() - self::STORE_TTL) {
+                @unlink($file);
+            }
+        }
     }
 }

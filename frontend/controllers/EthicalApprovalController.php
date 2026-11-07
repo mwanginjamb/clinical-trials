@@ -3,11 +3,14 @@
 namespace frontend\controllers;
 
 use frontend\models\EthicalApproval;
+use frontend\models\EthicalApprovalDocument;
 use frontend\models\EthicalApprovalSearch;
 use Yii;
 use yii\filters\VerbFilter;
 use frontend\components\AuthenticatedController;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 /**
  * EthicalApprovalController implements the CRUD actions for EthicalApproval model.
@@ -26,6 +29,7 @@ class EthicalApprovalController extends AuthenticatedController
                     'class' => VerbFilter::class,
                     'actions' => [
                         'delete' => ['POST'],
+                        'delete-document' => ['POST'],
                     ],
                 ],
             ]
@@ -78,10 +82,8 @@ class EthicalApprovalController extends AuthenticatedController
         }
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                // save model ID for wizard step
-                Yii::$app->wizard->registerModel('ethical-approval', $model->id);
-                return $this->redirect(Yii::$app->urlManager->createUrl(['funding/create']));
+            if ($response = $this->saveAndRedirect($model)) {
+                return $response;
             }
         } else {
             $model->loadDefaultValues();
@@ -108,9 +110,8 @@ class EthicalApprovalController extends AuthenticatedController
             $model = EthicalApproval::find()->where(['trial_id' => $trial_id])->one();
         }
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            Yii::$app->wizard->registerModel('ethical-approval', $model->id);
-            return $this->redirect(Yii::$app->urlManager->createUrl(['funding/create', 'trial_id' => $model->trial_id]));
+        if ($this->request->isPost && ($response = $this->saveAndRedirect($model))) {
+            return $response;
         }
 
         return $this->render('update', [
@@ -130,6 +131,99 @@ class EthicalApprovalController extends AuthenticatedController
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * GET: streams an approval document inline so the browser previews the PDF.
+     * Allowed for users who can view trials, or who can edit this trial.
+     * @param int $id document ID
+     * @throws NotFoundHttpException|ForbiddenHttpException
+     */
+    public function actionDocument($id)
+    {
+        $document = $this->findDocument($id);
+        $trial = $document->ethicalApproval->trial;
+        $user = Yii::$app->user;
+        if (!$user->can('viewTrial') && !$user->can('updateTrial', ['trial' => $trial])) {
+            throw new ForbiddenHttpException(Yii::t('app', 'You are not allowed to view this document.'));
+        }
+
+        $path = $document->getFilePath();
+        if (!is_file($path)) {
+            throw new NotFoundHttpException(Yii::t('app', 'The document file is missing.'));
+        }
+
+        return Yii::$app->response->sendFile($path, $document->original_name, [
+            'mimeType' => $document->mime_type,
+            'inline' => true,
+        ]);
+    }
+
+    /**
+     * POST: deletes an approval document (record and file), then returns to the form.
+     * Edit rights on the trial are enforced by the model.
+     * @param int $id document ID
+     */
+    public function actionDeleteDocument($id)
+    {
+        $document = $this->findDocument($id);
+        $approvalId = $document->ethical_approval_id;
+
+        if ($document->delete()) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Document "{name}" deleted.', ['name' => $document->original_name]));
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'The document could not be deleted.'));
+        }
+
+        return $this->redirect(['update', 'id' => $approvalId]);
+    }
+
+    /**
+     * Loads the POSTed form and uploaded documents, saves both, and redirects:
+     * "Save" reloads the form (so the uploaded documents are listed), "Save & Continue"
+     * moves on to the next wizard step.
+     *
+     * @return \yii\web\Response|null null when nothing was loaded or validation failed
+     */
+    private function saveAndRedirect(EthicalApproval $model)
+    {
+        if (!$model->load($this->request->post())) {
+            return null;
+        }
+        $model->documentFiles = UploadedFile::getInstances($model, 'documentFiles');
+        $uploaded = count($model->documentFiles);
+
+        if (!$model->save()) {
+            return null;
+        }
+        Yii::$app->wizard->registerModel('ethical-approval', $model->id);
+
+        $failed = $model->saveDocumentFiles();
+        if ($failed > 0) {
+            Yii::$app->session->setFlash('error', Yii::t('app', '{n, plural, =1{One document} other{# documents}} could not be stored. Please try uploading again.', ['n' => $failed]));
+        } elseif ($uploaded > 0) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Ethical approval saved with {n, plural, =1{one new document} other{# new documents}}.', ['n' => $uploaded]));
+        } else {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Ethical approval saved.'));
+        }
+
+        if ($this->request->post('intent') === 'continue' && $failed === 0) {
+            return $this->redirect(['funding/create', 'trial_id' => $model->trial_id]);
+        }
+
+        return $this->redirect(['update', 'id' => $model->id]);
+    }
+
+    /**
+     * @throws NotFoundHttpException
+     */
+    protected function findDocument($id): EthicalApprovalDocument
+    {
+        if (($document = EthicalApprovalDocument::findOne(['id' => $id])) !== null) {
+            return $document;
+        }
+
+        throw new NotFoundHttpException(Yii::t('app', 'The requested document does not exist.'));
     }
 
     /**

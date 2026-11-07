@@ -363,6 +363,44 @@ $sections = [
                         <?= $field('Approval document no.', $approval->document_number) ?>
                         <?= $field('Recorded on', $approval->created_at ? $fmt->asDate($approval->created_at) : null) ?>
                     </dl>
+
+                    <div class="mt-8">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-3">
+                            Approval documents
+                        </p>
+                        <?php if ($approval->documents): ?>
+                            <ul class="space-y-2">
+                                <?php foreach ($approval->documents as $document): ?>
+                                    <li class="flex items-center gap-3 min-w-0 bg-surface-container-low rounded-xl px-[1rem] py-[0.75rem]">
+                                        <span class="material-symbols-outlined text-error shrink-0">picture_as_pdf</span>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-sm font-semibold text-on-surface truncate" title="<?= Html::encode($document->original_name) ?>">
+                                                <?= Html::encode($document->original_name) ?>
+                                            </p>
+                                            <p class="text-xs text-on-surface-variant">
+                                                <?= Html::encode($document->getSizeLabel()) ?>
+                                                <?php if ($document->created_at): ?>
+                                                    · Uploaded <?= $fmt->asDate($document->created_at) ?>
+                                                <?php endif; ?>
+                                            </p>
+                                        </div>
+                                        <?= Html::a(
+                                            '<span class="material-symbols-outlined text-[18px]">visibility</span><span class="hidden sm:inline">Preview</span>',
+                                            ['ethical-approval/document', 'id' => $document->id],
+                                            [
+                                                'class' => 'shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-primary hover:bg-primary-fixed/30 transition-colors',
+                                                'target' => '_blank',
+                                                'rel' => 'noopener',
+                                                'title' => 'Preview ' . $document->original_name,
+                                            ]
+                                        ) ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <?= $empty('approval documents') ?>
+                        <?php endif; ?>
+                    </div>
                 <?php else: ?>
                     <?= $empty('ethics approval') ?>
                 <?php endif; ?>

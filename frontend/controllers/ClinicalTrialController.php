@@ -77,7 +77,7 @@ class ClinicalTrialController extends AuthenticatedController
                 'studyPopulationEligibility',
                 'timeline',
                 'investigators',
-                'ethicalApproval',
+                'ethicalApproval.documents',
                 'funding',
                 'studyDescription',
                 'studyIntervention',

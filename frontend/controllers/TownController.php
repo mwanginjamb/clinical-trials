@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use Yii;
 use frontend\models\Country;
 use frontend\models\Town;
 use frontend\models\TownSearch;
@@ -75,6 +76,7 @@ class TownController extends AuthenticatedController
         $countries = ArrayHelper::map(Country::find()->asArray()->all(), 'id', 'name');
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
+                Yii::$app->session->setFlash('success', 'Town "' . $model->name . '" created.');
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -100,6 +102,7 @@ class TownController extends AuthenticatedController
         $countries = ArrayHelper::map(Country::find()->asArray()->all(), 'id', 'name');
 
         if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+            Yii::$app->session->setFlash('success', 'Town "' . $model->name . '" updated.');
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -118,7 +121,14 @@ class TownController extends AuthenticatedController
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        try {
+            if ($model->delete()) {
+                Yii::$app->session->setFlash('success', 'Town "' . $model->name . '" deleted.');
+            }
+        } catch (\yii\db\IntegrityException $e) {
+            Yii::$app->session->setFlash('error', 'Town "' . $model->name . '" is still in use and cannot be deleted.');
+        }
 
         return $this->redirect(['index']);
     }

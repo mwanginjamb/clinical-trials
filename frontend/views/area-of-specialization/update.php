@@ -1,23 +1,17 @@
 <?php
 
-use yii\helpers\Html;
-
 /** @var yii\web\View $this */
 /** @var frontend\models\AreaOfSpecialization $model */
 
-$this->title = Yii::t('app', 'Update Area Of Specialization: {name}', [
-    'name' => $model->title,
-]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Area Of Specializations'), 'url' => ['index']];
+$this->title = 'Edit area of specialization: ' . $model->title;
+$this->params['breadcrumbs'][] = ['label' => 'Areas of Specialization', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
-<div class="area-of-specialization-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
-</div>
+<?= $this->render('../lookups/_header', [
+    'title' => 'Edit area of specialization',
+    'subtitle' => $model->title,
+]) ?>
+<?= $this->render('_form', [
+    'model' => $model,
+]) ?>

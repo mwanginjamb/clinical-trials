@@ -104,3 +104,19 @@
         @apply bg-primary text-white hover:bg-primary;
     }
 }
+/* --------------------------------------------------------------------------
+   Grid sort indicators (frontend/widgets/TailwindGridView).
+   yii\data\Sort marks the active sort link with .asc / .desc.
+   -------------------------------------------------------------------------- */
+@layer components {
+    .tw-grid th a.asc,
+    .tw-grid th a.desc {
+        @apply text-primary;
+    }
+    .tw-grid th a.asc::after {
+        content: "\2191";
+    }
+    .tw-grid th a.desc::after {
+        content: "\2193";
+    }
+}

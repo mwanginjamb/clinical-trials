@@ -1,48 +1,60 @@
 <?php
 
-use frontend\models\Publisher;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
+use common\library\FormUi;
+use common\models\User;
+use frontend\widgets\TailwindActionColumn;
+use frontend\widgets\TailwindGridView;
+use yii\grid\SerialColumn;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\PublisherSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Publishers');
+$this->title = 'Publishers';
+$this->params['breadcrumbs'][] = ['label' => 'Lookups'];
 $this->params['breadcrumbs'][] = $this->title;
+
+// usernames for the "Added by" column, one query for the page
+$creatorIds = array_filter(array_unique(ArrayHelper::getColumn($dataProvider->getModels(), 'created_by')));
+$usernames = $creatorIds
+    ? ArrayHelper::map(User::find()->select(['id', 'username'])->where(['id' => $creatorIds])->asArray()->all(), 'id', 'username')
+    : [];
 ?>
-<div class="publisher-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<?= $this->render('../lookups/_header', [
+    'title' => 'Publishers',
+    'subtitle' => 'Journals and publishers offered when recording trial publications.',
+    'actions' => FormUi::ctaButton('New publisher', 'add', ['create']),
+]) ?>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Publisher'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            //'id',
-            'publisher',
-            'created_at',
-            'updated_at',
-            'created_by',
-            //'updated_by',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, Publisher $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id' => $model->id]);
-                    }
-            ],
+<?= TailwindGridView::widget([
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'emptyText' => 'No publishers match your filters.',
+    'columns' => [
+        ['class' => SerialColumn::class],
+        [
+            'attribute' => 'publisher',
+            'contentOptions' => ['class' => TailwindGridView::TD . ' font-headline font-bold text-primary'],
         ],
-    ]); ?>
-
-
-</div>
+        [
+            'attribute' => 'created_at',
+            'label' => 'Added on',
+            'format' => 'date',
+            'filter' => false,
+            'contentOptions' => ['class' => TailwindGridView::TD . ' text-on-surface-variant whitespace-nowrap'],
+        ],
+        [
+            'attribute' => 'created_by',
+            'label' => 'Added by',
+            'value' => static fn($m) => $usernames[$m->created_by] ?? null,
+            'filter' => false,
+            'contentOptions' => ['class' => TailwindGridView::TD . ' text-on-surface-variant'],
+        ],
+        [
+            'class' => TailwindActionColumn::class,
+            'confirmMessage' => static fn($m) => 'Delete publisher "' . $m->publisher . '"? This cannot be undone.',
+        ],
+    ],
+]) ?>

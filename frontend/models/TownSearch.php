@@ -41,7 +41,7 @@ class TownSearch extends Town
      */
     public function search($params, $formName = null)
     {
-        $query = Town::find();
+        $query = Town::find()->with('country');
 
         // add conditions that should always apply here
 

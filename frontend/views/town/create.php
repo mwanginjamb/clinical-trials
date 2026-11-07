@@ -1,21 +1,18 @@
 <?php
 
-use yii\helpers\Html;
-
 /** @var yii\web\View $this */
 /** @var frontend\models\Town $model */
+/** @var array $countries id => name */
 
-$this->title = Yii::t('app', 'Create Town');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Towns'), 'url' => ['index']];
+$this->title = 'New town';
+$this->params['breadcrumbs'][] = ['label' => 'Towns', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="town-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-        'countries' => $countries
-    ]) ?>
-
-</div>
+<?= $this->render('../lookups/_header', [
+    'title' => 'New town',
+    'subtitle' => 'Towns and cities, each linked to a country.',
+]) ?>
+<?= $this->render('_form', [
+    'model' => $model,
+    'countries' => $countries,
+]) ?>

@@ -1,49 +1,52 @@
 <?php
 
-use frontend\models\AreaOfSpecialization;
-use yii\helpers\Html;
-use yii\helpers\Url;
-use yii\grid\ActionColumn;
-use yii\grid\GridView;
+use common\library\FormUi;
+use frontend\widgets\TailwindActionColumn;
+use frontend\widgets\TailwindGridView;
+use yii\grid\SerialColumn;
+use yii\helpers\StringHelper;
 
 /** @var yii\web\View $this */
 /** @var frontend\models\AreaOfSpecializationSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Area Of Specializations');
+$this->title = 'Areas of Specialization';
+$this->params['breadcrumbs'][] = ['label' => 'Lookups'];
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
-<div class="area-of-specialization-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<?= $this->render('../lookups/_header', [
+    'title' => 'Areas of Specialization',
+    'subtitle' => 'Specialities used to classify trials.',
+    'actions' => FormUi::ctaButton('New area of specialization', 'add', ['create']),
+]) ?>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Area Of Specialization'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            //'id',
-            'title',
-            'description:ntext',
-            'created_at',
-            'updated_at',
-            //'created_by',
-            //'updated_by',
-            [
-                'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, AreaOfSpecialization $model, $key, $index, $column) {
-                        return Url::toRoute([$action, 'id' => $model->id]);
-                    }
-            ],
+<?= TailwindGridView::widget([
+    'dataProvider' => $dataProvider,
+    'filterModel' => $searchModel,
+    'emptyText' => 'No areas of specialization match your filters.',
+    'columns' => [
+        ['class' => SerialColumn::class],
+        [
+            'attribute' => 'title',
+            'contentOptions' => ['class' => TailwindGridView::TD . ' font-headline font-bold text-primary'],
         ],
-    ]); ?>
-
-
-</div>
+        [
+            'attribute' => 'description',
+            'value' => static fn($m) => StringHelper::truncate((string) $m->description, 90),
+            'contentOptions' => ['class' => TailwindGridView::TD . ' text-on-surface-variant max-w-md'],
+        ],
+        [
+            'attribute' => 'updated_at',
+            'label' => 'Last updated',
+            'format' => 'date',
+            'filter' => false,
+            'contentOptions' => ['class' => TailwindGridView::TD . ' text-on-surface-variant whitespace-nowrap'],
+        ],
+        [
+            'class' => TailwindActionColumn::class,
+            'confirmMessage' => static fn($m) => 'Delete area of specialization "' . $m->title . '"? This cannot be undone.',
+        ],
+    ],
+]) ?>

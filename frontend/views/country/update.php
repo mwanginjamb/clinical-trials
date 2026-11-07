@@ -1,23 +1,17 @@
 <?php
 
-use yii\helpers\Html;
-
 /** @var yii\web\View $this */
 /** @var frontend\models\Country $model */
 
-$this->title = Yii::t('app', 'Update Country: {name}', [
-    'name' => $model->name,
-]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Countries'), 'url' => ['index']];
+$this->title = 'Edit country: ' . $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Countries', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->params['breadcrumbs'][] = 'Edit';
 ?>
-<div class="country-update">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
-
-</div>
+<?= $this->render('../lookups/_header', [
+    'title' => 'Edit country',
+    'subtitle' => $model->name,
+]) ?>
+<?= $this->render('_form', [
+    'model' => $model,
+]) ?>

@@ -2,9 +2,9 @@
 
 namespace frontend\models;
 
+use common\library\FileStorage;
 use Yii;
 use yii\db\ActiveRecord;
-use yii\helpers\FileHelper;
 use yii\web\ForbiddenHttpException;
 use yii\web\UploadedFile;
 
@@ -95,9 +95,6 @@ class EthicalApprovalDocument extends ActiveRecord
      */
     public static function store(EthicalApproval $approval, UploadedFile $file): ?self
     {
-        $dir = self::storageDir((int) $approval->id);
-        FileHelper::createDirectory($dir);
-
         $doc = new self([
             'ethical_approval_id' => $approval->id,
             'original_name' => mb_substr($file->name, 0, 255),
@@ -106,7 +103,8 @@ class EthicalApprovalDocument extends ActiveRecord
             'size' => (int) $file->size,
         ]);
 
-        if (!$file->saveAs($doc->getFilePath())) {
+        // creates @uploads/ethical-approvals/{id}/ (and any missing parent) on first use
+        if (!FileStorage::saveUploadedFile($file, $doc->getFilePath())) {
             return null;
         }
         if (!$doc->save()) {
